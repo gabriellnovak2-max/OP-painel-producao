@@ -46,6 +46,22 @@ tr:nth-child(even){background:rgba(255,255,255,.02)}
 tr:hover{background:rgba(0,212,170,.04)}
 tr.total-row{background:rgba(0,212,170,.1)!important;font-weight:700}
 tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
+/* ====== TELA DE LOGIN ====== */
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg-primary);z-index:9999;display:flex;align-items:center;justify-content:center}
+.login-overlay.hidden{display:none}
+.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:40px;width:90%;max-width:400px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.login-box h2{font-size:20px;background:linear-gradient(135deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.login-box .login-sub{font-size:12px;color:var(--text-secondary);margin-bottom:24px}
+.login-box .form-group{text-align:left;margin-bottom:14px}
+.login-box input,.login-box select{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg-secondary);color:var(--text-primary)}
+.login-box input:focus,.login-box select:focus{border-color:var(--teal);outline:none;box-shadow:0 0 0 3px rgba(0,212,170,.15)}
+.login-box .btn-login{width:100%;padding:12px;margin-top:10px;font-size:15px}
+.login-box .login-error{color:var(--red);font-size:12px;margin-top:8px;display:none}
+.user-info{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary)}
+.user-info .user-name{color:var(--teal);font-weight:700}
+.user-info .user-role{background:rgba(0,212,170,.15);color:var(--teal);padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.btn-logout{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-weight:700}
+.btn-logout:hover{background:rgba(239,68,68,.25)}
 /* ====== AURA-STYLE KPI CARDS ====== */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
 .kpi-card{border-radius:14px;padding:18px 20px 14px;text-align:left;border:1px solid var(--border);position:relative;overflow:hidden;transition:all .35s ease;background:var(--bg-card);box-shadow:0 4px 16px rgba(0,0,0,.3),0 1px 2px rgba(0,0,0,.2)}
@@ -130,16 +146,49 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 </head>
 <body>
 
+<!-- TELA DE LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h2>PAINEL DE PRODUÇÃO</h2>
+    <div class="login-sub">Indústria de Torrefação de Café</div>
+    <div class="form-group">
+      <label>USUÁRIO</label>
+      <input type="text" id="login-user" placeholder="Digite seu usuário">
+    </div>
+    <div class="form-group">
+      <label>SENHA</label>
+      <input type="password" id="login-pass" placeholder="Digite sua senha">
+    </div>
+    <div class="form-group">
+      <label>PERFIL</label>
+      <select id="login-perfil">
+        <option value="operador">Operador</option>
+        <option value="supervisor">Supervisor</option>
+        <option value="dono">Dono / Gestão</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-login" onclick="fazerLogin()">ENTRAR</button>
+    <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
+  </div>
+</div>
+
 <div class="header">
   <div>
     <h1>PAINEL DE CONTROLE DE PRODUÇÃO</h1>
     <div class="subtitle">Indústria de Torrefação de Café</div>
   </div>
-  <div class="btn-group">
-    <button class="btn btn-success" onclick="salvarDados()">Salvar Dados</button>
-    <button class="btn btn-primary" onclick="salvarOPnoHistorico()">Salvar no Histórico</button>
-    <button class="btn btn-primary" onclick="listarHistorico()">Histórico OPs</button>
-    <button class="btn btn-primary" onclick="novaOP()">+ Nova OP</button>
+  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <div class="user-info">
+      <span class="user-name" id="header-user">-</span>
+      <span class="user-role" id="header-role">-</span>
+      <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+    </div>
+    <div class="btn-group" style="margin:0">
+      <button class="btn btn-success" onclick="salvarDados()">Salvar Dados</button>
+      <button class="btn btn-primary" onclick="salvarOPnoHistorico()">Salvar no Histórico</button>
+      <button class="btn btn-primary" onclick="listarHistorico()">Histórico OPs</button>
+      <button class="btn btn-primary" onclick="novaOP()">+ Nova OP</button>
+    </div>
   </div>
 </div>
 
@@ -745,6 +794,60 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 <div class="toast" id="toast">Dados salvos com sucesso!</div>
 
 <script>
+// ============ LOGIN E PERFIS ============
+const USUARIOS = [
+  { user: 'admin', pass: '1234', perfil: 'dono', nome: 'Gabriell (Dono)' },
+  { user: 'supervisor', pass: '1234', perfil: 'supervisor', nome: 'Supervisor' },
+  { user: 'operador', pass: '1234', perfil: 'operador', nome: 'Operador' },
+];
+
+let usuarioLogado = null;
+
+function fazerLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const perfil = document.getElementById('login-perfil').value;
+  const found = USUARIOS.find(u => u.user === user && u.pass === pass && u.perfil === perfil);
+  if (found) {
+    usuarioLogado = found;
+    sessionStorage.setItem('usuario_logado', JSON.stringify(found));
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('header-user').textContent = found.nome;
+    document.getElementById('header-role').textContent = found.perfil.toUpperCase();
+    document.getElementById('login-error').style.display = 'none';
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function fazerLogout() {
+  sessionStorage.removeItem('usuario_logado');
+  usuarioLogado = null;
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+function verificarLogin() {
+  const raw = sessionStorage.getItem('usuario_logado');
+  if (raw) {
+    try {
+      const u = JSON.parse(raw);
+      usuarioLogado = u;
+      document.getElementById('loginOverlay').classList.add('hidden');
+      document.getElementById('header-user').textContent = u.nome;
+      document.getElementById('header-role').textContent = u.perfil.toUpperCase();
+    } catch(e) { /* login expirou */ }
+  }
+}
+
+// Enter para fazer login
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !document.getElementById('loginOverlay').classList.contains('hidden')) {
+    fazerLogin();
+  }
+});
+
 // ============ NAVEGAÇÃO ============
 function abrirAba(n, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -1531,6 +1634,7 @@ function init() {
   inicializarGraficos();
   atualizarDashboard();
   iniciarAutoSave();
+  verificarLogin();
 }
 init();
 </script>
