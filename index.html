@@ -137,6 +137,8 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
   </div>
   <div class="btn-group">
     <button class="btn btn-success" onclick="salvarDados()">Salvar Dados</button>
+    <button class="btn btn-primary" onclick="salvarOPnoHistorico()">Salvar no Histórico</button>
+    <button class="btn btn-primary" onclick="listarHistorico()">Histórico OPs</button>
     <button class="btn btn-primary" onclick="novaOP()">+ Nova OP</button>
   </div>
 </div>
@@ -1327,7 +1329,34 @@ function atualizarDashboard() {
   atualizarGraficos();
 }
 
-// ============ SALVAR / CARREGAR ============
+// ============ SALVAR / CARREGAR (COMPLETO) ============
+function coletarDadosTabela(tableId) {
+  const rows = [];
+  document.querySelectorAll('#' + tableId + ' tbody tr').forEach(tr => {
+    const row = [];
+    tr.querySelectorAll('input, select').forEach(el => {
+      row.push({ tag: el.tagName, type: el.type || '', value: el.value, readOnly: el.readOnly || false });
+    });
+    rows.push(row);
+  });
+  return rows;
+}
+
+function restaurarDadosTabela(tableId, rows, addRowFn) {
+  if (!rows || !rows.length) return;
+  const tbody = document.querySelector('#' + tableId + ' tbody');
+  const existentes = tbody.querySelectorAll('tr').length;
+  for (let i = existentes; i < rows.length; i++) { addRowFn(); }
+  const trs = tbody.querySelectorAll('tr');
+  rows.forEach((row, ri) => {
+    if (!trs[ri]) return;
+    const els = trs[ri].querySelectorAll('input, select');
+    row.forEach((cell, ci) => {
+      if (els[ci]) els[ci].value = cell.value || '';
+    });
+  });
+}
+
 function salvarDados() {
   const dados = {
     op: {
@@ -1344,6 +1373,24 @@ function salvarDados() {
       inicio: document.getElementById('lenha-inicio').value,
       pronta: document.getElementById('lenha-pronta').value,
     },
+    blend: coletarDadosTabela('tbl-blend'),
+    bateladas: coletarDadosTabela('tbl-bateladas'),
+    silos: coletarDadosTabela('tbl-silos'),
+    movSilos: coletarDadosTabela('tbl-mov-silos'),
+    blendComp: coletarDadosTabela('tbl-blend-comp'),
+    blendagem: {
+      num: document.getElementById('bld-num').value,
+      data: document.getElementById('bld-data').value,
+      op: document.getElementById('bld-op').value,
+      operador: document.getElementById('bld-operador').value,
+      cliente: document.getElementById('bld-cliente').value,
+      tipoProd: document.getElementById('bld-tipo-prod').value,
+      gram: document.getElementById('bld-gram').value,
+    },
+    moagem: coletarDadosTabela('tbl-moagem'),
+    embalagem: coletarDadosTabela('tbl-embalagem'),
+    tempos: coletarDadosTabela('tbl-tempos'),
+    quebra: coletarDadosTabela('tbl-quebra'),
     timestamp: new Date().toISOString()
   };
   localStorage.setItem('painel_torrefacao', JSON.stringify(dados));
@@ -1369,6 +1416,50 @@ function carregarDados() {
       document.getElementById('lenha-inicio').value = d.lenha.inicio || '';
       document.getElementById('lenha-pronta').value = d.lenha.pronta || '';
     }
+    if (d.blend) restaurarDadosTabela('tbl-blend', d.blend, addBlendRow);
+    if (d.bateladas) restaurarDadosTabela('tbl-bateladas', d.bateladas, addBateladaRow);
+    if (d.movSilos) restaurarDadosTabela('tbl-mov-silos', d.movSilos, addMovSiloRow);
+    if (d.blendComp) restaurarDadosTabela('tbl-blend-comp', d.blendComp, addBlendCompRow);
+    if (d.blendagem) {
+      document.getElementById('bld-num').value = d.blendagem.num || '';
+      document.getElementById('bld-data').value = d.blendagem.data || '';
+      document.getElementById('bld-op').value = d.blendagem.op || '';
+      document.getElementById('bld-operador').value = d.blendagem.operador || '';
+      document.getElementById('bld-cliente').value = d.blendagem.cliente || '';
+      document.getElementById('bld-tipo-prod').value = d.blendagem.tipoProd || '';
+      document.getElementById('bld-gram').value = d.blendagem.gram || '';
+    }
+    if (d.moagem) restaurarDadosTabela('tbl-moagem', d.moagem, addMoagemRow);
+    if (d.embalagem) restaurarDadosTabela('tbl-embalagem', d.embalagem, addEmbalagemRow);
+    if (d.tempos) {
+      const trs = document.querySelectorAll('#tbl-tempos tbody tr');
+      d.tempos.forEach((row, ri) => {
+        if (!trs[ri]) return;
+        const els = trs[ri].querySelectorAll('input, select');
+        row.forEach((cell, ci) => {
+          if (els[ci]) els[ci].value = cell.value || '';
+        });
+      });
+    }
+    if (d.quebra) restaurarDadosTabela('tbl-quebra', d.quebra, addQuebraRow);
+    if (d.silos) {
+      const trs = document.querySelectorAll('#tbl-silos tbody tr');
+      d.silos.forEach((row, ri) => {
+        if (!trs[ri]) return;
+        const els = trs[ri].querySelectorAll('input, select');
+        row.forEach((cell, ci) => {
+          if (els[ci]) els[ci].value = cell.value || '';
+        });
+      });
+    }
+    // Recalcular tudo após carregar
+    calcBlend();
+    calcBateladaTotais();
+    calcSilos();
+    calcBlendComp();
+    calcMoagemTotais();
+    calcEmbalagemTotais();
+    calcTempos();
   } catch(e) { console.error('Erro ao carregar:', e); }
 }
 
@@ -1376,6 +1467,55 @@ function novaOP() {
   if (confirm('Iniciar uma nova Ordem de Produção? Os dados atuais serão limpos.')) {
     localStorage.removeItem('painel_torrefacao');
     location.reload();
+  }
+}
+
+// ============ AUTO-SAVE (a cada 30 segundos) ============
+let autoSaveInterval = null;
+function iniciarAutoSave() {
+  if (autoSaveInterval) clearInterval(autoSaveInterval);
+  autoSaveInterval = setInterval(() => {
+    const dados = localStorage.getItem('painel_torrefacao');
+    salvarDados();
+    // Não mostra toast no auto-save para não atrapalhar
+  }, 30000);
+}
+
+// ============ HISTÓRICO DE OPs ============
+function salvarOPnoHistorico() {
+  const numOP = document.getElementById('op-numero').value;
+  if (!numOP) { alert('Preencha o número da OP antes de salvar no histórico.'); return; }
+  const historico = JSON.parse(localStorage.getItem('historico_ops') || '[]');
+  const dados = JSON.parse(localStorage.getItem('painel_torrefacao') || '{}');
+  dados.salvoEm = new Date().toISOString();
+  // Verificar se já existe essa OP no histórico
+  const idx = historico.findIndex(h => h.op && h.op.numero === numOP);
+  if (idx >= 0) {
+    if (confirm('OP ' + numOP + ' já existe no histórico. Deseja atualizar?')) {
+      historico[idx] = dados;
+    } else return;
+  } else {
+    historico.push(dados);
+  }
+  localStorage.setItem('historico_ops', JSON.stringify(historico));
+  showToast('OP ' + numOP + ' salva no histórico!');
+}
+
+function listarHistorico() {
+  const historico = JSON.parse(localStorage.getItem('historico_ops') || '[]');
+  if (!historico.length) { alert('Nenhuma OP salva no histórico.'); return; }
+  let msg = 'HISTÓRICO DE OPs:\n\n';
+  historico.forEach((h, i) => {
+    msg += (i+1) + '. ' + (h.op?.numero || 'Sem número') + ' - ' + (h.op?.data || 'Sem data') + ' - ' + (h.op?.status || 'Sem status') + '\n';
+  });
+  msg += '\nDeseja carregar alguma? Digite o número (1, 2, 3...) ou cancele.';
+  const escolha = prompt(msg);
+  if (escolha && !isNaN(escolha)) {
+    const idx = parseInt(escolha) - 1;
+    if (historico[idx]) {
+      localStorage.setItem('painel_torrefacao', JSON.stringify(historico[idx]));
+      location.reload();
+    }
   }
 }
 
@@ -1390,6 +1530,7 @@ function init() {
   carregarDados();
   inicializarGraficos();
   atualizarDashboard();
+  iniciarAutoSave();
 }
 init();
 </script>
