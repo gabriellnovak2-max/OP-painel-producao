@@ -173,6 +173,22 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 }
 .toast{position:fixed;bottom:20px;right:20px;background:linear-gradient(135deg,var(--teal),var(--cyan));color:#0d1117;padding:14px 28px;border-radius:12px;font-weight:700;transform:translateY(100px);opacity:0;transition:.3s;z-index:200;box-shadow:0 4px 20px rgba(0,212,170,.3)}
 .toast.show{transform:translateY(0);opacity:1}
+/* ====== SUBMENU EXPANSÍVEL ====== */
+.nav-group{position:relative}
+.nav-group-header{display:flex;align-items:center;justify-content:space-between;width:100%;background:none;border:none;padding:11px 16px;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .3s ease}
+.nav-group-header:hover{color:var(--text-primary);background:rgba(0,212,170,.06);border-left-color:rgba(0,212,170,.3)}
+.nav-group-header.active{color:var(--teal);border-left:3px solid var(--teal);background:rgba(0,212,170,.1)}
+.nav-group-header .nav-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;filter:drop-shadow(0 2px 4px rgba(0,212,170,.15));transition:all .4s ease}
+.nav-group-header .nav-icon svg{width:20px;height:20px;transition:all .4s ease}
+.nav-group-header:hover .nav-icon{filter:drop-shadow(0 4px 10px rgba(0,212,170,.4));transform:scale(1.15)}
+.nav-group-header .nav-arrow{width:16px;height:16px;transition:transform .3s ease;color:var(--teal);flex-shrink:0}
+.nav-group-header.open .nav-arrow{transform:rotate(180deg)}
+.nav-group-header.active .nav-icon{filter:drop-shadow(0 0 10px rgba(0,212,170,.5));animation:iconFloat 2s ease-in-out infinite}
+.nav-submenu{max-height:0;overflow:hidden;transition:max-height .35s ease;background:rgba(0,0,0,.12)}
+.nav-submenu.open{max-height:200px}
+.nav-submenu button{background:none;border:none;padding:9px 16px 9px 52px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;width:100%;text-align:left;transition:all .2s;border-left:3px solid transparent;display:block}
+.nav-submenu button:hover{color:var(--text-primary);background:rgba(0,212,170,.05);border-left-color:rgba(0,212,170,.2)}
+.nav-submenu button.active{color:var(--teal);border-left-color:var(--teal);background:rgba(0,212,170,.08);font-weight:700}
 </style>
 </head>
 <body>
@@ -230,7 +246,20 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
   <button class="active" onclick="abrirAba(0,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span><span class="nav-label">Home</span></button>
   <button onclick="abrirAba(1,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span class="nav-label">Ordem de Produção</span></button>
   <div style="padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:10px">PRODUÇÃO</div>
-  <button onclick="abrirAba(9,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8 2 4 4 4 8c0 3 2 5 4 6l1 8h6l1-8c2-1 4-3 4-6 0-4-4-6-8-6z"/><path d="M9 16h6"/><path d="M10 20h4"/></svg></span><span class="nav-label">Estoque</span></button>
+  <div class="nav-group">
+    <div class="nav-group-header" onclick="toggleSubmenu(this)">
+      <span style="display:flex;align-items:center;gap:14px">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8 2 4 4 4 8c0 3 2 5 4 6l1 8h6l1-8c2-1 4-3 4-6 0-4-4-6-8-6z"/><path d="M9 16h6"/><path d="M10 20h4"/></svg></span>
+        <span class="nav-label">Estoque</span>
+      </span>
+      <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="nav-submenu" id="submenu-estoque">
+      <button onclick="abrirAbaSub(9,this)">Café Verde Cru</button>
+      <button onclick="abrirAbaSub(10,this)">Estoque Embalagens</button>
+      <button onclick="abrirAbaSub(11,this)">Estoque Lenha</button>
+    </div>
+  </div>
   <button onclick="abrirAba(2,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M12 6v6l4 2"/></svg></span><span class="nav-label">Bateladas de Torra</span></button>
   <button onclick="abrirAba(3,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="14" rx="1"/><path d="M9 16l3 6 3-6"/><line x1="12" y1="6" x2="12" y2="12"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg></span><span class="nav-label">Controle de Silos</span></button>
   <button onclick="abrirAba(4,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="7" height="10" rx="2"/><rect x="14" y="4" width="7" height="10" rx="2"/><path d="M6.5 14v4c0 1.1.9 2 2 2h7c1.1 0 2-.9 2-2v-4"/><path d="M10 10h4"/></svg></span><span class="nav-label">Blendagem</span></button>
@@ -985,7 +1014,7 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
   </div>
 </div>
 
-<!-- ============ ABA 9: ESTOQUE ============ -->
+<!-- ============ ABA 9: CAFÉ VERDE CRU ============ -->
 <div class="tab-content" id="tab9">
 
   <!-- CHEGADA DO CAMINHÃO -->
@@ -1202,6 +1231,142 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
   </div>
 </div>
 
+<!-- ============ ABA 10: ESTOQUE EMBALAGENS ============ -->
+<div class="tab-content" id="tab10">
+
+  <div class="section">
+    <div class="section-title">ESTOQUE DE EMBALAGENS E INSUMOS</div>
+    <div class="section-body">
+      <div class="info-box azul"><b>Controle:</b> Registre todas as bobinas, caixas e materiais de embalagem. Confira peso vs NF-e na entrada. Alerta automático quando estoque atingir <b>35 dias</b> de consumo.</div>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table id="tbl-estoque-emb">
+          <thead><tr>
+            <th>#</th>
+            <th>Material</th>
+            <th>Tipo</th>
+            <th>Nº NF-e</th>
+            <th>Data Entrada</th>
+            <th>Fornecedor</th>
+            <th>Qtd Entrada</th>
+            <th>Unidade</th>
+            <th>Peso NF (kg)</th>
+            <th>Peso Conferido (kg)</th>
+            <th>Diferença (kg)</th>
+            <th>Estoque Atual</th>
+            <th>Obs</th>
+          </tr></thead>
+          <tbody></tbody>
+          <tfoot><tr class="total-row">
+            <td colspan="6"><b>TOTAIS</b></td>
+            <td><input class="calc" id="emb-est-qtd-total" readonly></td>
+            <td></td>
+            <td><input class="calc" id="emb-est-pesonf-total" readonly></td>
+            <td><input class="calc" id="emb-est-pesoconf-total" readonly></td>
+            <td><input class="calc" id="emb-est-dif-total" readonly></td>
+            <td></td><td></td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueEmbRow()">+ Adicionar Material</button></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">RESUMO ESTOQUE EMBALAGENS</div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card azul">
+          <div class="kpi-header"><span class="label">Bobinas Almofada</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="emb-est-bobinas-alm">0</span><span class="unit">un</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+        </div>
+        <div class="kpi-card verde">
+          <div class="kpi-header"><span class="label">Bobinas Vácuo</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="emb-est-bobinas-vac">0</span><span class="unit">un</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+        </div>
+        <div class="kpi-card amarelo">
+          <div class="kpi-header"><span class="label">Caixas Papelão</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="emb-est-caixas">0</span><span class="unit">un</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+        </div>
+        <div class="kpi-card vermelho">
+          <div class="kpi-header"><span class="label">Sacos Ráfia</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="emb-est-rafia">0</span><span class="unit">un</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 11: ESTOQUE LENHA ============ -->
+<div class="tab-content" id="tab11">
+
+  <div class="section">
+    <div class="section-title">ESTOQUE DE LENHA / COMBUSTÍVEL</div>
+    <div class="section-body">
+      <div class="info-box amarelo"><b>Controle:</b> Registre cada entrada de lenha com NF-e, tipo, quantidade e fornecedor. O sistema calcula o consumo por OP automaticamente.</div>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table id="tbl-estoque-lenha">
+          <thead><tr>
+            <th>#</th>
+            <th>Data</th>
+            <th>Tipo Lenha</th>
+            <th>Fornecedor</th>
+            <th>Nº NF-e</th>
+            <th>Qtd Entrada (kg)</th>
+            <th>Preço/kg (R$)</th>
+            <th>Valor Total (R$)</th>
+            <th>Consumo OP (kg)</th>
+            <th>Saldo (kg)</th>
+            <th>Obs</th>
+          </tr></thead>
+          <tbody></tbody>
+          <tfoot><tr class="total-row">
+            <td colspan="5"><b>TOTAIS</b></td>
+            <td><input class="calc" id="lenha-est-entrada-total" readonly></td>
+            <td></td>
+            <td><input class="calc" id="lenha-est-valor-total" readonly></td>
+            <td><input class="calc" id="lenha-est-consumo-total" readonly></td>
+            <td><input class="calc" id="lenha-est-saldo-total" readonly></td>
+            <td></td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueLenhaRow()">+ Adicionar Entrada</button></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">RESUMO ESTOQUE LENHA</div>
+    <div class="section-body">
+      <div class="kpi-grid">
+        <div class="kpi-card laranja">
+          <div class="kpi-header"><span class="label">Estoque Atual</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="lenha-est-saldo">0</span><span class="unit">kg</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" id="lenha-est-saldo-bar" style="width:0%"></div></div>
+        </div>
+        <div class="kpi-card azul">
+          <div class="kpi-header"><span class="label">Total Entradas</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="lenha-est-entradas">0</span><span class="unit">kg</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="kpi-card vermelho">
+          <div class="kpi-header"><span class="label">Total Consumido</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="lenha-est-consumido">0</span><span class="unit">kg</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+        </div>
+        <div class="kpi-card roxo">
+          <div class="kpi-header"><span class="label">Investimento Total</span><span class="kpi-dot"></span></div>
+          <div class="kpi-body"><div><span class="value" id="lenha-est-invest">0,00</span><span class="unit">R$</span></div></div>
+          <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">Dados salvos com sucesso!</div>
 
 <script>
@@ -1329,9 +1494,35 @@ function initCalendario() {
 function abrirAba(n, btn) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('active'));
+  document.querySelectorAll('.nav-submenu button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab' + n).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (n === 0) atualizarDashboard();
+}
+
+function toggleSubmenu(header) {
+  const submenu = header.nextElementSibling;
+  const isOpen = submenu.classList.contains('open');
+  // Fecha todos os submenus primeiro
+  document.querySelectorAll('.nav-submenu').forEach(s => s.classList.remove('open'));
+  document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('open'));
+  if (!isOpen) {
+    submenu.classList.add('open');
+    header.classList.add('open');
+  }
+}
+
+function abrirAbaSub(n, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-group-header').forEach(h => h.classList.remove('active'));
+  document.querySelectorAll('.nav-submenu button').forEach(b => b.classList.remove('active'));
   document.getElementById('tab' + n).classList.add('active');
   btn.classList.add('active');
-  if (n === 0) atualizarDashboard();
+  // Marca o header do grupo como ativo também
+  const group = btn.closest('.nav-group');
+  if (group) group.querySelector('.nav-group-header').classList.add('active');
 }
 
 function showToast(msg) {
@@ -1693,6 +1884,118 @@ function calcQuebraRow(el) {
   const torr = parseFloat(tr.querySelector('.qbr-torr').value) || 0;
   tr.querySelector('.qbr-kg').value = cru > 0 && torr > 0 ? fmt(cru - torr) : '';
   tr.querySelector('.qbr-pct').value = cru > 0 && torr > 0 ? fmt((cru-torr)/cru*100, 1) + '%' : '';
+}
+
+// ============ ESTOQUE EMBALAGENS ============
+let estEmbCount = 0;
+function addEstoqueEmbRow() {
+  estEmbCount++;
+  const tbody = document.querySelector('#tbl-estoque-emb tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${estEmbCount}</b></td>
+    <td><input type="text" placeholder="Ex: Bobina 500g"></td>
+    <td><select class="estEmb-tipo">
+      <option value="">Selecione...</option>
+      <option>Bobina Almofada</option>
+      <option>Bobina Vácuo</option>
+      <option>Caixa Papelão</option>
+      <option>Saco Ráfia</option>
+      <option>Fita Adesiva</option>
+      <option>Etiqueta</option>
+      <option>Válvula</option>
+      <option>Outro</option>
+    </select></td>
+    <td><input type="text" class="estEmb-nfe" placeholder="NF-e"></td>
+    <td><input type="date" class="estEmb-data"></td>
+    <td><input type="text" class="estEmb-forn" placeholder="Fornecedor"></td>
+    <td><input type="number" class="estEmb-qtd" oninput="calcEstoqueEmb()" placeholder="0"></td>
+    <td><select><option>Un</option><option>Kg</option><option>Rolo</option><option>Caixa</option></select></td>
+    <td><input type="number" step="0.01" class="estEmb-pesonf" oninput="calcEstoqueEmbRow(this)" placeholder="kg"></td>
+    <td><input type="number" step="0.01" class="estEmb-pesoconf" oninput="calcEstoqueEmbRow(this)" placeholder="kg"></td>
+    <td><input class="calc estEmb-dif" readonly></td>
+    <td><input type="number" class="estEmb-atual" placeholder="0"></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+function calcEstoqueEmbRow(el) {
+  const tr = el.closest('tr');
+  const pesoNf = parseFloat(tr.querySelector('.estEmb-pesonf').value) || 0;
+  const pesoConf = parseFloat(tr.querySelector('.estEmb-pesoconf').value) || 0;
+  const dif = pesoConf - pesoNf;
+  tr.querySelector('.estEmb-dif').value = pesoNf > 0 && pesoConf > 0 ? (dif >= 0 ? '+' : '') + fmt(dif) : '';
+  calcEstoqueEmb();
+}
+function calcEstoqueEmb() {
+  let tQtd=0, tPesoNf=0, tPesoConf=0, tDif=0;
+  document.querySelectorAll('#tbl-estoque-emb tbody tr').forEach(tr => {
+    tQtd += parseFloat(tr.querySelector('.estEmb-qtd')?.value) || 0;
+    tPesoNf += parseFloat(tr.querySelector('.estEmb-pesonf')?.value) || 0;
+    tPesoConf += parseFloat(tr.querySelector('.estEmb-pesoconf')?.value) || 0;
+  });
+  tDif = tPesoConf - tPesoNf;
+  document.getElementById('emb-est-qtd-total').value = tQtd > 0 ? tQtd : '';
+  document.getElementById('emb-est-pesonf-total').value = tPesoNf > 0 ? fmt(tPesoNf) : '';
+  document.getElementById('emb-est-pesoconf-total').value = tPesoConf > 0 ? fmt(tPesoConf) : '';
+  document.getElementById('emb-est-dif-total').value = (tPesoNf > 0 || tPesoConf > 0) ? (tDif >= 0 ? '+' : '') + fmt(tDif) : '';
+}
+
+// ============ ESTOQUE LENHA ============
+let estLenhaCount = 0;
+function addEstoqueLenhaRow() {
+  estLenhaCount++;
+  const tbody = document.querySelector('#tbl-estoque-lenha tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${estLenhaCount}</b></td>
+    <td><input type="date" class="estLen-data"></td>
+    <td><select class="estLen-tipo">
+      <option value="">Selecione...</option>
+      <option>Eucalipto</option>
+      <option>Nativa</option>
+      <option>Reflorestamento</option>
+      <option>Outro</option>
+    </select></td>
+    <td><input type="text" class="estLen-forn" placeholder="Fornecedor"></td>
+    <td><input type="text" class="estLen-nfe" placeholder="NF-e"></td>
+    <td><input type="number" step="0.01" class="estLen-entrada" oninput="calcEstoqueLenhaRow(this)" placeholder="kg"></td>
+    <td><input type="number" step="0.01" class="estLen-preco" oninput="calcEstoqueLenhaRow(this)" placeholder="R$"></td>
+    <td><input class="calc estLen-valor" readonly></td>
+    <td><input type="number" step="0.01" class="estLen-consumo" oninput="calcEstoqueLenha()" placeholder="kg"></td>
+    <td><input class="calc estLen-saldo" readonly></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+function calcEstoqueLenhaRow(el) {
+  const tr = el.closest('tr');
+  const entrada = parseFloat(tr.querySelector('.estLen-entrada').value) || 0;
+  const preco = parseFloat(tr.querySelector('.estLen-preco').value) || 0;
+  const consumo = parseFloat(tr.querySelector('.estLen-consumo').value) || 0;
+  tr.querySelector('.estLen-valor').value = entrada > 0 && preco > 0 ? fmtBRL(entrada * preco) : '';
+  tr.querySelector('.estLen-saldo').value = entrada > 0 ? fmt(entrada - consumo) : '';
+  calcEstoqueLenha();
+}
+function calcEstoqueLenha() {
+  let tEntrada=0, tValor=0, tConsumo=0, tSaldo=0;
+  document.querySelectorAll('#tbl-estoque-lenha tbody tr').forEach(tr => {
+    const ent = parseFloat(tr.querySelector('.estLen-entrada')?.value) || 0;
+    const preco = parseFloat(tr.querySelector('.estLen-preco')?.value) || 0;
+    const cons = parseFloat(tr.querySelector('.estLen-consumo')?.value) || 0;
+    const saldo = ent - cons;
+    tEntrada += ent; tValor += ent * preco; tConsumo += cons; tSaldo += saldo;
+    const saldoEl = tr.querySelector('.estLen-saldo');
+    if (saldoEl) saldoEl.value = ent > 0 ? fmt(saldo) : '';
+  });
+  document.getElementById('lenha-est-entrada-total').value = tEntrada > 0 ? fmt(tEntrada) : '';
+  document.getElementById('lenha-est-valor-total').value = tValor > 0 ? fmtBRL(tValor) : '';
+  document.getElementById('lenha-est-consumo-total').value = tConsumo > 0 ? fmt(tConsumo) : '';
+  document.getElementById('lenha-est-saldo-total').value = tEntrada > 0 ? fmt(tSaldo) : '';
+  // KPIs
+  setText('lenha-est-saldo', fmt(tSaldo));
+  setText('lenha-est-entradas', fmt(tEntrada));
+  setText('lenha-est-consumido', fmt(tConsumo));
+  setText('lenha-est-invest', fmtBRL(tValor));
+  setBar('lenha-est-saldo-bar', tEntrada > 0 ? Math.min(tSaldo / tEntrada * 100, 100) : 0);
 }
 
 // ============ CAFÉ VERDE ============
@@ -2146,6 +2449,8 @@ function salvarDados() {
     embalagem: coletarDadosTabela('tbl-embalagem'),
     tempos: coletarDadosTabela('tbl-tempos'),
     quebra: coletarDadosTabela('tbl-quebra'),
+    estoqueEmb: coletarDadosTabela('tbl-estoque-emb'),
+    estoqueLenha: coletarDadosTabela('tbl-estoque-lenha'),
     cafeVerde: {
       nfe: document.getElementById('cv-nfe').value,
       fornecedor: document.getElementById('cv-fornecedor').value,
@@ -2235,6 +2540,11 @@ function carregarDados() {
       if (cv.lotes) restaurarDadosTabela('tbl-cafe-verde', cv.lotes, addCafeVerdeRow);
       calcPesagemCaminhao();
       calcCafeVerde();
+    }
+    if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
+    if (d.estoqueLenha) {
+      restaurarDadosTabela('tbl-estoque-lenha', d.estoqueLenha, addEstoqueLenhaRow);
+      calcEstoqueLenha();
     }
     if (d.silos) {
       const trs = document.querySelectorAll('#tbl-silos tbody tr');
