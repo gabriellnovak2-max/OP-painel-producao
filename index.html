@@ -222,6 +222,13 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 .pen-card .pen-label{font-size:11px;font-weight:700;margin-bottom:4px}
 .pen-card .pen-value{font-size:22px;font-weight:800}
 @media(max-width:768px){.dual-panel{grid-template-columns:1fr}}
+/* ====== VALIDAÇÃO CAMPOS OBRIGATÓRIOS ====== */
+.campo-obrigatorio{position:relative}
+.campo-obrigatorio::after{content:'*';color:var(--red);font-weight:700;font-size:14px;position:absolute;top:0;right:4px}
+input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(239,68,68,.2)!important;animation:shakeField .4s ease}
+@keyframes shakeField{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.validacao-msg{font-size:11px;color:var(--red);margin-top:6px;padding:8px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;display:none}
+.validacao-msg.show{display:block}
 </style>
 </head>
 <body>
@@ -638,10 +645,10 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
     <div class="section-title">1. IDENTIFICAÇÃO DA ORDEM DE PRODUÇÃO</div>
     <div class="section-body">
       <div class="form-grid">
-        <div class="form-group"><label>Nº da OP</label><input type="text" id="op-numero" placeholder="Ex: OP-001"></div>
-        <div class="form-group"><label>Data de Emissão</label><input type="date" id="op-data"></div>
-        <div class="form-group"><label>Turno</label><select id="op-turno"><option value="">Selecione...</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
-        <div class="form-group"><label>Operador Responsável</label><input type="text" id="op-operador" placeholder="Nome do operador"></div>
+        <div class="form-group campo-obrigatorio"><label>Nº da OP</label><input type="text" id="op-numero" placeholder="Ex: OP-001" required></div>
+        <div class="form-group campo-obrigatorio"><label>Data de Emissão</label><input type="date" id="op-data" required></div>
+        <div class="form-group campo-obrigatorio"><label>Turno</label><select id="op-turno" required><option value="">Selecione...</option><option>Manhã</option><option>Tarde</option><option>Noite</option></select></div>
+        <div class="form-group campo-obrigatorio"><label>Operador Responsável</label><input type="text" id="op-operador" placeholder="Nome do operador" required></div>
         <div class="form-group"><label>Torrador / Máquina</label><input type="text" id="op-torrador" placeholder="Identificação do torrador"></div>
         <div class="form-group"><label>Status</label><select id="op-status"><option value="Planejada">Planejada</option><option value="Em Andamento">Em Andamento</option><option value="Concluída">Concluída</option><option value="Cancelada">Cancelada</option></select></div>
       </div>
@@ -1063,11 +1070,11 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
         <div class="panel-main">
           <div class="acc-body-inner">
             <div class="form-grid">
-              <div class="form-group"><label>Nº da NF-e</label><input type="text" id="cv-nfe" placeholder="Ex: 000123456"></div>
-              <div class="form-group"><label>Fornecedor</label><input type="text" id="cv-fornecedor" placeholder="Nome do fornecedor"></div>
-              <div class="form-group"><label>Data de Chegada</label><input type="date" id="cv-data"></div>
-              <div class="form-group"><label>Hora de Chegada</label><input type="time" id="cv-hora"></div>
-              <div class="form-group"><label>Placa do Caminhão</label><input type="text" id="cv-placa" placeholder="Ex: ABC-1234"></div>
+              <div class="form-group campo-obrigatorio"><label>Nº da NF-e</label><input type="text" id="cv-nfe" placeholder="Ex: 000123456" required></div>
+              <div class="form-group campo-obrigatorio"><label>Fornecedor</label><input type="text" id="cv-fornecedor" placeholder="Nome do fornecedor" required></div>
+              <div class="form-group campo-obrigatorio"><label>Data de Chegada</label><input type="date" id="cv-data" required></div>
+              <div class="form-group campo-obrigatorio"><label>Hora de Chegada</label><input type="time" id="cv-hora" required></div>
+              <div class="form-group campo-obrigatorio"><label>Placa do Caminhão</label><input type="text" id="cv-placa" placeholder="Ex: ABC-1234" required></div>
               <div class="form-group"><label>Motorista</label><input type="text" id="cv-motorista" placeholder="Nome do motorista"></div>
               <div class="form-group"><label>Responsável Recebimento</label><input type="text" id="cv-responsavel" placeholder="Quem recebeu"></div>
               <div class="form-group"><label>Status</label><select id="cv-status"><option value="Aguardando">Aguardando Descarga</option><option value="Em Descarga">Em Descarga</option><option value="Conferindo">Conferindo Lotes</option><option value="Armazenado">Armazenado</option><option value="Concluído">Concluído</option></select></div>
@@ -2508,7 +2515,7 @@ function restaurarDadosTabela(tableId, rows, addRowFn) {
   });
 }
 
-function salvarDados() {
+function salvarDados(silencioso) {
   const dados = {
     op: {
       numero: document.getElementById('op-numero').value,
@@ -2559,13 +2566,24 @@ function salvarDados() {
       descInicio: document.getElementById('cv-desc-inicio').value,
       descFim: document.getElementById('cv-desc-fim').value,
       descTempo: document.getElementById('cv-desc-tempo').value,
+      pesagemInicio: document.getElementById('cv-pesagem-inicio').value,
+      pesagemFim: document.getElementById('cv-pesagem-fim').value,
+      pesagemTempo: document.getElementById('cv-pesagem-tempo').value,
+      confInicio: document.getElementById('cv-conf-inicio').value,
+      confFim: document.getElementById('cv-conf-fim').value,
+      confTempo: document.getElementById('cv-conf-tempo').value,
       obs: document.getElementById('cv-obs').value,
       lotes: coletarDadosTabela('tbl-cafe-verde'),
     },
     timestamp: new Date().toISOString()
   };
-  localStorage.setItem('painel_torrefacao', JSON.stringify(dados));
-  showToast('Dados salvos com sucesso!');
+  try {
+    localStorage.setItem('painel_torrefacao', JSON.stringify(dados));
+    if (!silencioso) showToast('Dados salvos com sucesso!');
+  } catch(e) {
+    console.error('Erro ao salvar:', e);
+    if (!silencioso) showToast('ERRO ao salvar! Espaço insuficiente.');
+  }
 }
 
 function carregarDados() {
@@ -2629,6 +2647,12 @@ function carregarDados() {
       document.getElementById('cv-desc-inicio').value = cv.descInicio || '';
       document.getElementById('cv-desc-fim').value = cv.descFim || '';
       document.getElementById('cv-desc-tempo').value = cv.descTempo || '';
+      document.getElementById('cv-pesagem-inicio').value = cv.pesagemInicio || '';
+      document.getElementById('cv-pesagem-fim').value = cv.pesagemFim || '';
+      document.getElementById('cv-pesagem-tempo').value = cv.pesagemTempo || '';
+      document.getElementById('cv-conf-inicio').value = cv.confInicio || '';
+      document.getElementById('cv-conf-fim').value = cv.confFim || '';
+      document.getElementById('cv-conf-tempo').value = cv.confTempo || '';
       document.getElementById('cv-obs').value = cv.obs || '';
       if (cv.lotes) restaurarDadosTabela('tbl-cafe-verde', cv.lotes, addCafeVerdeRow);
       calcPesagemCaminhao();
@@ -2667,16 +2691,18 @@ function novaOP() {
   }
 }
 
-// ============ AUTO-SAVE (a cada 30 segundos) ============
+// ============ AUTO-SAVE (a cada 30 segundos + ao sair) ============
 let autoSaveInterval = null;
 function iniciarAutoSave() {
   if (autoSaveInterval) clearInterval(autoSaveInterval);
-  autoSaveInterval = setInterval(() => {
-    const dados = localStorage.getItem('painel_torrefacao');
-    salvarDados();
-    // Não mostra toast no auto-save para não atrapalhar
-  }, 30000);
+  autoSaveInterval = setInterval(() => { salvarDados(true); }, 30000);
 }
+// Salva antes de fechar/recarregar a página
+window.addEventListener('beforeunload', function() { salvarDados(true); });
+// Salva ao mudar de aba do navegador
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'hidden') salvarDados(true);
+});
 
 // ============ HISTÓRICO DE OPs ============
 function salvarOPnoHistorico() {
@@ -2715,6 +2741,47 @@ function listarHistorico() {
     }
   }
 }
+
+// ============ VALIDAÇÃO DE CAMPOS OBRIGATÓRIOS ============
+function validarCampos(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return true;
+  const campos = container.querySelectorAll('[required]');
+  let valido = true;
+  let primeiroErro = null;
+  campos.forEach(campo => {
+    campo.classList.remove('campo-erro');
+    if (!campo.value || campo.value.trim() === '') {
+      campo.classList.add('campo-erro');
+      valido = false;
+      if (!primeiroErro) primeiroErro = campo;
+      // Remove erro ao digitar
+      campo.addEventListener('input', function limpa() {
+        campo.classList.remove('campo-erro');
+        campo.removeEventListener('input', limpa);
+      }, { once: true });
+      campo.addEventListener('change', function limpa() {
+        campo.classList.remove('campo-erro');
+        campo.removeEventListener('change', limpa);
+      }, { once: true });
+    }
+  });
+  if (!valido && primeiroErro) {
+    primeiroErro.focus();
+    primeiroErro.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return valido;
+}
+
+// Validar antes de salvar no histórico
+const _salvarOPoriginal = salvarOPnoHistorico;
+salvarOPnoHistorico = function() {
+  if (!validarCampos('tab1')) {
+    showToast('Preencha os campos obrigatórios da OP!');
+    return;
+  }
+  _salvarOPoriginal();
+};
 
 // ============ INICIALIZAÇÃO ============
 function init() {
