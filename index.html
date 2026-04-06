@@ -308,6 +308,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
   <button onclick="abrirAba(6,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></span><span class="nav-label">Controle de Tempos</span></button>
   <hr style="border:none;border-top:1px solid var(--border);margin:8px 16px">
   <div style="padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">GESTÃO</div>
+  <button onclick="abrirAba(12,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M9 4v16"/><path d="M4 9h16"/><path d="M4 14h5"/></svg></span><span class="nav-label">Fichas Clientes/Produtos</span></button>
   <button onclick="abrirAba(7,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="nav-label">Quebra e Fiscal</span></button>
   <button onclick="abrirAba(8,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="nav-label">Cadastros</span></button>
   </div>
@@ -1006,54 +1007,100 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
 
 <!-- ============ ABA 8: CADASTROS ============ -->
 <div class="tab-content" id="tab8">
-  <div class="section">
-    <div class="section-title">TIPOS DE CAFÉ VERDE</div>
-    <div class="section-body" style="overflow-x:auto">
-      <table>
-        <thead><tr><th>Código</th><th>Descrição</th><th>Origem</th><th>Tipo</th><th>Peneira</th><th>Umidade (%)</th></tr></thead>
-        <tbody>
-          <tr><td>CV001</td><td>Arábica Natural</td><td>Cerrado Mineiro</td><td>Arábica</td><td>16/18</td><td>11%</td></tr>
-          <tr><td>CV002</td><td>Arábica Cereja Descascado</td><td>Sul de Minas</td><td>Arábica</td><td>17/18</td><td>10,5%</td></tr>
-          <tr><td>CV003</td><td>Conilon Tipo 7</td><td>Espírito Santo</td><td>Conilon</td><td>13/15</td><td>12%</td></tr>
-          <tr><td>CV004</td><td>Arábica Rio</td><td>Zona da Mata</td><td>Arábica</td><td>14/16</td><td>11,5%</td></tr>
-          <tr><td>CV005</td><td>Blend Comercial</td><td>Diversas</td><td>Blend</td><td>Misto</td><td>11%</td></tr>
-        </tbody>
-      </table>
+
+  <!-- OPERADORES -->
+  <div class="acc-section">
+    <div class="acc-header open" onclick="toggleAcc(this)">
+      <h3>CADASTRO DE OPERADORES / FUNCIONÁRIOS</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body open">
+      <div class="acc-body-inner">
+        <div class="info-box azul"><b>Custo/hora:</b> (Salário + 55% encargos) / 220 horas mensais = custo por hora do funcionário.</div>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table id="tbl-operadores">
+            <thead><tr>
+              <th>#</th><th>Nome Completo</th><th>Função</th><th>Turno</th>
+              <th>Salário (R$)</th><th>Encargos 55% (R$)</th><th>Custo Total (R$)</th>
+              <th>Custo/Hora (R$)</th><th>Data Admissão</th><th>Status</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addOperadorRow()">+ Adicionar Operador</button></div>
+      </div>
     </div>
   </div>
-  <div class="section">
-    <div class="section-title">PRODUTOS FINAIS</div>
-    <div class="section-body" style="overflow-x:auto">
-      <table>
-        <thead><tr><th>Código</th><th>Descrição</th><th>Tipo</th><th>Embalagem</th><th>Gramatura</th><th>Marca</th></tr></thead>
-        <tbody>
-          <tr><td>PF001</td><td>Café Torrado Moído Almofada 500g</td><td>Moído</td><td>Almofada</td><td>500g</td><td>Marca Própria</td></tr>
-          <tr><td>PF002</td><td>Café Torrado Moído Almofada 250g</td><td>Moído</td><td>Almofada</td><td>250g</td><td>Marca Própria</td></tr>
-          <tr><td>PF003</td><td>Café Torrado Moído Vácuo 500g</td><td>Moído</td><td>Vácuo</td><td>500g</td><td>Marca Própria</td></tr>
-          <tr><td>PF004</td><td>Café Torrado em Grão 1kg</td><td>Grão</td><td>Vácuo</td><td>1000g</td><td>Marca Própria</td></tr>
-          <tr><td>PF005</td><td>Café Moído Almofada 500g - Cliente</td><td>Moído</td><td>Almofada</td><td>500g</td><td>Cliente A</td></tr>
-        </tbody>
-      </table>
+
+  <!-- FORNECEDORES -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>CADASTRO DE FORNECEDORES</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div style="overflow-x:auto">
+          <table id="tbl-fornecedores">
+            <thead><tr>
+              <th>#</th><th>Razão Social</th><th>CNPJ</th><th>Tipo</th>
+              <th>Cidade/UF</th><th>Telefone</th><th>E-mail</th><th>Contato</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addFornecedorRow()">+ Adicionar Fornecedor</button></div>
+      </div>
     </div>
   </div>
-  <div class="section">
-    <div class="section-title">PARÂMETROS DE REFERÊNCIA DA PRODUÇÃO</div>
-    <div class="section-body">
-      <table class="param-table">
-        <tr><td>Quebra de Torra Esperada</td><td>15% a 20% (depende do ponto de torra)</td></tr>
-        <tr><td>Temperatura Fornalha Padrão</td><td>400°C a 600°C</td></tr>
-        <tr><td>Temperatura Cilindro Padrão</td><td>180°C a 240°C</td></tr>
-        <tr><td>Água de Resfriamento</td><td>10 litros a cada 60 kg de café torrado</td></tr>
-        <tr><td>Tempo de Torra Padrão</td><td>10 a 15 minutos por batelada</td></tr>
-        <tr><td>Capacidade por Batelada</td><td>60 kg de café verde</td></tr>
-        <tr><td>Umidade Café Verde</td><td>10% a 12%</td></tr>
-        <tr><td>Umidade Café Torrado</td><td>Máx. 5% (regulação MAPA)</td></tr>
-        <tr><td>Blend Padrão</td><td>3 tipos de café verde / 3 silos</td></tr>
-        <tr><td>Perda na Moagem</td><td>0,5% a 1%</td></tr>
-        <tr><td>Taxa de Rejeição Embalagem</td><td>Meta: inferior a 2%</td></tr>
-      </table>
+
+  <!-- CLIENTES -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>CADASTRO DE CLIENTES</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div style="overflow-x:auto">
+          <table id="tbl-clientes">
+            <thead><tr>
+              <th>#</th><th>Razão Social / Nome</th><th>CNPJ/CPF</th><th>Tipo</th>
+              <th>Cidade/UF</th><th>Telefone</th><th>E-mail</th><th>Marca Própria?</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addClienteRow()">+ Adicionar Cliente</button></div>
+      </div>
     </div>
   </div>
+
+  <!-- PARÂMETROS DE REFERÊNCIA -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>PARÂMETROS DE REFERÊNCIA DA PRODUÇÃO</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <table class="param-table">
+          <tr><td>Quebra de Torra Esperada</td><td>15% a 20% (depende do ponto de torra)</td></tr>
+          <tr><td>Temperatura Fornalha Padrão</td><td>400°C a 600°C</td></tr>
+          <tr><td>Temperatura Cilindro Padrão</td><td>180°C a 240°C</td></tr>
+          <tr><td>Água de Resfriamento</td><td>10 litros a cada 60 kg de café torrado</td></tr>
+          <tr><td>Tempo de Torra Padrão</td><td>10 a 15 minutos por batelada</td></tr>
+          <tr><td>Capacidade por Batelada</td><td>60 kg de café verde</td></tr>
+          <tr><td>Umidade Café Verde</td><td>10% a 12%</td></tr>
+          <tr><td>Umidade Café Torrado</td><td>Máx. 5% (regulação MAPA)</td></tr>
+          <tr><td>Blend Padrão</td><td>3 tipos de café verde / 3 silos</td></tr>
+          <tr><td>Perda na Moagem</td><td>0,5% a 1%</td></tr>
+          <tr><td>Taxa de Rejeição Embalagem</td><td>Meta: inferior a 2%</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ============ ABA 9: CAFÉ VERDE CRU ============ -->
@@ -1454,6 +1501,86 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
       </div>
     </div>
   </div>
+</div>
+
+<!-- ============ ABA 12: FICHAS DE CLIENTES E PRODUTOS ============ -->
+<div class="tab-content" id="tab12">
+
+  <!-- FICHAS DE PRODUTOS POR CLIENTE -->
+  <div class="acc-section">
+    <div class="acc-header open" onclick="toggleAcc(this)">
+      <h3>FICHAS DE PRODUTO POR CLIENTE</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body open">
+      <div class="acc-body-inner">
+        <div class="info-box verde"><b>Cada cliente tem sua ficha:</b> define marca, blend%, Agtron, tipo embalagem, granulometria, perfil de torra. A OP puxa esses dados automaticamente.</div>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table id="tbl-fichas-produto">
+            <thead><tr>
+              <th>#</th><th>Cliente / Marca</th><th>Produto</th><th>Tipo Embalagem</th>
+              <th>Gramatura (g)</th><th>Ponto Torra (Agtron)</th><th>Granulometria</th>
+              <th>Blend FP5 (%)</th><th>Blend FP8 (%)</th><th>Blend FP10 (%)</th>
+              <th>Blend P10-P18 (%)</th><th>Blend PVA (%)</th><th>Total Blend</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+            <tfoot><tr class="total-row">
+              <td colspan="14" style="text-align:left;padding-left:18px"><b>Total de fichas: <span id="fichas-count">0</span></b></td>
+            </tr></tfoot>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addFichaProdutoRow()">+ Adicionar Ficha de Produto</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFIL DE TORRA POR PENEIRA -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>PERFIL DE TORRA POR PENEIRA</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="info-box amarelo"><b>Cada peneira torra diferente!</b> Registre os parâmetros de cada uma: temperatura, tempo, quebra esperada, Agtron alvo.</div>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table id="tbl-perfil-torra">
+            <thead><tr>
+              <th>Peneira</th><th>Temp. Fornalha (°C)</th><th>Temp. Cilindro (°C)</th>
+              <th>Tempo Torra (min)</th><th>Quebra Esperada (%)</th><th>Agtron Alvo</th>
+              <th>Água Resfr. (L)</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addPerfilTorraRow()">+ Adicionar Perfil</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUTOS FINAIS CADASTRADOS -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>PRODUTOS FINAIS CADASTRADOS</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div style="overflow-x:auto">
+          <table id="tbl-produtos-finais">
+            <thead><tr>
+              <th>#</th><th>Código</th><th>Descrição</th><th>Tipo</th>
+              <th>Embalagem</th><th>Gramatura</th><th>Peso Embal. (kg)</th>
+              <th>Marca</th><th>Selo Puro Lote?</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addProdutoFinalRow()">+ Adicionar Produto</button></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast">Dados salvos com sucesso!</div>
@@ -1980,6 +2107,142 @@ function calcQuebraRow(el) {
   const torr = parseFloat(tr.querySelector('.qbr-torr').value) || 0;
   tr.querySelector('.qbr-kg').value = cru > 0 && torr > 0 ? fmt(cru - torr) : '';
   tr.querySelector('.qbr-pct').value = cru > 0 && torr > 0 ? fmt((cru-torr)/cru*100, 1) + '%' : '';
+}
+
+// ============ CADASTROS (OPERADORES, FORNECEDORES, CLIENTES) ============
+let opCount = 0;
+function addOperadorRow() {
+  opCount++;
+  const tbody = document.querySelector('#tbl-operadores tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${opCount}</b></td>
+    <td><input type="text" class="cad-op-nome" placeholder="Nome completo"></td>
+    <td><select class="cad-op-func"><option>Operador</option><option>Torrador</option><option>Moageiro</option><option>Embalador</option><option>Supervisor</option><option>Auxiliar</option></select></td>
+    <td><select><option>Manhã</option><option>Tarde</option><option>Noite</option></select></td>
+    <td><input type="number" step="0.01" class="cad-op-sal" oninput="calcOperador(this)" placeholder="R$"></td>
+    <td><input class="calc cad-op-enc" readonly></td>
+    <td><input class="calc cad-op-total" readonly></td>
+    <td><input class="calc cad-op-hora" readonly></td>
+    <td><input type="date"></td>
+    <td><select><option>Ativo</option><option>Férias</option><option>Afastado</option><option>Desligado</option></select></td>`;
+  tbody.appendChild(tr);
+}
+function calcOperador(el) {
+  const tr = el.closest('tr');
+  const sal = parseFloat(tr.querySelector('.cad-op-sal').value) || 0;
+  const enc = sal * 0.55;
+  const total = sal + enc;
+  const hora = total / 220;
+  tr.querySelector('.cad-op-enc').value = sal > 0 ? fmtBRL(enc) : '';
+  tr.querySelector('.cad-op-total').value = sal > 0 ? fmtBRL(total) : '';
+  tr.querySelector('.cad-op-hora').value = sal > 0 ? fmtBRL(hora) : '';
+}
+
+let fornCount = 0;
+function addFornecedorRow() {
+  fornCount++;
+  const tbody = document.querySelector('#tbl-fornecedores tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${fornCount}</b></td>
+    <td><input type="text" placeholder="Razão Social"></td>
+    <td><input type="text" placeholder="00.000.000/0000-00"></td>
+    <td><select><option>Café Verde</option><option>Embalagens</option><option>Lenha</option><option>Insumos</option><option>Manutenção</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="Cidade/UF"></td>
+    <td><input type="text" placeholder="(00) 00000-0000"></td>
+    <td><input type="text" placeholder="email@email.com"></td>
+    <td><input type="text" placeholder="Nome contato"></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+
+let cliCount = 0;
+function addClienteRow() {
+  cliCount++;
+  const tbody = document.querySelector('#tbl-clientes tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${cliCount}</b></td>
+    <td><input type="text" placeholder="Razão Social / Nome"></td>
+    <td><input type="text" placeholder="CNPJ ou CPF"></td>
+    <td><select><option>Marca Própria</option><option>Revenda</option><option>Consumidor Final</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="Cidade/UF"></td>
+    <td><input type="text" placeholder="(00) 00000-0000"></td>
+    <td><input type="text" placeholder="email@email.com"></td>
+    <td><select><option>Não</option><option>Sim</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+
+// ============ FICHAS DE CLIENTES E PRODUTOS ============
+let fichaCount = 0;
+function addFichaProdutoRow() {
+  fichaCount++;
+  const tbody = document.querySelector('#tbl-fichas-produto tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${fichaCount}</b></td>
+    <td><input type="text" class="ficha-cliente" placeholder="Cliente / Marca"></td>
+    <td><input type="text" placeholder="Ex: Café Moído 500g"></td>
+    <td><select><option>Almofada</option><option>Vácuo</option><option>Grão</option><option>Drip</option></select></td>
+    <td><select><option value="250">250g</option><option value="500" selected>500g</option><option value="1000">1000g</option></select></td>
+    <td><input type="number" class="ficha-agtron" placeholder="25-95"></td>
+    <td><select><option>Grossa (1.2-1.4)</option><option>Média (1.5-1.6)</option><option>Fina (Espresso)</option><option>N/A (Grão)</option></select></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
+    <td><input class="calc ficha-blend-total" readonly></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+  document.getElementById('fichas-count').textContent = fichaCount;
+}
+function calcFichaBlend(el) {
+  const tr = el.closest('tr');
+  const pcts = tr.querySelectorAll('.ficha-bp');
+  let total = 0;
+  pcts.forEach(p => { total += parseFloat(p.value) || 0; });
+  const totalEl = tr.querySelector('.ficha-blend-total');
+  totalEl.value = total > 0 ? fmt(total, 1) + '%' : '';
+  totalEl.style.color = Math.abs(total - 100) < 0.1 ? 'var(--green)' : total > 0 ? 'var(--red)' : '';
+}
+
+let perfilTorraCount = 0;
+function addPerfilTorraRow() {
+  perfilTorraCount++;
+  const tbody = document.querySelector('#tbl-perfil-torra tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><select><option>FP5</option><option>FP8</option><option>FP10</option><option>P10-P18</option><option>PVA</option></select></td>
+    <td><input type="number" placeholder="°C"></td>
+    <td><input type="number" placeholder="°C"></td>
+    <td><input type="number" step="0.1" placeholder="min"></td>
+    <td><input type="number" step="0.1" placeholder="%"></td>
+    <td><input type="number" placeholder="25-95"></td>
+    <td><input type="number" step="0.1" placeholder="L"></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+
+let prodFinalCount = 0;
+function addProdutoFinalRow() {
+  prodFinalCount++;
+  const tbody = document.querySelector('#tbl-produtos-finais tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${prodFinalCount}</b></td>
+    <td><input type="text" value="PF${String(prodFinalCount).padStart(3,'0')}"></td>
+    <td><input type="text" placeholder="Descrição do produto"></td>
+    <td><select><option>Moído</option><option>Grão</option><option>Drip</option></select></td>
+    <td><select><option>Almofada</option><option>Vácuo</option><option>Grão</option></select></td>
+    <td><select><option value="250">250g</option><option value="500">500g</option><option value="1000">1000g</option></select></td>
+    <td><input type="number" step="0.001" placeholder="kg"></td>
+    <td><input type="text" placeholder="Marca"></td>
+    <td><select><option>Não</option><option>Sim</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
 }
 
 // ============ ESTOQUE EMBALAGENS ============
@@ -2549,6 +2812,12 @@ function salvarDados(silencioso) {
     embalagem: coletarDadosTabela('tbl-embalagem'),
     tempos: coletarDadosTabela('tbl-tempos'),
     quebra: coletarDadosTabela('tbl-quebra'),
+    operadores: coletarDadosTabela('tbl-operadores'),
+    fornecedores: coletarDadosTabela('tbl-fornecedores'),
+    clientes: coletarDadosTabela('tbl-clientes'),
+    fichasProduto: coletarDadosTabela('tbl-fichas-produto'),
+    perfilTorra: coletarDadosTabela('tbl-perfil-torra'),
+    produtosFinais: coletarDadosTabela('tbl-produtos-finais'),
     estoqueEmb: coletarDadosTabela('tbl-estoque-emb'),
     estoqueLenha: coletarDadosTabela('tbl-estoque-lenha'),
     cafeVerde: {
@@ -2658,6 +2927,12 @@ function carregarDados() {
       calcPesagemCaminhao();
       calcCafeVerde();
     }
+    if (d.operadores) restaurarDadosTabela('tbl-operadores', d.operadores, addOperadorRow);
+    if (d.fornecedores) restaurarDadosTabela('tbl-fornecedores', d.fornecedores, addFornecedorRow);
+    if (d.clientes) restaurarDadosTabela('tbl-clientes', d.clientes, addClienteRow);
+    if (d.fichasProduto) restaurarDadosTabela('tbl-fichas-produto', d.fichasProduto, addFichaProdutoRow);
+    if (d.perfilTorra) restaurarDadosTabela('tbl-perfil-torra', d.perfilTorra, addPerfilTorraRow);
+    if (d.produtosFinais) restaurarDadosTabela('tbl-produtos-finais', d.produtosFinais, addProdutoFinalRow);
     if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
     if (d.estoqueLenha) {
       restaurarDadosTabela('tbl-estoque-lenha', d.estoqueLenha, addEstoqueLenhaRow);
