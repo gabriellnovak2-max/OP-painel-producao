@@ -311,6 +311,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
   <button onclick="abrirAba(12,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M9 4v16"/><path d="M4 9h16"/><path d="M4 14h5"/></svg></span><span class="nav-label">Fichas Clientes/Produtos</span></button>
   <button onclick="abrirAba(7,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="nav-label">Quebra e Fiscal</span></button>
   <button onclick="abrirAba(8,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="nav-label">Cadastros</span></button>
+  <button onclick="abrirAba(13,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="nav-label">Selos e Certificados</span></button>
   </div>
 </nav>
 
@@ -1258,8 +1259,20 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
             <div class="pen-value" style="color:var(--green)" id="cv-pen-fp10">0 kg</div>
           </div>
           <div class="pen-card" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)">
-            <div class="pen-label" style="color:var(--yellow)">P10-P18</div>
-            <div class="pen-value" style="color:var(--yellow)" id="cv-pen-p10p18">0 kg</div>
+            <div class="pen-label" style="color:var(--yellow)">P10/12</div>
+            <div class="pen-value" style="color:var(--yellow)" id="cv-pen-p1012">0 kg</div>
+          </div>
+          <div class="pen-card" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3)">
+            <div class="pen-label" style="color:var(--orange)">P13/14</div>
+            <div class="pen-value" style="color:var(--orange)" id="cv-pen-p1314">0 kg</div>
+          </div>
+          <div class="pen-card" style="background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.3)">
+            <div class="pen-label" style="color:var(--pink)">P15/16</div>
+            <div class="pen-value" style="color:var(--pink)" id="cv-pen-p1516">0 kg</div>
+          </div>
+          <div class="pen-card" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3)">
+            <div class="pen-label" style="color:var(--red)">P17/18</div>
+            <div class="pen-value" style="color:var(--red)" id="cv-pen-p1718">0 kg</div>
           </div>
           <div class="pen-card" style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3)">
             <div class="pen-label" style="color:var(--purple)">PVA</div>
@@ -1520,8 +1533,9 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
             <thead><tr>
               <th>#</th><th>Cliente / Marca</th><th>Produto</th><th>Tipo Embalagem</th>
               <th>Gramatura (g)</th><th>Ponto Torra (Agtron)</th><th>Granulometria</th>
-              <th>Blend FP5 (%)</th><th>Blend FP8 (%)</th><th>Blend FP10 (%)</th>
-              <th>Blend P10-P18 (%)</th><th>Blend PVA (%)</th><th>Total Blend</th><th>Obs</th>
+              <th>FP5 %</th><th>FP8 %</th><th>FP10 %</th>
+              <th>P10/12 %</th><th>P13/14 %</th><th>P15/16 %</th><th>P17/18 %</th>
+              <th>PVA %</th><th>Total</th><th>Obs</th>
             </tr></thead>
             <tbody></tbody>
             <tfoot><tr class="total-row">
@@ -1577,6 +1591,118 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
           </table>
         </div>
         <div class="btn-group"><button class="btn btn-primary" onclick="addProdutoFinalRow()">+ Adicionar Produto</button></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ ABA 13: SELOS E CERTIFICADOS ============ -->
+<div class="tab-content" id="tab13">
+
+  <!-- SELO PURO LOTE -->
+  <div class="acc-section">
+    <div class="acc-header open" onclick="toggleAcc(this)">
+      <h3>SELO PURO LOTE - PATROCÍNIO TORREFAÇÃO</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body open">
+      <div class="acc-body-inner">
+        <div class="info-box verde"><b>Selo Puro Lote:</b> Registro INPI. Primeiro do Brasil. Cada lote produzido requer 2 amostras enviadas para laboratório (SENAI Goiânia - pureza, NUGAP BH - sensorial). Contraprova retida por 1 ano.</div>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table id="tbl-selo-puro">
+            <thead><tr>
+              <th>#</th><th>Nº Lote</th><th>OP Origem</th><th>Data Produção</th>
+              <th>Amostra SENAI?</th><th>Data Envio SENAI</th><th>Laudo SENAI</th>
+              <th>Amostra NUGAP?</th><th>Data Envio NUGAP</th><th>Laudo NUGAP</th>
+              <th>Contraprova?</th><th>Validade Contraprova</th><th>Selo Emitido?</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addSeloPuroRow()">+ Adicionar Lote</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CERTIFICADOS E LAUDOS -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>CERTIFICADOS E LAUDOS LABORATORIAIS</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="info-box azul"><b>Laboratórios:</b> NUGAP (BH) = análise sensorial. Instituto SENAI Alimentos (Goiânia) = laudo de pureza. Ocratoxina = verificação periódica.</div>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table id="tbl-laudos">
+            <thead><tr>
+              <th>#</th><th>Tipo Laudo</th><th>Laboratório</th><th>Nº Laudo</th>
+              <th>Data Envio</th><th>Data Resultado</th><th>Resultado</th>
+              <th>Lote Referência</th><th>Arquivo/Foto</th><th>Validade</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addLaudoRow()">+ Adicionar Laudo</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOCUMENTOS REGULATÓRIOS -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>DOCUMENTOS REGULATÓRIOS (ANVISA / MAPA / ABIC)</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="info-box amarelo"><b>Atenção:</b> Documentos com validade vencida BLOQUEIAM a emissão de OP. O sistema alerta 30 dias antes do vencimento.</div>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table id="tbl-docs-reg">
+            <thead><tr>
+              <th>#</th><th>Documento</th><th>Órgão</th><th>Nº Registro</th>
+              <th>Data Emissão</th><th>Data Validade</th><th>Status</th>
+              <th>Responsável</th><th>Arquivo/Foto</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="btn-group"><button class="btn btn-primary" onclick="addDocRegRow()">+ Adicionar Documento</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMO -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>RESUMO DE CONFORMIDADE</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="kpi-grid">
+          <div class="kpi-card verde">
+            <div class="kpi-header"><span class="label">Selos Emitidos</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="selo-kpi-emitidos">0</span><span class="unit">un</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card azul">
+            <div class="kpi-header"><span class="label">Laudos Válidos</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="selo-kpi-laudos">0</span><span class="unit">un</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card amarelo">
+            <div class="kpi-header"><span class="label">Contraprovas Ativas</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="selo-kpi-contra">0</span><span class="unit">un</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card vermelho">
+            <div class="kpi-header"><span class="label">Docs Vencendo</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="selo-kpi-vencendo">0</span><span class="unit">un</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" style="width:0%"></div></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2189,11 +2315,14 @@ function addFichaProdutoRow() {
     <td><select><option value="250">250g</option><option value="500" selected>500g</option><option value="1000">1000g</option></select></td>
     <td><input type="number" class="ficha-agtron" placeholder="25-95"></td>
     <td><select><option>Grossa (1.2-1.4)</option><option>Média (1.5-1.6)</option><option>Fina (Espresso)</option><option>N/A (Grão)</option></select></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
+    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
     <td><input class="calc ficha-blend-total" readonly></td>
     <td><input type="text" placeholder="Obs"></td>`;
   tbody.appendChild(tr);
@@ -2215,7 +2344,7 @@ function addPerfilTorraRow() {
   const tbody = document.querySelector('#tbl-perfil-torra tbody');
   const tr = document.createElement('tr');
   tr.innerHTML = `
-    <td><select><option>FP5</option><option>FP8</option><option>FP10</option><option>P10-P18</option><option>PVA</option></select></td>
+    <td><select><option>FP5</option><option>FP8</option><option>FP10</option><option>P10/12</option><option>P13/14</option><option>P15/16</option><option>P17/18</option><option>PVA</option></select></td>
     <td><input type="number" placeholder="°C"></td>
     <td><input type="number" placeholder="°C"></td>
     <td><input type="number" step="0.1" placeholder="min"></td>
@@ -2378,7 +2507,10 @@ function addCafeVerdeRow(peneira) {
       <option value="FP5" ${peneiraVal==='FP5'?'selected':''}>FP5</option>
       <option value="FP8" ${peneiraVal==='FP8'?'selected':''}>FP8</option>
       <option value="FP10" ${peneiraVal==='FP10'?'selected':''}>FP10</option>
-      <option value="P10-P18" ${peneiraVal==='P10-P18'?'selected':''}>P10-P18</option>
+      <option value="P10/12" ${peneiraVal==='P10/12'?'selected':''}>P10/12</option>
+      <option value="P13/14" ${peneiraVal==='P13/14'?'selected':''}>P13/14</option>
+      <option value="P15/16" ${peneiraVal==='P15/16'?'selected':''}>P15/16</option>
+      <option value="P17/18" ${peneiraVal==='P17/18'?'selected':''}>P17/18</option>
       <option value="PVA" ${peneiraVal==='PVA'?'selected':''}>PVA</option>
     </select></td>
     <td><input type="number" class="cv-sacas" oninput="calcCafeVerdeRow(this)" placeholder="0"></td>
@@ -2404,7 +2536,7 @@ function addCafeVerdeRow(peneira) {
 }
 
 function addCafeVerdePeneiras() {
-  const peneiras = ['FP5', 'FP8', 'FP10', 'P10-P18', 'PVA'];
+  const peneiras = ['FP5', 'FP8', 'FP10', 'P10/12', 'P13/14', 'P15/16', 'P17/18', 'PVA'];
   peneiras.forEach(p => addCafeVerdeRow(p));
 }
 
@@ -2419,7 +2551,7 @@ function calcCafeVerdeRow(el) {
 
 function calcCafeVerde() {
   let tSacas=0, tBruto=0, tSacaria=0, tLiq=0, tUmid=0, countUmid=0;
-  const penKg = {'FP5':0, 'FP8':0, 'FP10':0, 'P10-P18':0, 'PVA':0};
+  const penKg = {'FP5':0, 'FP8':0, 'FP10':0, 'P10/12':0, 'P13/14':0, 'P15/16':0, 'P17/18':0, 'PVA':0};
   document.querySelectorAll('#tbl-cafe-verde tbody tr').forEach(tr => {
     const sacas = parseFloat(tr.querySelector('.cv-sacas')?.value) || 0;
     const bruto = parseFloat(tr.querySelector('.cv-bruto')?.value) || 0;
@@ -2453,7 +2585,10 @@ function calcCafeVerde() {
   document.getElementById('cv-pen-fp5').textContent = fmt(penKg['FP5']) + ' kg';
   document.getElementById('cv-pen-fp8').textContent = fmt(penKg['FP8']) + ' kg';
   document.getElementById('cv-pen-fp10').textContent = fmt(penKg['FP10']) + ' kg';
-  document.getElementById('cv-pen-p10p18').textContent = fmt(penKg['P10-P18']) + ' kg';
+  document.getElementById('cv-pen-p1012').textContent = fmt(penKg['P10/12']) + ' kg';
+  document.getElementById('cv-pen-p1314').textContent = fmt(penKg['P13/14']) + ' kg';
+  document.getElementById('cv-pen-p1516').textContent = fmt(penKg['P15/16']) + ' kg';
+  document.getElementById('cv-pen-p1718').textContent = fmt(penKg['P17/18']) + ' kg';
   document.getElementById('cv-pen-pva').textContent = fmt(penKg['PVA']) + ' kg';
 }
 
@@ -2515,6 +2650,69 @@ function cvCronoParar(tipo) {
     setText('cv-kpi-tempo', Math.round(c.seg / 60));
     setBar('cv-kpi-tempo-bar', Math.min(c.seg / 60 / 120 * 100, 100));
   }
+}
+
+// ============ SELOS E CERTIFICADOS ============
+let seloPuroCount = 0;
+function addSeloPuroRow() {
+  seloPuroCount++;
+  const tbody = document.querySelector('#tbl-selo-puro tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${seloPuroCount}</b></td>
+    <td><input type="text" placeholder="Lote"></td>
+    <td><input type="text" placeholder="OP"></td>
+    <td><input type="date"></td>
+    <td><select><option>Não</option><option>Sim</option></select></td>
+    <td><input type="date"></td>
+    <td><select><option>Pendente</option><option>Aprovado</option><option>Reprovado</option></select></td>
+    <td><select><option>Não</option><option>Sim</option></select></td>
+    <td><input type="date"></td>
+    <td><select><option>Pendente</option><option>Aprovado</option><option>Reprovado</option></select></td>
+    <td><select><option>Não</option><option>Sim</option></select></td>
+    <td><input type="date"></td>
+    <td><select><option>Não</option><option>Sim</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+
+let laudoCount = 0;
+function addLaudoRow() {
+  laudoCount++;
+  const tbody = document.querySelector('#tbl-laudos tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${laudoCount}</b></td>
+    <td><select><option>Pureza</option><option>Sensorial</option><option>Ocratoxina</option><option>Umidade</option><option>Outro</option></select></td>
+    <td><select><option>SENAI Goiânia</option><option>NUGAP BH</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="Nº laudo"></td>
+    <td><input type="date"></td>
+    <td><input type="date"></td>
+    <td><select><option>Pendente</option><option>Aprovado</option><option>Reprovado</option></select></td>
+    <td><input type="text" placeholder="Lote ref."></td>
+    <td><input type="file" accept="image/*,.pdf" style="font-size:10px;width:90px"></td>
+    <td><input type="date"></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+
+let docRegCount = 0;
+function addDocRegRow() {
+  docRegCount++;
+  const tbody = document.querySelector('#tbl-docs-reg tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${docRegCount}</b></td>
+    <td><select><option>Alvará Sanitário</option><option>Licença MAPA</option><option>Registro ANVISA</option><option>Certificado ABIC</option><option>Selo Puro Lote INPI</option><option>BPF</option><option>PPHO</option><option>Outro</option></select></td>
+    <td><select><option>ANVISA</option><option>MAPA</option><option>ABIC</option><option>INPI</option><option>Vigilância Sanitária</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="Nº registro"></td>
+    <td><input type="date"></td>
+    <td><input type="date"></td>
+    <td><select><option>Válido</option><option>Vencendo (30 dias)</option><option>Vencido</option><option>Em Renovação</option></select></td>
+    <td><input type="text" placeholder="Responsável"></td>
+    <td><input type="file" accept="image/*,.pdf" style="font-size:10px;width:90px"></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
 }
 
 // Fotos com registro automático de data/hora
@@ -2818,6 +3016,9 @@ function salvarDados(silencioso) {
     fichasProduto: coletarDadosTabela('tbl-fichas-produto'),
     perfilTorra: coletarDadosTabela('tbl-perfil-torra'),
     produtosFinais: coletarDadosTabela('tbl-produtos-finais'),
+    seloPuro: coletarDadosTabela('tbl-selo-puro'),
+    laudos: coletarDadosTabela('tbl-laudos'),
+    docsReg: coletarDadosTabela('tbl-docs-reg'),
     estoqueEmb: coletarDadosTabela('tbl-estoque-emb'),
     estoqueLenha: coletarDadosTabela('tbl-estoque-lenha'),
     cafeVerde: {
@@ -2933,6 +3134,9 @@ function carregarDados() {
     if (d.fichasProduto) restaurarDadosTabela('tbl-fichas-produto', d.fichasProduto, addFichaProdutoRow);
     if (d.perfilTorra) restaurarDadosTabela('tbl-perfil-torra', d.perfilTorra, addPerfilTorraRow);
     if (d.produtosFinais) restaurarDadosTabela('tbl-produtos-finais', d.produtosFinais, addProdutoFinalRow);
+    if (d.seloPuro) restaurarDadosTabela('tbl-selo-puro', d.seloPuro, addSeloPuroRow);
+    if (d.laudos) restaurarDadosTabela('tbl-laudos', d.laudos, addLaudoRow);
+    if (d.docsReg) restaurarDadosTabela('tbl-docs-reg', d.docsReg, addDocRegRow);
     if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
     if (d.estoqueLenha) {
       restaurarDadosTabela('tbl-estoque-lenha', d.estoqueLenha, addEstoqueLenhaRow);
