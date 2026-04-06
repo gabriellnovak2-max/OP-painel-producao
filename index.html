@@ -204,18 +204,23 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 .acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
 .acc-body.open{max-height:3000px}
 .acc-body-inner{padding:18px}
-/* ====== PAINEL LATERAL CRONÔMETRO ====== */
-.dual-panel{display:grid;grid-template-columns:1fr 280px;gap:0;align-items:stretch}
+/* ====== PAINEL LATERAL CRONÔMETRO (compacto) ====== */
+.dual-panel{display:grid;grid-template-columns:1fr 180px;gap:0;align-items:stretch}
 .dual-panel .panel-main{flex:1}
-.dual-panel .panel-crono{background:var(--bg-secondary);border-left:1px solid var(--border);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:100%}
-.dual-panel .panel-crono .crono-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text-muted)}
-.dual-panel .panel-crono .crono-display{font-size:32px;font-weight:800;color:var(--teal);font-family:monospace;text-shadow:0 0 16px rgba(0,212,170,.3)}
-.dual-panel .panel-crono .crono-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
-.dual-panel .panel-crono .crono-btns .btn{padding:5px 10px;font-size:10px;border-radius:6px}
-.dual-panel .panel-crono .crono-fields{display:flex;flex-direction:column;gap:6px;width:100%}
-.dual-panel .panel-crono .crono-fields .form-group{gap:2px}
-.dual-panel .panel-crono .crono-fields .form-group label{font-size:8px}
-.dual-panel .panel-crono .crono-fields .form-group input{padding:5px 8px;font-size:11px}
+.dual-panel .panel-crono{background:linear-gradient(180deg,rgba(249,115,22,.06),rgba(245,158,11,.03));border-left:2px solid rgba(249,115,22,.3);padding:12px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px}
+.dual-panel .panel-crono .crono-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--orange)}
+.dual-panel .panel-crono .crono-display{font-size:22px;font-weight:800;color:var(--orange);font-family:monospace;text-shadow:0 0 12px rgba(249,115,22,.3)}
+.dual-panel .panel-crono .crono-btns{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.dual-panel .panel-crono .crono-btns .btn{padding:3px 8px;font-size:9px;border-radius:5px}
+.dual-panel .panel-crono .crono-fields{display:flex;flex-direction:column;gap:4px;width:100%}
+.dual-panel .panel-crono .crono-fields .form-group{gap:1px}
+.dual-panel .panel-crono .crono-fields .form-group label{font-size:7px;color:var(--orange)}
+.dual-panel .panel-crono .crono-fields .form-group input{padding:3px 6px;font-size:10px;background:var(--bg-primary);border-color:rgba(249,115,22,.2)}
+/* ====== PENEIRA CARDS HOVER (igual KPI) ====== */
+.pen-card{padding:14px;border-radius:10px;text-align:center;transition:all .35s ease;cursor:default;position:relative;overflow:hidden}
+.pen-card:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.pen-card .pen-label{font-size:11px;font-weight:700;margin-bottom:4px}
+.pen-card .pen-value{font-size:22px;font-weight:800}
 @media(max-width:768px){.dual-panel{grid-template-columns:1fr}}
 </style>
 </head>
@@ -1070,82 +1075,114 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
           </div>
         </div>
         <div class="panel-crono">
-          <div class="crono-label">TEMPO DESCARGA</div>
+          <div class="crono-label">DESCARGA</div>
           <div class="crono-display" id="cv-crono-display">00:00:00</div>
           <div class="crono-btns">
-            <button class="btn btn-success" onclick="cvCronoIniciar()">Iniciar</button>
-            <button class="btn btn-primary" onclick="cvCronoPausar()">Pausar</button>
-            <button class="btn btn-danger" onclick="cvCronoParar()">Parar</button>
+            <button class="btn btn-success" onclick="cvCronoIniciar('desc')">Iniciar</button>
+            <button class="btn btn-danger" onclick="cvCronoParar('desc')">Parar</button>
           </div>
           <div class="crono-fields">
             <div class="form-group"><label>Início</label><input type="time" id="cv-desc-inicio" readonly></div>
             <div class="form-group"><label>Fim</label><input type="time" id="cv-desc-fim" readonly></div>
             <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-desc-tempo" readonly></div>
           </div>
-          <div style="font-size:9px;color:var(--yellow);text-align:center;margin-top:4px">Alerta se &gt; 60 min</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SEÇÃO 2: PESAGEM DO CAMINHÃO -->
+  <!-- SEÇÃO 2: PESAGEM + CRONÔMETRO LATERAL -->
   <div class="acc-section">
     <div class="acc-header" onclick="toggleAcc(this)">
       <h3>2. PESAGEM DO CAMINHÃO</h3>
       <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="acc-body">
-      <div class="acc-body-inner">
-        <div class="info-box azul"><b>Procedimento:</b> Pesar caminhão cheio na balança do vizinho. Descarregar. Pesar caminhão vazio. Diferença = peso líquido do café verde.</div>
-        <div class="form-grid" style="margin-top:14px">
-          <div class="form-group"><label>Peso Bruto Caminhão (kg)</label><input type="number" step="0.01" id="cv-peso-bruto" oninput="calcPesagemCaminhao()" placeholder="Caminhão cheio"></div>
-          <div class="form-group"><label>Peso Tara Caminhão (kg)</label><input type="number" step="0.01" id="cv-peso-tara" oninput="calcPesagemCaminhao()" placeholder="Caminhão vazio"></div>
-          <div class="form-group"><label>Peso Líquido (kg)</label><input type="number" class="calc" id="cv-peso-liquido" readonly></div>
-          <div class="form-group"><label>Peso NF-e (kg)</label><input type="number" step="0.01" id="cv-peso-nfe" oninput="calcPesagemCaminhao()" placeholder="Peso declarado na NF"></div>
-          <div class="form-group"><label>Diferença Peso vs NF (kg)</label><input type="text" class="calc" id="cv-dif-peso" readonly></div>
-          <div class="form-group"><label>Tolerância (±0.5%)</label><input type="text" class="calc" id="cv-tolerancia" readonly></div>
+      <div class="dual-panel">
+        <div class="panel-main">
+          <div class="acc-body-inner">
+            <div class="info-box azul"><b>Procedimento:</b> Pesar cheio. Descarregar. Pesar vazio. Diferença = peso líquido.</div>
+            <div class="form-grid" style="margin-top:14px">
+              <div class="form-group"><label>Peso Bruto (kg)</label><input type="number" step="0.01" id="cv-peso-bruto" oninput="calcPesagemCaminhao()" placeholder="Caminhão cheio"></div>
+              <div class="form-group"><label>Peso Tara (kg)</label><input type="number" step="0.01" id="cv-peso-tara" oninput="calcPesagemCaminhao()" placeholder="Caminhão vazio"></div>
+              <div class="form-group"><label>Peso Líquido (kg)</label><input type="number" class="calc" id="cv-peso-liquido" readonly></div>
+              <div class="form-group"><label>Peso NF-e (kg)</label><input type="number" step="0.01" id="cv-peso-nfe" oninput="calcPesagemCaminhao()" placeholder="Peso declarado"></div>
+              <div class="form-group"><label>Diferença vs NF (kg)</label><input type="text" class="calc" id="cv-dif-peso" readonly></div>
+              <div class="form-group"><label>Tolerância (±0.5%)</label><input type="text" class="calc" id="cv-tolerancia" readonly></div>
+            </div>
+            <div class="info-box" id="cv-alerta-peso" style="display:none;margin-top:10px"></div>
+          </div>
         </div>
-        <div class="info-box" id="cv-alerta-peso" style="display:none;margin-top:10px"></div>
+        <div class="panel-crono">
+          <div class="crono-label">PESAGEM</div>
+          <div class="crono-display" id="cv-crono-pesagem">00:00:00</div>
+          <div class="crono-btns">
+            <button class="btn btn-success" onclick="cvCronoIniciar('pesagem')">Iniciar</button>
+            <button class="btn btn-danger" onclick="cvCronoParar('pesagem')">Parar</button>
+          </div>
+          <div class="crono-fields">
+            <div class="form-group"><label>Início</label><input type="time" id="cv-pesagem-inicio" readonly></div>
+            <div class="form-group"><label>Fim</label><input type="time" id="cv-pesagem-fim" readonly></div>
+            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-pesagem-tempo" readonly></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- SEÇÃO 3: CONFERÊNCIA POR PENEIRA -->
+  <!-- SEÇÃO 3: CONFERÊNCIA + CRONÔMETRO LATERAL -->
   <div class="acc-section">
     <div class="acc-header" onclick="toggleAcc(this)">
       <h3>3. CONFERÊNCIA DE LOTES POR PENEIRA</h3>
       <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
     </div>
     <div class="acc-body">
-      <div class="acc-body-inner">
-        <div class="info-box verde"><b>ATENÇÃO:</b> Cada peneira (FP5, FP8, FP10, P10-P18, PVA) deve ser pesada e registrada separadamente. <b>NUNCA misturar peneiras no mesmo lote/silo/batelada!</b></div>
-        <div style="overflow-x:auto;margin-top:14px">
-          <table id="tbl-cafe-verde">
-            <thead><tr>
-              <th>#</th><th>Peneira</th><th>Nº Sacas</th><th>Peso Bruto (kg)</th><th>Peso Sacaria (kg)</th>
-              <th>Peso Líquido (kg)</th><th>Umidade (%)</th><th>Defeitos (%)</th>
-              <th>Local Armazém</th><th>Lote Interno</th><th>Foto Balança</th><th>Obs</th>
-            </tr></thead>
-            <tbody></tbody>
-            <tfoot><tr class="total-row">
-              <td><b>TOTAIS</b></td><td></td>
-              <td><input class="calc" id="cv-sacas-total" readonly></td>
-              <td><input class="calc" id="cv-bruto-total" readonly></td>
-              <td><input class="calc" id="cv-sacaria-total" readonly></td>
-              <td><input class="calc" id="cv-liquido-total" readonly></td>
-              <td></td><td></td><td></td><td></td><td></td><td></td>
-            </tr></tfoot>
-          </table>
+      <div class="dual-panel">
+        <div class="panel-main">
+          <div class="acc-body-inner">
+            <div class="info-box verde"><b>ATENÇÃO:</b> Cada peneira deve ser pesada separadamente. <b>NUNCA misturar peneiras!</b></div>
+            <div style="overflow-x:auto;margin-top:14px">
+              <table id="tbl-cafe-verde">
+                <thead><tr>
+                  <th>#</th><th>Peneira</th><th>Nº Sacas</th><th>Peso Bruto (kg)</th><th>Peso Sacaria (kg)</th>
+                  <th>Peso Líquido (kg)</th><th>Umidade (%)</th><th>Defeitos (%)</th>
+                  <th>Local Armazém</th><th>Lote Interno</th><th>Foto Balança</th><th>Obs</th>
+                </tr></thead>
+                <tbody></tbody>
+                <tfoot><tr class="total-row">
+                  <td><b>TOTAIS</b></td><td></td>
+                  <td><input class="calc" id="cv-sacas-total" readonly></td>
+                  <td><input class="calc" id="cv-bruto-total" readonly></td>
+                  <td><input class="calc" id="cv-sacaria-total" readonly></td>
+                  <td><input class="calc" id="cv-liquido-total" readonly></td>
+                  <td></td><td></td><td></td><td></td><td></td><td></td>
+                </tr></tfoot>
+              </table>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="addCafeVerdeRow()">+ Adicionar Lote</button>
+              <button class="btn btn-success" onclick="addCafeVerdePeneiras()">+ Todas Peneiras</button>
+            </div>
+          </div>
         </div>
-        <div class="btn-group">
-          <button class="btn btn-primary" onclick="addCafeVerdeRow()">+ Adicionar Lote</button>
-          <button class="btn btn-success" onclick="addCafeVerdePeneiras()">+ Adicionar Todas as Peneiras (FP5/FP8/FP10/P10-P18/PVA)</button>
+        <div class="panel-crono">
+          <div class="crono-label">CONFERÊNCIA</div>
+          <div class="crono-display" id="cv-crono-conf">00:00:00</div>
+          <div class="crono-btns">
+            <button class="btn btn-success" onclick="cvCronoIniciar('conf')">Iniciar</button>
+            <button class="btn btn-danger" onclick="cvCronoParar('conf')">Parar</button>
+          </div>
+          <div class="crono-fields">
+            <div class="form-group"><label>Início</label><input type="time" id="cv-conf-inicio" readonly></div>
+            <div class="form-group"><label>Fim</label><input type="time" id="cv-conf-fim" readonly></div>
+            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-conf-tempo" readonly></div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SEÇÃO 4: DISTRIBUIÇÃO POR PENEIRA -->
+  <!-- SEÇÃO 4: DISTRIBUIÇÃO POR PENEIRA (cards com hover) -->
   <div class="acc-section">
     <div class="acc-header" onclick="toggleAcc(this)">
       <h3>4. DISTRIBUIÇÃO POR PENEIRA (kg)</h3>
@@ -1154,32 +1191,32 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
     <div class="acc-body">
       <div class="acc-body-inner">
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px" id="cv-peneiras-resumo">
-          <div style="padding:14px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:10px;text-align:center">
-            <div style="font-size:11px;font-weight:700;color:var(--blue);margin-bottom:4px">FP5</div>
-            <div style="font-size:22px;font-weight:800;color:var(--blue)" id="cv-pen-fp5">0 kg</div>
+          <div class="pen-card" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)">
+            <div class="pen-label" style="color:var(--blue)">FP5</div>
+            <div class="pen-value" style="color:var(--blue)" id="cv-pen-fp5">0 kg</div>
           </div>
-          <div style="padding:14px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.3);border-radius:10px;text-align:center">
-            <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px">FP8</div>
-            <div style="font-size:22px;font-weight:800;color:var(--teal)" id="cv-pen-fp8">0 kg</div>
+          <div class="pen-card" style="background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.3)">
+            <div class="pen-label" style="color:var(--teal)">FP8</div>
+            <div class="pen-value" style="color:var(--teal)" id="cv-pen-fp8">0 kg</div>
           </div>
-          <div style="padding:14px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-radius:10px;text-align:center">
-            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px">FP10</div>
-            <div style="font-size:22px;font-weight:800;color:var(--green)" id="cv-pen-fp10">0 kg</div>
+          <div class="pen-card" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3)">
+            <div class="pen-label" style="color:var(--green)">FP10</div>
+            <div class="pen-value" style="color:var(--green)" id="cv-pen-fp10">0 kg</div>
           </div>
-          <div style="padding:14px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3);border-radius:10px;text-align:center">
-            <div style="font-size:11px;font-weight:700;color:var(--yellow);margin-bottom:4px">P10-P18</div>
-            <div style="font-size:22px;font-weight:800;color:var(--yellow)" id="cv-pen-p10p18">0 kg</div>
+          <div class="pen-card" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)">
+            <div class="pen-label" style="color:var(--yellow)">P10-P18</div>
+            <div class="pen-value" style="color:var(--yellow)" id="cv-pen-p10p18">0 kg</div>
           </div>
-          <div style="padding:14px;background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3);border-radius:10px;text-align:center">
-            <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px">PVA</div>
-            <div style="font-size:22px;font-weight:800;color:var(--purple)" id="cv-pen-pva">0 kg</div>
+          <div class="pen-card" style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3)">
+            <div class="pen-label" style="color:var(--purple)">PVA</div>
+            <div class="pen-value" style="color:var(--purple)" id="cv-pen-pva">0 kg</div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SEÇÃO 5: FOTOS OBRIGATÓRIAS -->
+  <!-- SEÇÃO 5: FOTOS (com registro automático de hora) -->
   <div class="acc-section">
     <div class="acc-header" onclick="toggleAcc(this)">
       <h3>5. FOTOS OBRIGATÓRIAS DO RECEBIMENTO</h3>
@@ -1187,37 +1224,42 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
     </div>
     <div class="acc-body">
       <div class="acc-body-inner">
-        <div class="info-box vermelho"><b>OBRIGATÓRIO:</b> Tirar foto da balança a cada pesagem. Fotos do caminhão, NF-e e local de armazenamento. Data/hora visíveis.</div>
+        <div class="info-box vermelho"><b>OBRIGATÓRIO:</b> Ao tirar cada foto, o sistema registra automaticamente data e hora.</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:14px">
           <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">📄</div>
+            <div style="font-size:22px;margin-bottom:4px">📄</div>
             <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Foto NF-e</div>
             <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="nfe" style="font-size:10px;width:100%">
             <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
+            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
           </div>
           <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">🚛</div>
+            <div style="font-size:22px;margin-bottom:4px">🚛</div>
             <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Caminhão</div>
             <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="caminhao" style="font-size:10px;width:100%">
             <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
+            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
           </div>
           <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">⚖️</div>
+            <div style="font-size:22px;margin-bottom:4px">⚖️</div>
             <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Balança Cheio</div>
             <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="balanca-cheio" style="font-size:10px;width:100%">
             <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
+            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
           </div>
           <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">⚖️</div>
+            <div style="font-size:22px;margin-bottom:4px">⚖️</div>
             <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Balança Vazio</div>
             <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="balanca-vazio" style="font-size:10px;width:100%">
             <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
+            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
           </div>
           <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">🏭</div>
+            <div style="font-size:22px;margin-bottom:4px">🏭</div>
             <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Local Armazém</div>
             <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="armazem" style="font-size:10px;width:100%">
             <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
+            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
           </div>
         </div>
         <div style="margin-top:10px;font-size:11px;color:var(--text-muted)">Fotos: <span id="cv-fotos-count" style="color:var(--teal);font-weight:700">0</span> / 5</div>
@@ -2047,9 +2089,12 @@ function calcEstoqueLenha() {
 
 // ============ CAFÉ VERDE ============
 let cvLoteCount = 0;
-let cvCronoTimer = null;
-let cvCronoSegundos = 0;
-let cvCronoRodando = false;
+// Sistema multi-cronômetro
+const cvCronos = {
+  desc: { timer: null, seg: 0, rodando: false, display: 'cv-crono-display', inicio: 'cv-desc-inicio', fim: 'cv-desc-fim', tempo: 'cv-desc-tempo' },
+  pesagem: { timer: null, seg: 0, rodando: false, display: 'cv-crono-pesagem', inicio: 'cv-pesagem-inicio', fim: 'cv-pesagem-fim', tempo: 'cv-pesagem-tempo' },
+  conf: { timer: null, seg: 0, rodando: false, display: 'cv-crono-conf', inicio: 'cv-conf-inicio', fim: 'cv-conf-fim', tempo: 'cv-conf-tempo' }
+};
 
 function addCafeVerdeRow(peneira) {
   cvLoteCount++;
@@ -2169,49 +2214,50 @@ function calcPesagemCaminhao() {
   calcCafeVerde();
 }
 
-// Cronômetro
-function cvCronoIniciar() {
-  if (cvCronoRodando) return;
-  cvCronoRodando = true;
-  if (cvCronoSegundos === 0) {
-    const now = new Date();
-    document.getElementById('cv-desc-inicio').value = now.toTimeString().slice(0,5);
+// Cronômetros independentes
+function cvCronoIniciar(tipo) {
+  const c = cvCronos[tipo];
+  if (!c || c.rodando) return;
+  c.rodando = true;
+  if (c.seg === 0) {
+    document.getElementById(c.inicio).value = new Date().toTimeString().slice(0,5);
   }
-  cvCronoTimer = setInterval(() => {
-    cvCronoSegundos++;
-    const h = String(Math.floor(cvCronoSegundos / 3600)).padStart(2, '0');
-    const m = String(Math.floor((cvCronoSegundos % 3600) / 60)).padStart(2, '0');
-    const s = String(cvCronoSegundos % 60).padStart(2, '0');
-    document.getElementById('cv-crono-display').textContent = h + ':' + m + ':' + s;
-    // Alerta de inatividade > 60 min
-    if (cvCronoSegundos === 3600) {
-      document.getElementById('cv-crono-display').style.color = 'var(--red)';
-    }
+  c.timer = setInterval(() => {
+    c.seg++;
+    const h = String(Math.floor(c.seg / 3600)).padStart(2, '0');
+    const m = String(Math.floor((c.seg % 3600) / 60)).padStart(2, '0');
+    const s = String(c.seg % 60).padStart(2, '0');
+    const el = document.getElementById(c.display);
+    el.textContent = h + ':' + m + ':' + s;
+    if (c.seg === 3600) el.style.color = 'var(--red)';
   }, 1000);
 }
 
-function cvCronoPausar() {
-  cvCronoRodando = false;
-  if (cvCronoTimer) clearInterval(cvCronoTimer);
+function cvCronoParar(tipo) {
+  const c = cvCronos[tipo];
+  if (!c) return;
+  c.rodando = false;
+  if (c.timer) clearInterval(c.timer);
+  document.getElementById(c.fim).value = new Date().toTimeString().slice(0,5);
+  document.getElementById(c.tempo).value = Math.round(c.seg / 60) + ' min';
+  document.getElementById(c.display).style.color = 'var(--orange)';
+  if (tipo === 'desc') {
+    setText('cv-kpi-tempo', Math.round(c.seg / 60));
+    setBar('cv-kpi-tempo-bar', Math.min(c.seg / 60 / 120 * 100, 100));
+  }
 }
 
-function cvCronoParar() {
-  cvCronoPausar();
-  const now = new Date();
-  document.getElementById('cv-desc-fim').value = now.toTimeString().slice(0,5);
-  document.getElementById('cv-desc-tempo').value = Math.round(cvCronoSegundos / 60) + ' min';
-  setText('cv-kpi-tempo', Math.round(cvCronoSegundos / 60));
-  setBar('cv-kpi-tempo-bar', Math.min(cvCronoSegundos / 60 / 120 * 100, 100));
-  document.getElementById('cv-crono-display').style.color = 'var(--teal)';
-}
-
-// Contagem de fotos
+// Fotos com registro automático de data/hora
 document.addEventListener('change', function(e) {
   if (e.target.classList.contains('cv-foto')) {
-    const status = e.target.closest('div').querySelector('.cv-foto-status');
+    const card = e.target.closest('div');
+    const status = card.querySelector('.cv-foto-status');
+    const hora = card.querySelector('.cv-foto-hora');
     if (e.target.files.length > 0) {
+      const now = new Date();
       status.textContent = 'Registrada';
       status.style.color = 'var(--green)';
+      hora.textContent = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
     }
     const total = document.querySelectorAll('.cv-foto');
     let count = 0;
