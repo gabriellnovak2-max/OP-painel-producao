@@ -16,9 +16,13 @@
   --text-primary:#e6edf3;--text-secondary:#8b949e;--text-muted:#6e7681;
 }
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg-primary);color:var(--text-primary);font-size:14px}
-.header{background:var(--bg-secondary);color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.5)}
-.header h1{font-size:18px;letter-spacing:1.5px;background:linear-gradient(135deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header{background:linear-gradient(135deg,rgba(22,27,34,.95),rgba(0,212,170,.06));color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(0,212,170,.2);box-shadow:0 4px 24px rgba(0,0,0,.5),0 1px 0 rgba(0,212,170,.1);border-radius:0 0 18px 18px;margin:0 8px;flex-wrap:wrap;gap:10px}
+.header h1{font-size:20px;letter-spacing:2px;background:linear-gradient(135deg,var(--teal),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:none}
 .header .subtitle{font-size:11px;color:var(--text-secondary);margin-top:2px}
+.header .btn-group .btn{border-radius:12px;padding:9px 18px;font-size:12px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 10px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.08);transition:all .3s ease;position:relative;overflow:hidden}
+.header .btn-group .btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 6px 24px rgba(0,212,170,.3),inset 0 1px 0 rgba(255,255,255,.12)}
+.header .btn-group .btn:active{transform:translateY(0) scale(.98)}
+.header .btn-group .btn svg{flex-shrink:0}
 .nav{display:flex;flex-direction:column;background:var(--bg-secondary);position:fixed;left:0;top:54px;bottom:0;width:220px;z-index:99;border-right:1px solid var(--border);box-shadow:4px 0 20px rgba(0,0,0,.3);overflow-y:auto;overflow-x:hidden;padding:8px 0}
 .nav button{background:none;border:none;padding:10px 14px;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;white-space:nowrap;border-left:3px solid transparent;transition:all .3s ease;display:flex;align-items:center;gap:12px;width:100%;text-align:left;border-radius:0 12px 12px 0;margin:2px 0}
 .nav button .nav-icon{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(145deg,rgba(0,212,170,.12),rgba(34,211,238,.06));border:1.5px solid rgba(0,212,170,.2);flex-shrink:0;transition:all .4s ease;box-shadow:0 2px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.05)}
@@ -207,10 +211,10 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
     <div class="btn-group" style="margin:0">
-      <button class="btn btn-success" onclick="salvarDados()">Salvar Dados</button>
-      <button class="btn btn-primary" onclick="salvarOPnoHistorico()">Salvar no Histórico</button>
-      <button class="btn btn-primary" onclick="listarHistorico()">Histórico OPs</button>
-      <button class="btn btn-primary" onclick="novaOP()">+ Nova OP</button>
+      <button class="btn btn-success" onclick="salvarDados()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Salvar</button>
+      <button class="btn btn-primary" onclick="salvarOPnoHistorico()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M2 12h20"/></svg> Histórico</button>
+      <button class="btn btn-primary" onclick="listarHistorico()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg> Consultar</button>
+      <button class="btn btn-primary" onclick="novaOP()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Nova OP</button>
     </div>
   </div>
 </div>
