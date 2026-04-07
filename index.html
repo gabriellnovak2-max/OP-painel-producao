@@ -1762,26 +1762,32 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
     </div>
     <div class="acc-body">
       <div class="acc-body-inner">
-        <div class="info-box verde"><b>Resultado AGB:</b> Cada peneira separada vira um lote. Registre o peso de cada lote que saiu da maquinação.</div>
+        <div class="info-box verde"><b>Resultado AGB:</b> Todas as peneiras + subprodutos da maquinação. Preencha o peso de cada lote conforme resultado da AGB Araguari.</div>
         <div style="overflow-x:auto;margin-top:14px">
           <table id="tbl-agb-lotes">
             <thead><tr>
-              <th>#</th><th>Peneira</th><th>Peso Saída AGB (kg)</th><th>% do Total</th>
-              <th>Nº Sacas</th><th>Lote Interno</th><th>Obs</th>
+              <th style="width:30px">#</th>
+              <th style="width:30px"></th>
+              <th>Peneira</th>
+              <th>Lote AGB</th>
+              <th>Lote Torrefação</th>
+              <th>Peso (kg)</th>
+              <th>Nº Sacas</th>
+              <th>% do Total</th>
+              <th>Obs</th>
             </tr></thead>
-            <tbody></tbody>
+            <tbody id="agb-lotes-body"></tbody>
             <tfoot><tr class="total-row">
-              <td><b>TOTAL</b></td><td></td>
+              <td><b>TOTAL</b></td><td></td><td></td><td></td><td></td>
               <td><input class="calc" id="agb-peso-total-saida" readonly></td>
-              <td><input class="calc" id="agb-pct-total" readonly></td>
               <td><input class="calc" id="agb-sacas-total" readonly></td>
-              <td></td><td></td>
+              <td><input class="calc" id="agb-pct-total" readonly></td>
+              <td></td>
             </tr></tfoot>
           </table>
         </div>
         <div class="btn-group">
-          <button class="btn btn-primary" onclick="addAGBLoteRow()">+ Adicionar Lote</button>
-          <button class="btn btn-success" onclick="addAGBTodasPeneiras()">+ Todas Peneiras (FP5/FP8/FP10/P10-12/P13-14/P15-16/P17-18/PVA)</button>
+          <button class="btn btn-primary" onclick="addAGBLoteRow()">+ Adicionar Linha</button>
         </div>
       </div>
     </div>
@@ -2778,36 +2784,48 @@ function calcAGB() {
 }
 
 let agbLoteCount = 0;
+const AGB_PENEIRAS = ['FP5','FP8','FP10','P10/12','P13/14','P15/16','P17/18','PVA','Pau','Pedra','Voadeira','Palha'];
+
+function initAGBLotes() {
+  AGB_PENEIRAS.forEach(p => addAGBLoteRow(p));
+}
+
 function addAGBLoteRow(peneira) {
   agbLoteCount++;
-  const tbody = document.querySelector('#tbl-agb-lotes tbody');
+  const tbody = document.getElementById('agb-lotes-body');
   const tr = document.createElement('tr');
-  const pv = peneira || '';
+  const pNome = peneira || '';
   tr.innerHTML = `
-    <td><b>${agbLoteCount}</b></td>
-    <td><select class="agb-pen" onchange="calcAGBLotes()">
-      <option value="">Selecione...</option>
-      <option ${pv==='FP5'?'selected':''}>FP5</option><option ${pv==='FP8'?'selected':''}>FP8</option>
-      <option ${pv==='FP10'?'selected':''}>FP10</option><option ${pv==='P10/12'?'selected':''}>P10/12</option>
-      <option ${pv==='P13/14'?'selected':''}>P13/14</option><option ${pv==='P15/16'?'selected':''}>P15/16</option>
-      <option ${pv==='P17/18'?'selected':''}>P17/18</option><option ${pv==='PVA'?'selected':''}>PVA</option>
-    </select></td>
+    <td><b class="agb-num">${agbLoteCount}</b></td>
+    <td><button onclick="excluirAGBLinha(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:2px" title="Excluir">x</button></td>
+    <td><input type="text" class="agb-pen" value="${pNome}" style="font-weight:700" readonly></td>
+    <td><input type="text" class="agb-lote-agb" placeholder="Lote AGB"></td>
+    <td><input type="text" class="agb-lote-torr" placeholder="Lote Patrocínio"></td>
     <td><input type="number" step="0.01" class="agb-peso" oninput="calcAGBLotes()" placeholder="kg"></td>
-    <td><input class="calc agb-pct" readonly></td>
     <td><input type="number" class="agb-sacas" oninput="calcAGBLotes()" placeholder="0"></td>
-    <td><input type="text" value="AGB-${String(agbLoteCount).padStart(3,'0')}"></td>
+    <td><input class="calc agb-pct" readonly></td>
     <td><input type="text" placeholder="Obs"></td>`;
   tbody.appendChild(tr);
 }
 
-function addAGBTodasPeneiras() {
-  ['FP5','FP8','FP10','P10/12','P13/14','P15/16','P17/18','PVA'].forEach(p => addAGBLoteRow(p));
+function excluirAGBLinha(btn) {
+  btn.closest('tr').remove();
+  renumerarAGB();
+  calcAGBLotes();
+}
+
+function renumerarAGB() {
+  document.querySelectorAll('#agb-lotes-body tr').forEach((tr, i) => {
+    const num = tr.querySelector('.agb-num');
+    if (num) num.textContent = i + 1;
+  });
+  agbLoteCount = document.querySelectorAll('#agb-lotes-body tr').length;
 }
 
 function calcAGBLotes() {
   let tPeso = 0, tSacas = 0;
   const enviado = parseFloat(document.getElementById('agb-peso-enviado').value) || 0;
-  document.querySelectorAll('#tbl-agb-lotes tbody tr').forEach(tr => {
+  document.querySelectorAll('#agb-lotes-body tr').forEach(tr => {
     const peso = parseFloat(tr.querySelector('.agb-peso')?.value) || 0;
     const sacas = parseFloat(tr.querySelector('.agb-sacas')?.value) || 0;
     tPeso += peso; tSacas += sacas;
@@ -3336,7 +3354,12 @@ function carregarDados() {
       document.getElementById('agb-nfe-servico').value = a.nfeServico || '';
       document.getElementById('agb-status').value = a.status || 'Enviado p/ AGB';
       document.getElementById('agb-obs').value = a.obs || '';
-      if (a.lotes) restaurarDadosTabela('tbl-agb-lotes', a.lotes, addAGBLoteRow);
+      if (a.lotes) {
+        // Limpa linhas padrão e restaura as salvas
+        document.getElementById('agb-lotes-body').innerHTML = '';
+        agbLoteCount = 0;
+        restaurarDadosTabela('tbl-agb-lotes', a.lotes, function(){ addAGBLoteRow(''); });
+      }
       calcAGB();
     }
     if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
@@ -3472,6 +3495,7 @@ function init() {
   for (let i = 0; i < 3; i++) addBlendRow();
   for (let i = 0; i < 3; i++) addBateladaRow();
   for (let i = 0; i < 3; i++) addBlendCompRow();
+  initAGBLotes();
   carregarDados();
   inicializarGraficos();
   atualizarDashboard();
