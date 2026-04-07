@@ -215,9 +215,31 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 .acc-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
 .acc-body.open{max-height:3000px;transition:max-height .6s cubic-bezier(.4,0,.2,1)}
 .acc-body-inner{padding:18px}
+/* ====== CALENDÁRIO FULL-WIDTH ====== */
+.cal-full{width:100%;border-collapse:separate;border-spacing:4px;table-layout:fixed}
+.cal-full th{font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--teal);padding:8px 4px;text-align:center;border:none;background:none}
+.cal-full td{height:70px;vertical-align:top;padding:6px 8px;border-radius:10px;background:var(--bg-secondary);border:1px solid var(--border);font-size:16px;font-weight:700;color:var(--text-primary);transition:all .3s ease;cursor:default;position:relative}
+.cal-full td:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 24px rgba(0,0,0,.4),0 0 0 1px rgba(0,212,170,.2);z-index:10;border-color:rgba(0,212,170,.3)}
+.cal-full td.cal-empty{background:transparent;border-color:transparent;cursor:default}
+.cal-full td.cal-empty:hover{transform:none;box-shadow:none}
+.cal-full td.cal-hoje{background:rgba(0,212,170,.15);border-color:var(--teal);box-shadow:0 0 16px rgba(0,212,170,.25)}
+.cal-full td.cal-hoje:hover{box-shadow:0 8px 30px rgba(0,212,170,.4)}
+.cal-full td.cal-concluida{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3)}
+.cal-full td.cal-andamento{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)}
+.cal-full td.cal-planejada{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.25)}
+.cal-full td .cal-dia{font-size:18px;font-weight:800;line-height:1}
+.cal-full td .cal-ops{margin-top:4px}
+.cal-full td .cal-op-badge{display:inline-block;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;margin:1px;letter-spacing:.3px}
 /* ====== TOOLTIP CALENDÁRIO ====== */
 .cal-tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(6px);background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:11px;line-height:1.5;color:var(--text-primary);white-space:nowrap;z-index:200;box-shadow:0 8px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:all .25s ease}
 .cal-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--border)}
+/* ====== HOVER 3D GLOBAL ====== */
+.hover3d{transition:all .35s ease}
+.hover3d:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,.45),0 4px 12px rgba(0,0,0,.3),0 0 0 1px rgba(0,212,170,.1)!important}
+.kpi-card{transition:all .35s ease}
+.kpi-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 16px 48px rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.3),0 0 0 1px rgba(0,212,170,.15)!important}
+.silo-card{transition:all .35s ease}
+.silo-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.4),0 0 0 1px rgba(0,212,170,.15)!important}
 /* ====== PAINEL LATERAL CRONÔMETRO (compacto) ====== */
 .dual-panel{display:grid;grid-template-columns:1fr 180px;gap:0;align-items:stretch}
 .dual-panel .panel-main{flex:1}
@@ -479,105 +501,107 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
     </div>
   </div>
 
-  <!-- SILOS + CALENDÁRIO -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
-    <!-- SILOS -->
-    <div class="section">
-      <div class="section-title">CAFÉ TORRADO POR SILO (kg)</div>
-      <div class="section-body">
-        <div class="silo-grid" style="grid-template-columns:1fr">
-          <div class="silo-card">
-            <h3>SILO 1</h3>
-            <div class="silo-kg-torrado" id="silo1-kg-torrado">0 kg</div>
-            <div class="silo-bar"><div class="silo-bar-fill" id="silo1-bar" style="width:0%"></div></div>
-            <div class="silo-info"><span id="silo1-kg">0</span> kg / <span id="silo1-cap">0</span> kg (<span id="silo1-pct">0</span>%)</div>
-            <div class="silo-info">Blend: <span id="silo1-blend">-</span></div>
-            <span class="badge badge-gray" id="silo1-status">Disponível</span>
-          </div>
-          <div class="silo-card">
-            <h3>SILO 2</h3>
-            <div class="silo-kg-torrado" id="silo2-kg-torrado">0 kg</div>
-            <div class="silo-bar"><div class="silo-bar-fill" id="silo2-bar" style="width:0%"></div></div>
-            <div class="silo-info"><span id="silo2-kg">0</span> kg / <span id="silo2-cap">0</span> kg (<span id="silo2-pct">0</span>%)</div>
-            <div class="silo-info">Blend: <span id="silo2-blend">-</span></div>
-            <span class="badge badge-gray" id="silo2-status">Disponível</span>
-          </div>
-          <div class="silo-card">
-            <h3>SILO 3</h3>
-            <div class="silo-kg-torrado" id="silo3-kg-torrado">0 kg</div>
-            <div class="silo-bar"><div class="silo-bar-fill" id="silo3-bar" style="width:0%"></div></div>
-            <div class="silo-info"><span id="silo3-kg">0</span> kg / <span id="silo3-cap">0</span> kg (<span id="silo3-pct">0</span>%)</div>
-            <div class="silo-info">Blend: <span id="silo3-blend">-</span></div>
-            <span class="badge badge-gray" id="silo3-status">Disponível</span>
-          </div>
+  <!-- SILOS -->
+  <div class="section hover3d">
+    <div class="section-title">CAFÉ TORRADO POR SILO (kg)</div>
+    <div class="section-body">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+        <div class="silo-card hover3d">
+          <h3>SILO 1</h3>
+          <div class="silo-kg-torrado" id="silo1-kg-torrado">0 kg</div>
+          <div class="silo-bar"><div class="silo-bar-fill" id="silo1-bar" style="width:0%"></div></div>
+          <div class="silo-info"><span id="silo1-kg">0</span> kg / <span id="silo1-cap">0</span> kg (<span id="silo1-pct">0</span>%)</div>
+          <div class="silo-info">Blend: <span id="silo1-blend">-</span></div>
+          <span class="badge badge-gray" id="silo1-status">Disponível</span>
         </div>
-      </div>
-    </div>
-
-    <!-- CALENDÁRIO DE PRODUÇÃO -->
-    <div class="section">
-      <div class="section-title">CALENDÁRIO DE PRODUÇÃO</div>
-      <div class="section-body">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <button class="btn" style="padding:6px 12px;font-size:12px;background:var(--bg-secondary)" onclick="mudarMesCalendario(-1)">◀</button>
-          <span style="font-size:15px;font-weight:700;color:var(--teal)" id="cal-mes-ano">Abril 2026</span>
-          <button class="btn" style="padding:6px 12px;font-size:12px;background:var(--bg-secondary)" onclick="mudarMesCalendario(1)">▶</button>
+        <div class="silo-card hover3d">
+          <h3>SILO 2</h3>
+          <div class="silo-kg-torrado" id="silo2-kg-torrado">0 kg</div>
+          <div class="silo-bar"><div class="silo-bar-fill" id="silo2-bar" style="width:0%"></div></div>
+          <div class="silo-info"><span id="silo2-kg">0</span> kg / <span id="silo2-cap">0</span> kg (<span id="silo2-pct">0</span>%)</div>
+          <div class="silo-info">Blend: <span id="silo2-blend">-</span></div>
+          <span class="badge badge-gray" id="silo2-status">Disponível</span>
         </div>
-        <table style="width:100%;text-align:center;font-size:12px" id="cal-tabela">
-          <thead><tr style="color:var(--teal)"><th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th></tr></thead>
-          <tbody id="cal-corpo"></tbody>
-        </table>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-secondary)">
-          <span style="display:inline-block;width:10px;height:10px;background:var(--teal);border-radius:50%;margin-right:4px"></span> Hoje
-          <span style="display:inline-block;width:10px;height:10px;background:var(--green);border-radius:50%;margin-left:12px;margin-right:4px"></span> OP Concluída
-          <span style="display:inline-block;width:10px;height:10px;background:var(--yellow);border-radius:50%;margin-left:12px;margin-right:4px"></span> OP Em Andamento
+        <div class="silo-card hover3d">
+          <h3>SILO 3</h3>
+          <div class="silo-kg-torrado" id="silo3-kg-torrado">0 kg</div>
+          <div class="silo-bar"><div class="silo-bar-fill" id="silo3-bar" style="width:0%"></div></div>
+          <div class="silo-info"><span id="silo3-kg">0</span> kg / <span id="silo3-cap">0</span> kg (<span id="silo3-pct">0</span>%)</div>
+          <div class="silo-info">Blend: <span id="silo3-blend">-</span></div>
+          <span class="badge badge-gray" id="silo3-status">Disponível</span>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- CALENDÁRIO DE PRODUÇÃO — FULL WIDTH -->
+  <div class="section hover3d">
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>CALENDÁRIO DE PRODUÇÃO</span>
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="btn" style="padding:6px 14px;font-size:13px;background:var(--bg-secondary);border-radius:8px" onclick="mudarMesCalendario(-1)">◀</button>
+        <span style="font-size:16px;font-weight:800;color:var(--teal);min-width:160px;text-align:center" id="cal-mes-ano">Abril 2026</span>
+        <button class="btn" style="padding:6px 14px;font-size:13px;background:var(--bg-secondary);border-radius:8px" onclick="mudarMesCalendario(1)">▶</button>
+      </div>
+    </div>
+    <div class="section-body" style="padding:14px">
+      <table class="cal-full" id="cal-tabela">
+        <thead><tr>
+          <th>DOMINGO</th><th>SEGUNDA</th><th>TERÇA</th><th>QUARTA</th><th>QUINTA</th><th>SEXTA</th><th>SÁBADO</th>
+        </tr></thead>
+        <tbody id="cal-corpo"></tbody>
+      </table>
+      <div style="margin-top:12px;display:flex;gap:18px;font-size:11px;color:var(--text-secondary);flex-wrap:wrap">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--teal);border-radius:3px"></span> Hoje</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--green);border-radius:3px"></span> OP Concluída</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--yellow);border-radius:3px"></span> OP Em Andamento</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--blue);border-radius:3px"></span> OP Planejada</span>
+      </div>
+    </div>
+  </div>
+
   <!-- FLUXO DE PRODUÇÃO (rastreabilidade visual) -->
-  <div class="section">
+  <div class="section hover3d">
     <div class="section-title">FLUXO DE PRODUÇÃO - RASTREABILIDADE</div>
     <div class="section-body">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;text-align:center">
-        <div style="flex:1;min-width:100px;padding:12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:12px">
+        <div class="hover3d" style="flex:1;min-width:100px;padding:12px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:12px">
           <div style="font-size:20px;margin-bottom:4px">🌿</div>
           <div style="font-size:10px;font-weight:700;color:var(--blue)">CAFÉ VERDE</div>
           <div style="font-size:9px;color:var(--text-muted)">Peneira/Lote</div>
         </div>
         <div style="color:var(--teal);font-size:18px">→</div>
-        <div style="flex:1;min-width:100px;padding:12px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:12px">
+        <div class="hover3d" style="flex:1;min-width:100px;padding:12px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:12px">
           <div style="font-size:20px;margin-bottom:4px">🔥</div>
           <div style="font-size:10px;font-weight:700;color:var(--orange)">TORRA</div>
           <div style="font-size:9px;color:var(--text-muted)">Batelada</div>
         </div>
         <div style="color:var(--teal);font-size:18px">→</div>
-        <div style="flex:1;min-width:100px;padding:12px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:12px">
+        <div class="hover3d" style="flex:1;min-width:100px;padding:12px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:12px">
           <div style="font-size:20px;margin-bottom:4px">🏗️</div>
           <div style="font-size:10px;font-weight:700;color:var(--cyan)">SILO</div>
           <div style="font-size:9px;color:var(--text-muted)">Armazenamento</div>
         </div>
         <div style="color:var(--teal);font-size:18px">→</div>
-        <div style="flex:1;min-width:100px;padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:12px">
+        <div class="hover3d" style="flex:1;min-width:100px;padding:12px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:12px">
           <div style="font-size:20px;margin-bottom:4px">🔄</div>
           <div style="font-size:10px;font-weight:700;color:var(--purple)">BLEND</div>
           <div style="font-size:9px;color:var(--text-muted)">200kg/vez</div>
         </div>
         <div style="color:var(--teal);font-size:18px">→</div>
-        <div style="flex:1;min-width:100px;padding:12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px">
+        <div class="hover3d" style="flex:1;min-width:100px;padding:12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px">
           <div style="font-size:20px;margin-bottom:4px">⚙️</div>
           <div style="font-size:10px;font-weight:700;color:var(--yellow)">MOAGEM</div>
           <div style="font-size:9px;color:var(--text-muted)">Granulometria</div>
         </div>
         <div style="color:var(--teal);font-size:18px">→</div>
-        <div style="flex:1;min-width:100px;padding:12px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px">
+        <div class="hover3d" style="flex:1;min-width:100px;padding:12px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px">
           <div style="font-size:20px;margin-bottom:4px">📦</div>
           <div style="font-size:10px;font-weight:700;color:var(--green)">EMBALAGEM</div>
           <div style="font-size:9px;color:var(--text-muted)">Lote Final</div>
         </div>
         <div style="color:var(--teal);font-size:18px">→</div>
-        <div style="flex:1;min-width:100px;padding:12px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);border-radius:12px">
+        <div class="hover3d" style="flex:1;min-width:100px;padding:12px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);border-radius:12px">
           <div style="font-size:20px;margin-bottom:4px">🏆</div>
           <div style="font-size:10px;font-weight:700;color:var(--teal)">SELO PURO LOTE</div>
           <div style="font-size:9px;color:var(--text-muted)">Laudo SENAI</div>
@@ -587,20 +611,20 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
   </div>
 
   <!-- GRÁFICOS INTERATIVOS -->
-  <div class="section">
+  <div class="section hover3d">
     <div class="section-title">GRÁFICOS INTERATIVOS</div>
     <div class="section-body">
       <div class="charts-grid">
-        <div class="chart-box"><h4>Peso por Batelada (Cru vs Torrado)</h4><canvas id="chart-bateladas"></canvas></div>
-        <div class="chart-box"><h4>Quebra (%) por Batelada</h4><canvas id="chart-quebra"></canvas></div>
-        <div class="chart-box"><h4>Distribuição por Silo (kg Torrado)</h4><canvas id="chart-silos"></canvas></div>
-        <div class="chart-box"><h4>Tempo por Batelada (min)</h4><canvas id="chart-tempos"></canvas></div>
+        <div class="chart-box hover3d"><h4>Peso por Batelada (Cru vs Torrado)</h4><canvas id="chart-bateladas"></canvas></div>
+        <div class="chart-box hover3d"><h4>Quebra (%) por Batelada</h4><canvas id="chart-quebra"></canvas></div>
+        <div class="chart-box hover3d"><h4>Distribuição por Silo (kg Torrado)</h4><canvas id="chart-silos"></canvas></div>
+        <div class="chart-box hover3d"><h4>Tempo por Batelada (min)</h4><canvas id="chart-tempos"></canvas></div>
       </div>
     </div>
   </div>
 
   <!-- ATIVIDADE RECENTE -->
-  <div class="section">
+  <div class="section hover3d">
     <div class="section-title">ATIVIDADE RECENTE</div>
     <div class="section-body" id="home-atividade">
       <div style="display:flex;align-items:center;gap:12px;padding:10px;border-bottom:1px solid var(--border)">
@@ -622,31 +646,31 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
   </div>
 
   <!-- MÁQUINAS E EQUIPAMENTOS -->
-  <div class="section">
+  <div class="section hover3d">
     <div class="section-title">STATUS DOS EQUIPAMENTOS</div>
     <div class="section-body">
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
-        <div style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+        <div class="hover3d" style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
           <div style="font-size:28px;margin-bottom:6px">🔥</div>
           <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Torrador</div>
           <span class="badge badge-gray" style="margin-top:6px">Aguardando OP</span>
         </div>
-        <div style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+        <div class="hover3d" style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
           <div style="font-size:28px;margin-bottom:6px">⚙️</div>
           <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Moinho</div>
           <span class="badge badge-gray" style="margin-top:6px">Aguardando</span>
         </div>
-        <div style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+        <div class="hover3d" style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
           <div style="font-size:28px;margin-bottom:6px">📦</div>
           <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Mazipac (Almofada)</div>
           <span class="badge badge-gray" style="margin-top:6px">Aguardando</span>
         </div>
-        <div style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+        <div class="hover3d" style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
           <div style="font-size:28px;margin-bottom:6px">🫙</div>
           <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Vácuo</div>
           <span class="badge badge-gray" style="margin-top:6px">Aguardando</span>
         </div>
-        <div style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+        <div class="hover3d" style="padding:16px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
           <div style="font-size:28px;margin-bottom:6px">🔄</div>
           <div style="font-size:13px;font-weight:700;color:var(--text-primary)">Blendador</div>
           <span class="badge badge-gray" style="margin-top:6px">Aguardando</span>
@@ -2134,22 +2158,21 @@ function renderizarCalendario(mes, ano) {
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
   const hoje = new Date();
 
-  // Busca OPs do histórico para marcar no calendário
+  // Busca OPs do histórico + atual
   const historico = JSON.parse(localStorage.getItem('historico_ops') || '[]');
   const opAtual = JSON.parse(localStorage.getItem('painel_torrefacao') || '{}');
   const opsMap = {};
   historico.forEach(h => {
     if (h.op?.data) {
-      const d = h.op.data;
-      if (!opsMap[d]) opsMap[d] = [];
-      opsMap[d].push({ num: h.op.numero || '--', status: h.op.status || '--', operador: h.op.operador || '--' });
+      if (!opsMap[h.op.data]) opsMap[h.op.data] = [];
+      opsMap[h.op.data].push({ num: h.op.numero || '--', status: h.op.status || '--', operador: h.op.operador || '--' });
     }
   });
   if (opAtual.op?.data) {
-    const d = opAtual.op.data;
-    if (!opsMap[d]) opsMap[d] = [];
-    const jaExiste = opsMap[d].some(o => o.num === opAtual.op.numero);
-    if (!jaExiste) opsMap[d].push({ num: opAtual.op.numero || 'Atual', status: opAtual.op.status || 'Em Andamento', operador: opAtual.op.operador || '--' });
+    if (!opsMap[opAtual.op.data]) opsMap[opAtual.op.data] = [];
+    if (!opsMap[opAtual.op.data].some(o => o.num === opAtual.op.numero)) {
+      opsMap[opAtual.op.data].push({ num: opAtual.op.numero || 'Atual', status: opAtual.op.status || 'Em Andamento', operador: opAtual.op.operador || '--' });
+    }
   }
 
   let dia = 1;
@@ -2157,51 +2180,41 @@ function renderizarCalendario(mes, ano) {
     const tr = document.createElement('tr');
     for (let d = 0; d < 7; d++) {
       const td = document.createElement('td');
-      td.style.padding = '8px 4px';
-      td.style.borderRadius = '8px';
-      td.style.cursor = 'default';
-      td.style.transition = 'all .2s';
-      td.style.position = 'relative';
       if (s === 0 && d < primeiroDia || dia > diasNoMes) {
-        td.textContent = '';
+        td.className = 'cal-empty';
+        td.innerHTML = '';
       } else {
-        td.textContent = dia;
         const dataStr = ano + '-' + String(mes+1).padStart(2,'0') + '-' + String(dia).padStart(2,'0');
         const isHoje = dia === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear();
+        const ops = opsMap[dataStr] || null;
+        const temConc = ops && ops.some(o => o.status === 'Concluída');
+        const temAnd = ops && ops.some(o => o.status === 'Em Andamento');
 
-        if (isHoje) {
-          td.style.background = 'rgba(0,212,170,.25)';
-          td.style.color = 'var(--teal)';
-          td.style.fontWeight = '800';
-          td.style.boxShadow = '0 0 10px rgba(0,212,170,.4)';
-        }
+        if (isHoje) td.classList.add('cal-hoje');
+        else if (temConc) td.classList.add('cal-concluida');
+        else if (temAnd) td.classList.add('cal-andamento');
+        else if (ops) td.classList.add('cal-planejada');
 
-        if (opsMap[dataStr]) {
-          const ops = opsMap[dataStr];
-          const temConcluida = ops.some(o => o.status === 'Concluída');
-          const temAndamento = ops.some(o => o.status === 'Em Andamento');
-          if (!isHoje) {
-            td.style.background = temConcluida ? 'rgba(16,185,129,.18)' : temAndamento ? 'rgba(245,158,11,.18)' : 'rgba(59,130,246,.12)';
-            td.style.fontWeight = '700';
-          }
-          // Bolinha indicadora
-          const dot = document.createElement('div');
-          dot.style.cssText = 'width:5px;height:5px;border-radius:50%;margin:2px auto 0;background:' + (temConcluida ? 'var(--green)' : temAndamento ? 'var(--yellow)' : 'var(--blue)');
-          td.appendChild(dot);
-          // Tooltip hover
+        let inner = '<div class="cal-dia">' + dia + '</div>';
+        if (ops) {
+          inner += '<div class="cal-ops">';
+          ops.forEach(o => {
+            const cor = o.status === 'Concluída' ? 'var(--green)' : o.status === 'Em Andamento' ? 'var(--yellow)' : 'var(--blue)';
+            inner += '<span class="cal-op-badge" style="background:' + cor + ';color:#0d1117">' + o.num + '</span>';
+          });
+          inner += '</div>';
+          // Tooltip
+          inner += '<div class="cal-tooltip"><b style="color:var(--teal)">' + dataStr + '</b><br>';
+          inner += ops.map(o => {
+            const c = o.status==='Concluída'?'var(--green)':o.status==='Em Andamento'?'var(--yellow)':'var(--text-secondary)';
+            return '<span style="color:'+c+'">'+o.num+'</span> — '+o.status+'<br><span style="font-size:10px;color:var(--text-muted)">Op: '+o.operador+'</span>';
+          }).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0">');
+          inner += '</div>';
           td.style.cursor = 'pointer';
-          let tooltipText = '';
-          ops.forEach(o => { tooltipText += o.num + ' (' + o.status + ') - ' + o.operador + '\n'; });
-          const tooltip = document.createElement('div');
-          tooltip.className = 'cal-tooltip';
-          tooltip.innerHTML = '<b style="color:var(--teal)">' + dataStr + '</b><br>' + ops.map(o =>
-            '<span style="color:' + (o.status==='Concluída'?'var(--green)':o.status==='Em Andamento'?'var(--yellow)':'var(--text-secondary)') + '">' +
-            o.num + '</span> — ' + o.status + '<br><span style="font-size:10px;color:var(--text-muted)">Op: ' + o.operador + '</span>'
-          ).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0">');
-          td.appendChild(tooltip);
-          td.addEventListener('mouseenter', () => { tooltip.style.opacity = '1'; tooltip.style.transform = 'translateX(-50%) translateY(0)'; tooltip.style.pointerEvents = 'auto'; });
-          td.addEventListener('mouseleave', () => { tooltip.style.opacity = '0'; tooltip.style.transform = 'translateX(-50%) translateY(6px)'; tooltip.style.pointerEvents = 'none'; });
+          td.addEventListener('mouseenter', function() { const t = this.querySelector('.cal-tooltip'); if(t){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';t.style.pointerEvents='auto';} });
+          td.addEventListener('mouseleave', function() { const t = this.querySelector('.cal-tooltip'); if(t){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(6px)';t.style.pointerEvents='none';} });
         }
+        td.innerHTML = inner;
         dia++;
       }
       tr.appendChild(td);
