@@ -1774,27 +1774,22 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
     </div>
     <div class="acc-body">
       <div class="acc-body-inner">
-        <div class="info-box verde"><b>Resultado AGB:</b> Todas as peneiras + subprodutos da maquinação. Preencha o peso de cada lote conforme resultado da AGB Araguari.</div>
+        <div class="info-box verde"><b>Resultado AGB:</b> Preencha o peso de cada lote conforme resultado da maquinação AGB Araguari.</div>
         <div style="overflow-x:auto;margin-top:14px">
           <table id="tbl-agb-lotes">
             <thead><tr>
-              <th style="width:30px">#</th>
-              <th style="width:30px"></th>
-              <th>Peneira</th>
+              <th style="width:40px"># / X</th>
               <th>Lote AGB</th>
               <th>Lote Torrefação</th>
+              <th>Peneira</th>
               <th>Peso (kg)</th>
-              <th>Nº Sacas</th>
-              <th>% do Total</th>
-              <th>Obs</th>
+              <th>Sacas (60kg)</th>
             </tr></thead>
             <tbody id="agb-lotes-body"></tbody>
             <tfoot><tr class="total-row">
-              <td><b>TOTAL</b></td><td></td><td></td><td></td><td></td>
+              <td><b>TOTAL</b></td><td></td><td></td><td></td>
               <td><input class="calc" id="agb-peso-total-saida" readonly></td>
               <td><input class="calc" id="agb-sacas-total" readonly></td>
-              <td><input class="calc" id="agb-pct-total" readonly></td>
-              <td></td>
             </tr></tfoot>
           </table>
         </div>
@@ -2802,7 +2797,7 @@ function calcAGBSaca() {
 }
 
 let agbLoteCount = 0;
-const AGB_PENEIRAS = ['FP5','FP8','FP10','P10/12','P13/14','P15/16','P17/18','PVA','Pau','Pedra','Voadeira','Palha'];
+const AGB_PENEIRAS = ['P17/18','P15/16','P13/14','P10/12','FP10','FP8','FP5','PVA','Palha','Pau/Pedra','Voadeira','Outros'];
 
 function initAGBLotes() {
   AGB_PENEIRAS.forEach(p => addAGBLoteRow(p));
@@ -2813,16 +2808,14 @@ function addAGBLoteRow(peneira) {
   const tbody = document.getElementById('agb-lotes-body');
   const tr = document.createElement('tr');
   const pNome = peneira || '';
+  const isOutros = pNome === 'Outros';
   tr.innerHTML = `
-    <td><b class="agb-num">${agbLoteCount}</b></td>
-    <td><button onclick="excluirAGBLinha(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:2px" title="Excluir">x</button></td>
-    <td><input type="text" class="agb-pen" value="${pNome}" style="font-weight:700" readonly></td>
+    <td style="position:relative"><b class="agb-num">${agbLoteCount}</b><button onclick="excluirAGBLinha(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;position:absolute;top:1px;right:2px;opacity:.5" title="Excluir" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">x</button></td>
     <td><input type="text" class="agb-lote-agb" placeholder="Lote AGB"></td>
     <td><input type="text" class="agb-lote-torr" placeholder="Lote Patrocínio"></td>
+    <td>${isOutros ? '<input type="text" class="agb-pen" placeholder="Digitar..." style="font-weight:700">' : '<input type="text" class="agb-pen" value="'+pNome+'" style="font-weight:700" readonly>'}</td>
     <td><input type="number" step="0.01" class="agb-peso" oninput="calcAGBLotes()" placeholder="kg"></td>
-    <td><input type="number" class="agb-sacas" oninput="calcAGBLotes()" placeholder="0"></td>
-    <td><input class="calc agb-pct" readonly></td>
-    <td><input type="text" placeholder="Obs"></td>`;
+    <td><input type="number" step="0.01" class="agb-sacas" oninput="calcAGBLotes()" placeholder="0"></td>`;
   tbody.appendChild(tr);
 }
 
@@ -2847,12 +2840,9 @@ function calcAGBLotes() {
     const peso = parseFloat(tr.querySelector('.agb-peso')?.value) || 0;
     const sacas = parseFloat(tr.querySelector('.agb-sacas')?.value) || 0;
     tPeso += peso; tSacas += sacas;
-    const pctEl = tr.querySelector('.agb-pct');
-    if (pctEl) pctEl.value = enviado > 0 && peso > 0 ? fmt(peso / enviado * 100, 1) + '%' : '';
   });
   document.getElementById('agb-peso-total-saida').value = tPeso > 0 ? fmt(tPeso) : '';
-  document.getElementById('agb-pct-total').value = enviado > 0 && tPeso > 0 ? fmt(tPeso / enviado * 100, 1) + '%' : '';
-  document.getElementById('agb-sacas-total').value = tSacas > 0 ? tSacas : '';
+  document.getElementById('agb-sacas-total').value = tSacas > 0 ? fmt(tSacas, 1) : '';
   const perda = enviado - tPeso;
   setText('agb-kpi-recebido', fmt(tPeso));
   setText('agb-kpi-perda', enviado > 0 && tPeso > 0 ? fmt(perda) : '0');
