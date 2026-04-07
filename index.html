@@ -1660,13 +1660,14 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
             <th>Marca / Café</th>
             <th>Tipo Embalagem</th>
             <th>Fardo / Caixa</th>
+            <th>Qtd (fardos/cx/sacas)</th>
             <th>Qtd Total (kg)</th>
             <th>Impureza Laudo (%)</th>
             <th>Impureza (kg)</th>
           </tr></thead>
           <tbody id="calc-imp-body"></tbody>
           <tfoot><tr class="total-row">
-            <td colspan="4"><b>TOTAL BLEND</b></td>
+            <td colspan="5"><b>TOTAL BLEND</b></td>
             <td><b id="calc-ft-kg">0</b></td>
             <td><b id="calc-ft-pct">0,000 %</b></td>
             <td><b id="calc-ft-impkg">0,000</b></td>
@@ -3861,18 +3862,36 @@ function addCalcImpRow() {
       <option value="A granel (kg)">A granel (kg)</option>
       <option value="Outro">Outro</option>
     </select></td>
-    <td><select class="ci-fardo" style="min-width:100px">
-      <option value="">Avulso</option>
-      <option value="Fardo 5kg">Fardo 5kg (Almofada)</option>
-      <option value="Caixa 10kg">Caixa 10kg (Vácuo)</option>
-      <option value="Saca 30kg">Saca 30kg</option>
-      <option value="Saca 50kg">Saca 50kg</option>
-      <option value="Outro">Outro</option>
+    <td><select class="ci-fardo" style="min-width:100px" onchange="calcQtdKg(this.closest('tr'))">
+      <option value="">Avulso (kg manual)</option>
+      <option value="5">Fardo 5kg (Almofada)</option>
+      <option value="10">Caixa 10kg (Vácuo)</option>
+      <option value="30">Saca 30kg</option>
+      <option value="50">Saca 50kg</option>
     </select></td>
+    <td><input type="number" step="1" min="0" class="ci-qtd" placeholder="Qtd" oninput="calcQtdKg(this.closest('tr'))"></td>
     <td><input type="number" step="0.01" class="ci-kg" placeholder="kg" oninput="calcImpurezaBlend()"></td>
-    <td><input type="number" step="0.001" class="ci-imp" placeholder="%" oninput="calcImpurezaBlend()"></td>
+    <td><input type="number" step="0.001" min="0" class="ci-imp" placeholder="%" oninput="calcImpurezaBlend()"></td>
     <td><input type="text" class="ci-impkg calc" readonly></td>`;
   tbody.appendChild(tr);
+}
+
+function calcQtdKg(tr) {
+  const fardoSelect = tr.querySelector('.ci-fardo');
+  const qtdInput = tr.querySelector('.ci-qtd');
+  const kgInput = tr.querySelector('.ci-kg');
+  const pesoFardo = parseFloat(fardoSelect.value) || 0;
+  const qtd = parseFloat(qtdInput.value) || 0;
+  if (pesoFardo > 0 && qtd > 0) {
+    kgInput.value = (pesoFardo * qtd).toFixed(2);
+    kgInput.readOnly = true;
+    kgInput.style.opacity = '.7';
+  } else if (pesoFardo === 0) {
+    // Avulso: libera o campo kg para digitação manual
+    kgInput.readOnly = false;
+    kgInput.style.opacity = '1';
+  }
+  calcImpurezaBlend();
 }
 
 function removeCalcImpRow(btn) {
