@@ -7,6 +7,17 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+/* ====== ANIMAÇÕES GLOBAIS ====== */
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+.tab-content.active{animation:fadeSlideIn .4s ease}
+.acc-body.open{animation:fadeIn .35s ease}
+.section{animation:fadeSlideIn .3s ease}
+.kpi-card{animation:scaleIn .4s ease both}
+.kpi-card:nth-child(1){animation-delay:.05s}.kpi-card:nth-child(2){animation-delay:.1s}.kpi-card:nth-child(3){animation-delay:.15s}.kpi-card:nth-child(4){animation-delay:.2s}.kpi-card:nth-child(5){animation-delay:.25s}
+.pen-card{animation:scaleIn .4s ease both}
+.pen-card:nth-child(1){animation-delay:.05s}.pen-card:nth-child(2){animation-delay:.1s}.pen-card:nth-child(3){animation-delay:.15s}.pen-card:nth-child(4){animation-delay:.2s}.pen-card:nth-child(5){animation-delay:.25s}.pen-card:nth-child(6){animation-delay:.3s}.pen-card:nth-child(7){animation-delay:.35s}.pen-card:nth-child(8){animation-delay:.4s}
 :root{
   --bg-primary:#0d1117;--bg-secondary:#161b22;--bg-card:#1c2333;--bg-card-hover:#222d3d;
   --border:#30363d;--border-light:#444c56;
@@ -184,9 +195,9 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 .nav-group-header .nav-arrow{width:16px;height:16px;transition:transform .3s ease;color:var(--teal);flex-shrink:0}
 .nav-group-header.open .nav-arrow{transform:rotate(180deg)}
 .nav-group-header.active .nav-icon{filter:drop-shadow(0 0 10px rgba(0,212,170,.5));animation:iconFloat 2s ease-in-out infinite}
-.nav-submenu{max-height:0;overflow:hidden;transition:max-height .35s ease;background:rgba(0,0,0,.12)}
-.nav-submenu.open{max-height:200px}
-.nav-group:hover .nav-submenu{max-height:200px}
+.nav-submenu{max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.4,0,.2,1);background:rgba(0,0,0,.12)}
+.nav-submenu.open{max-height:200px;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.nav-group:hover .nav-submenu{max-height:200px;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
 .nav-group:hover .nav-group-header .nav-arrow{transform:rotate(180deg)}
 .nav-submenu button{background:none;border:none;padding:9px 16px 9px 52px;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;width:100%;text-align:left;transition:all .2s;border-left:3px solid transparent;display:block}
 .nav-submenu button:hover{color:var(--text-primary);background:rgba(0,212,170,.05);border-left-color:rgba(0,212,170,.2)}
@@ -201,8 +212,8 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 .acc-header h3{font-size:13px;font-weight:700;letter-spacing:.8px;color:var(--teal);margin:0}
 .acc-header .acc-arrow{width:18px;height:18px;color:var(--teal);transition:transform .3s ease;flex-shrink:0}
 .acc-header.open .acc-arrow{transform:rotate(180deg)}
-.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
-.acc-body.open{max-height:3000px}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.acc-body.open{max-height:3000px;transition:max-height .6s cubic-bezier(.4,0,.2,1)}
 .acc-body-inner{padding:18px}
 /* ====== PAINEL LATERAL CRONÔMETRO (compacto) ====== */
 .dual-panel{display:grid;grid-template-columns:1fr 180px;gap:0;align-items:stretch}
@@ -1723,16 +1734,16 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
             <div class="info-box azul"><b>AGB Araguari - Sr. Carlos:</b> Re-beneficiamento do café cru. Limpeza, separação por peneira e separação por cor (PVA). O café chega em lotes separados por peneira em Goiânia.</div>
             <div class="form-grid" style="margin-top:14px">
               <div class="form-group campo-obrigatorio"><label>Nº da NF-e Compra</label><input type="text" id="agb-nfe-compra" placeholder="NF de compra do café" required></div>
-              <div class="form-group campo-obrigatorio"><label>Fornecedor Café Cru</label><input type="text" id="agb-fornecedor" placeholder="De quem comprou" required></div>
+              <div class="form-group"><label>Foto / Upload NF-e Compra</label><input type="file" accept="image/*,.pdf" capture="environment" id="agb-foto-nfe" style="font-size:11px"></div>
+              <div class="form-group campo-obrigatorio"><label>Fornecedor Café Cru</label><input type="text" id="agb-fornecedor" placeholder="Razão social" required></div>
+              <div class="form-group"><label>Apelido Fornecedor</label><input type="text" id="agb-apelido-forn" placeholder="Ex: Sr. João, Fazenda X"></div>
               <div class="form-group"><label>Origem / Região</label><input type="text" id="agb-origem" placeholder="Ex: Patrocínio-MG"></div>
               <div class="form-group campo-obrigatorio"><label>Data Envio p/ AGB</label><input type="date" id="agb-data-envio" required></div>
               <div class="form-group"><label>Peso Total Enviado (kg)</label><input type="number" step="0.01" id="agb-peso-enviado" oninput="calcAGB()" placeholder="kg"></div>
               <div class="form-group"><label>Custo Café Cru (R$/kg)</label><input type="number" step="0.01" id="agb-custo-kg" oninput="calcAGB()" placeholder="R$"></div>
+              <div class="form-group"><label>Custo Café Cru (R$/saca 60kg)</label><input type="number" step="0.01" id="agb-custo-saca" oninput="calcAGBSaca()" placeholder="R$"></div>
               <div class="form-group"><label>Custo Maquinação AGB (R$)</label><input type="number" step="0.01" id="agb-custo-maq" oninput="calcAGB()" placeholder="R$"></div>
-              <div class="form-group"><label>Custo Frete (R$)</label><input type="number" step="0.01" id="agb-custo-frete" oninput="calcAGB()" placeholder="R$"></div>
-              <div class="form-group"><label>Custo Total (R$)</label><input type="text" class="calc" id="agb-custo-total" readonly></div>
-              <div class="form-group"><label>Custo/kg Final (R$)</label><input type="text" class="calc" id="agb-custo-kg-final" readonly></div>
-              <div class="form-group"><label>NF-e AGB (serviço)</label><input type="text" id="agb-nfe-servico" placeholder="NF da maquinação"></div>
+              <div class="form-group"><label>Upload Relatório / NF AGB</label><input type="file" accept="image/*,.pdf" id="agb-upload-relatorio" style="font-size:11px"></div>
               <div class="form-group"><label>Status</label><select id="agb-status"><option>Enviado p/ AGB</option><option>Em Maquinação</option><option>Pronto p/ Retirar</option><option>Em Transporte</option><option>Recebido Goiânia</option></select></div>
             </div>
           </div>
@@ -1745,6 +1756,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
             <button class="btn btn-danger" onclick="cvCronoParar('agb')">Parar</button>
           </div>
           <div class="crono-fields">
+            <div class="form-group"><label>Dias</label><input type="number" id="cv-agb-dias" readonly style="text-align:center"></div>
             <div class="form-group"><label>Início</label><input type="time" id="cv-agb-inicio" readonly></div>
             <div class="form-group"><label>Fim</label><input type="time" id="cv-agb-fim" readonly></div>
             <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-agb-tempo" readonly></div>
@@ -2772,15 +2784,21 @@ function cvCronoParar(tipo) {
 function calcAGB() {
   const enviado = parseFloat(document.getElementById('agb-peso-enviado').value) || 0;
   const custoKg = parseFloat(document.getElementById('agb-custo-kg').value) || 0;
-  const custoMaq = parseFloat(document.getElementById('agb-custo-maq').value) || 0;
-  const custoFrete = parseFloat(document.getElementById('agb-custo-frete').value) || 0;
-  const custoTotal = (enviado * custoKg) + custoMaq + custoFrete;
-  const custoKgFinal = enviado > 0 ? custoTotal / enviado : 0;
-  document.getElementById('agb-custo-total').value = custoTotal > 0 ? fmtBRL(custoTotal) : '';
-  document.getElementById('agb-custo-kg-final').value = custoKgFinal > 0 ? fmtBRL(custoKgFinal) : '';
+  // Sincronizar custo/kg com custo/saca (1 saca = 60kg)
+  const sacaEl = document.getElementById('agb-custo-saca');
+  if (custoKg > 0 && document.activeElement === document.getElementById('agb-custo-kg')) {
+    sacaEl.value = (custoKg * 60).toFixed(2);
+  }
   setText('agb-kpi-enviado', fmt(enviado));
-  setText('agb-kpi-custo', fmtBRL(custoTotal));
+  setText('agb-kpi-custo', custoKg > 0 ? fmtBRL(enviado * custoKg) : '0,00');
   calcAGBLotes();
+}
+function calcAGBSaca() {
+  const custoSaca = parseFloat(document.getElementById('agb-custo-saca').value) || 0;
+  if (custoSaca > 0) {
+    document.getElementById('agb-custo-kg').value = (custoSaca / 60).toFixed(2);
+  }
+  calcAGB();
 }
 
 let agbLoteCount = 0;
@@ -3212,13 +3230,13 @@ function salvarDados(silencioso) {
     agb: {
       nfeCompra: document.getElementById('agb-nfe-compra').value,
       fornecedor: document.getElementById('agb-fornecedor').value,
+      apelidoForn: document.getElementById('agb-apelido-forn').value,
       origem: document.getElementById('agb-origem').value,
       dataEnvio: document.getElementById('agb-data-envio').value,
       pesoEnviado: document.getElementById('agb-peso-enviado').value,
       custoKg: document.getElementById('agb-custo-kg').value,
+      custoSaca: document.getElementById('agb-custo-saca').value,
       custoMaq: document.getElementById('agb-custo-maq').value,
-      custoFrete: document.getElementById('agb-custo-frete').value,
-      nfeServico: document.getElementById('agb-nfe-servico').value,
       status: document.getElementById('agb-status').value,
       obs: document.getElementById('agb-obs').value,
       lotes: coletarDadosTabela('tbl-agb-lotes'),
@@ -3345,13 +3363,13 @@ function carregarDados() {
       const a = d.agb;
       document.getElementById('agb-nfe-compra').value = a.nfeCompra || '';
       document.getElementById('agb-fornecedor').value = a.fornecedor || '';
+      document.getElementById('agb-apelido-forn').value = a.apelidoForn || '';
       document.getElementById('agb-origem').value = a.origem || '';
       document.getElementById('agb-data-envio').value = a.dataEnvio || '';
       document.getElementById('agb-peso-enviado').value = a.pesoEnviado || '';
       document.getElementById('agb-custo-kg').value = a.custoKg || '';
+      document.getElementById('agb-custo-saca').value = a.custoSaca || '';
       document.getElementById('agb-custo-maq').value = a.custoMaq || '';
-      document.getElementById('agb-custo-frete').value = a.custoFrete || '';
-      document.getElementById('agb-nfe-servico').value = a.nfeServico || '';
       document.getElementById('agb-status').value = a.status || 'Enviado p/ AGB';
       document.getElementById('agb-obs').value = a.obs || '';
       if (a.lotes) {
