@@ -227,6 +227,8 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 .cal-full td.cal-concluida{background:rgba(16,185,129,.1);border-color:rgba(16,185,129,.3)}
 .cal-full td.cal-andamento{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)}
 .cal-full td.cal-planejada{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.25)}
+.cal-full td.cal-feriado{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.4);box-shadow:inset 0 0 0 1px rgba(239,68,68,.15)}
+.cal-full td.cal-feriado-fac{background:rgba(245,158,11,.08);border-color:rgba(245,158,11,.3)}
 .cal-full td .cal-dia{font-size:18px;font-weight:800;line-height:1}
 .cal-full td .cal-ops{margin-top:4px}
 .cal-full td .cal-op-badge{display:inline-block;font-size:8px;font-weight:700;padding:1px 5px;border-radius:4px;margin:1px;letter-spacing:.3px}
@@ -570,6 +572,8 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
         <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--green);border-radius:3px"></span> OP Concluída</span>
         <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--yellow);border-radius:3px"></span> OP Em Andamento</span>
         <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--blue);border-radius:3px"></span> OP Planejada</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--red);border-radius:3px"></span> Feriado Obrigatório</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;background:var(--orange);border-radius:3px"></span> Feriado Facultativo/Estadual</span>
       </div>
     </div>
   </div>
@@ -2162,6 +2166,62 @@ function atualizarHome() {
 }
 setInterval(atualizarHome, 1000);
 
+// ============ FERIADOS BRASIL + GOIÁS + GOIÂNIA ============
+function calcularPascoa(ano) {
+  // Algoritmo de Meeus/Jones/Butcher
+  const a=ano%19, b=Math.floor(ano/100), c=ano%100, d=Math.floor(b/4), e=b%4;
+  const f=Math.floor((b+8)/25), g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451), mes=Math.floor((h+l-7*m+114)/31), dia=((h+l-7*m+114)%31)+1;
+  return new Date(ano, mes-1, dia);
+}
+
+function getFeriados(ano) {
+  const pascoa = calcularPascoa(ano);
+  const addDias = (d, n) => { const r = new Date(d); r.setDate(r.getDate() + n); return r; };
+  const fmt = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+
+  const carnaval1 = addDias(pascoa, -48); // segunda
+  const carnaval2 = addDias(pascoa, -47); // terça
+  const quartaCinzas = addDias(pascoa, -46);
+  const sextaSanta = addDias(pascoa, -2);
+  const corpusChristi = addDias(pascoa, 60);
+
+  const feriados = {};
+  const add = (data, nome, tipo, nivel) => { feriados[data] = { nome, tipo, nivel }; };
+
+  // NACIONAIS (param = obrigatório)
+  add(ano+'-01-01', 'Confraternização Universal', 'Nacional', 'obrigatorio');
+  add(fmt(carnaval1), 'Carnaval (Segunda)', 'Nacional', 'facultativo');
+  add(fmt(carnaval2), 'Carnaval (Terça)', 'Nacional', 'facultativo');
+  add(fmt(quartaCinzas), 'Quarta-feira de Cinzas', 'Nacional', 'facultativo');
+  add(fmt(sextaSanta), 'Sexta-feira Santa', 'Nacional', 'obrigatorio');
+  add(fmt(pascoa), 'Domingo de Páscoa', 'Nacional', 'obrigatorio');
+  add(ano+'-04-21', 'Tiradentes', 'Nacional', 'obrigatorio');
+  add(ano+'-05-01', 'Dia do Trabalho', 'Nacional', 'obrigatorio');
+  add(fmt(corpusChristi), 'Corpus Christi', 'Nacional', 'facultativo');
+  add(ano+'-09-07', 'Independência do Brasil', 'Nacional', 'obrigatorio');
+  add(ano+'-10-12', 'Nossa Sra. Aparecida', 'Nacional', 'obrigatorio');
+  add(ano+'-11-02', 'Finados', 'Nacional', 'obrigatorio');
+  add(ano+'-11-15', 'Proclamação da República', 'Nacional', 'obrigatorio');
+  add(ano+'-11-20', 'Consciência Negra', 'Nacional', 'obrigatorio');
+  add(ano+'-12-25', 'Natal', 'Nacional', 'obrigatorio');
+
+  // GOIÁS (estadual)
+  add(ano+'-07-26', 'Fundação de Goiânia (Est.)', 'Estadual GO', 'estadual');
+  add(ano+'-10-24', 'Padroeira de Goiás - N.Sra. do Rosário', 'Estadual GO', 'estadual');
+
+  // GOIÂNIA (municipal)
+  add(ano+'-05-24', 'Aniversário de Goiânia', 'Municipal GYN', 'municipal');
+  add(ano+'-08-15', 'N. Sra. da Assunção (Padroeira)', 'Municipal GYN', 'municipal');
+
+  // Pontos facultativos extras relevantes
+  add(ano+'-12-24', 'Véspera de Natal', 'Facultativo', 'atencao');
+  add(ano+'-12-31', 'Véspera de Ano Novo', 'Facultativo', 'atencao');
+
+  return feriados;
+}
+
 function renderizarCalendario(mes, ano) {
   const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   document.getElementById('cal-mes-ano').textContent = meses[mes] + ' ' + ano;
@@ -2170,22 +2230,20 @@ function renderizarCalendario(mes, ano) {
   const primeiroDia = new Date(ano, mes, 1).getDay();
   const diasNoMes = new Date(ano, mes + 1, 0).getDate();
   const hoje = new Date();
+  const feriados = getFeriados(ano);
 
-  // Busca OPs do histórico + atual
+  // OPs do histórico + atual
   const historico = JSON.parse(localStorage.getItem('historico_ops') || '[]');
   const opAtual = JSON.parse(localStorage.getItem('painel_torrefacao') || '{}');
   const opsMap = {};
-  historico.forEach(h => {
-    if (h.op?.data) {
-      if (!opsMap[h.op.data]) opsMap[h.op.data] = [];
-      opsMap[h.op.data].push({ num: h.op.numero || '--', status: h.op.status || '--', operador: h.op.operador || '--' });
-    }
-  });
-  if (opAtual.op?.data) {
-    if (!opsMap[opAtual.op.data]) opsMap[opAtual.op.data] = [];
-    if (!opsMap[opAtual.op.data].some(o => o.num === opAtual.op.numero)) {
-      opsMap[opAtual.op.data].push({ num: opAtual.op.numero || 'Atual', status: opAtual.op.status || 'Em Andamento', operador: opAtual.op.operador || '--' });
-    }
+  historico.forEach(h => { if (h.op?.data) { if (!opsMap[h.op.data]) opsMap[h.op.data] = []; opsMap[h.op.data].push({ num: h.op.numero||'--', status: h.op.status||'--', operador: h.op.operador||'--' }); }});
+  if (opAtual.op?.data) { if (!opsMap[opAtual.op.data]) opsMap[opAtual.op.data] = []; if (!opsMap[opAtual.op.data].some(o => o.num === opAtual.op.numero)) opsMap[opAtual.op.data].push({ num: opAtual.op.numero||'Atual', status: opAtual.op.status||'Em Andamento', operador: opAtual.op.operador||'--' }); }
+
+  // Conta feriados no mês para alerta
+  let feriadosMes = 0;
+  for (let dd = 1; dd <= diasNoMes; dd++) {
+    const ds = ano + '-' + String(mes+1).padStart(2,'0') + '-' + String(dd).padStart(2,'0');
+    if (feriados[ds]) feriadosMes++;
   }
 
   let dia = 1;
@@ -2200,29 +2258,56 @@ function renderizarCalendario(mes, ano) {
         const dataStr = ano + '-' + String(mes+1).padStart(2,'0') + '-' + String(dia).padStart(2,'0');
         const isHoje = dia === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear();
         const ops = opsMap[dataStr] || null;
+        const feriado = feriados[dataStr] || null;
         const temConc = ops && ops.some(o => o.status === 'Concluída');
         const temAnd = ops && ops.some(o => o.status === 'Em Andamento');
 
+        // Prioridade visual: hoje > feriado > OP
         if (isHoje) td.classList.add('cal-hoje');
+        else if (feriado && feriado.nivel === 'obrigatorio') td.classList.add('cal-feriado');
+        else if (feriado) td.classList.add('cal-feriado-fac');
         else if (temConc) td.classList.add('cal-concluida');
         else if (temAnd) td.classList.add('cal-andamento');
         else if (ops) td.classList.add('cal-planejada');
 
         let inner = '<div class="cal-dia">' + dia + '</div>';
+
+        // Badge do feriado
+        if (feriado) {
+          const corF = feriado.nivel === 'obrigatorio' ? '#ef4444' : feriado.nivel === 'estadual' ? '#f59e0b' : feriado.nivel === 'municipal' ? '#3b82f6' : '#6e7681';
+          inner += '<div class="cal-ops"><span class="cal-op-badge" style="background:'+corF+';color:#fff;font-size:7px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block">' + feriado.nome + '</span></div>';
+        }
+
+        // Badge da OP
         if (ops) {
           inner += '<div class="cal-ops">';
           ops.forEach(o => {
             const cor = o.status === 'Concluída' ? 'var(--green)' : o.status === 'Em Andamento' ? 'var(--yellow)' : 'var(--blue)';
-            inner += '<span class="cal-op-badge" style="background:' + cor + ';color:#0d1117">' + o.num + '</span>';
+            inner += '<span class="cal-op-badge" style="background:'+cor+';color:#0d1117">' + o.num + '</span>';
           });
           inner += '</div>';
-          // Tooltip
-          inner += '<div class="cal-tooltip"><b style="color:var(--teal)">' + dataStr + '</b><br>';
-          inner += ops.map(o => {
-            const c = o.status==='Concluída'?'var(--green)':o.status==='Em Andamento'?'var(--yellow)':'var(--text-secondary)';
-            return '<span style="color:'+c+'">'+o.num+'</span> — '+o.status+'<br><span style="font-size:10px;color:var(--text-muted)">Op: '+o.operador+'</span>';
-          }).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0">');
-          inner += '</div>';
+        }
+
+        // Tooltip (feriado + OP)
+        if (feriado || ops) {
+          let tip = '<b style="color:var(--teal)">' + dataStr + '</b><br>';
+          if (feriado) {
+            const nivelTxt = feriado.nivel === 'obrigatorio' ? 'OBRIGATÓRIO — Produção parada' :
+                             feriado.nivel === 'facultativo' ? 'FACULTATIVO — Verificar com equipe' :
+                             feriado.nivel === 'estadual' ? 'ESTADUAL GO — Verificar legislação' :
+                             feriado.nivel === 'municipal' ? 'MUNICIPAL GYN — Verificar legislação' : 'ATENÇÃO';
+            const corTip = feriado.nivel === 'obrigatorio' ? 'var(--red)' : 'var(--yellow)';
+            tip += '<span style="color:'+corTip+';font-weight:700">'+feriado.nome+'</span><br>';
+            tip += '<span style="font-size:10px;color:'+corTip+'">'+feriado.tipo+' — '+nivelTxt+'</span>';
+            if (ops) tip += '<hr style="border:none;border-top:1px solid var(--border);margin:4px 0">';
+          }
+          if (ops) {
+            tip += ops.map(o => {
+              const c = o.status==='Concluída'?'var(--green)':o.status==='Em Andamento'?'var(--yellow)':'var(--text-secondary)';
+              return '<span style="color:'+c+'">'+o.num+'</span> — '+o.status+'<br><span style="font-size:10px;color:var(--text-muted)">Op: '+o.operador+'</span>';
+            }).join('<hr style="border:none;border-top:1px solid var(--border);margin:4px 0">');
+          }
+          inner += '<div class="cal-tooltip">' + tip + '</div>';
           td.style.cursor = 'pointer';
           td.addEventListener('mouseenter', function() { const t = this.querySelector('.cal-tooltip'); if(t){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';t.style.pointerEvents='auto';} });
           td.addEventListener('mouseleave', function() { const t = this.querySelector('.cal-tooltip'); if(t){t.style.opacity='0';t.style.transform='translateX(-50%) translateY(6px)';t.style.pointerEvents='none';} });
@@ -2234,6 +2319,33 @@ function renderizarCalendario(mes, ano) {
     }
     corpo.appendChild(tr);
     if (dia > diasNoMes) break;
+  }
+
+  // Painel de alerta de feriados no mês
+  let alertaEl = document.getElementById('cal-alerta-feriados');
+  if (!alertaEl) {
+    alertaEl = document.createElement('div');
+    alertaEl.id = 'cal-alerta-feriados';
+    alertaEl.style.cssText = 'margin-top:12px;padding:10px 16px;border-radius:10px;font-size:12px;display:none';
+    document.getElementById('cal-tabela').parentElement.appendChild(alertaEl);
+  }
+  if (feriadosMes > 0) {
+    const feriadosLista = [];
+    for (let dd = 1; dd <= diasNoMes; dd++) {
+      const ds = ano + '-' + String(mes+1).padStart(2,'0') + '-' + String(dd).padStart(2,'0');
+      if (feriados[ds]) feriadosLista.push({ dia: dd, ...feriados[ds] });
+    }
+    alertaEl.style.display = 'block';
+    alertaEl.style.background = 'rgba(239,68,68,.08)';
+    alertaEl.style.border = '1px solid rgba(239,68,68,.3)';
+    alertaEl.innerHTML = '<div style="font-weight:700;color:var(--red);margin-bottom:6px">ATENÇÃO PRODUÇÃO — ' + feriadosMes + ' feriado(s) em ' + meses[mes] + '</div>' +
+      feriadosLista.map(f => {
+        const cor = f.nivel === 'obrigatorio' ? 'var(--red)' : f.nivel === 'estadual' ? 'var(--yellow)' : f.nivel === 'municipal' ? 'var(--blue)' : 'var(--text-muted)';
+        const icone = f.nivel === 'obrigatorio' ? '🔴' : f.nivel === 'facultativo' ? '🟡' : f.nivel === 'estadual' ? '🟠' : '🔵';
+        return '<div style="display:flex;align-items:center;gap:6px;padding:2px 0"><span>'+icone+'</span><span style="color:var(--text-primary);font-weight:600">Dia '+f.dia+'</span><span style="color:'+cor+'">'+f.nome+'</span><span style="font-size:10px;color:var(--text-muted)">('+f.tipo+')</span></div>';
+      }).join('');
+  } else {
+    alertaEl.style.display = 'none';
   }
 }
 // Auto-atualiza calendário a cada 30s
