@@ -284,6 +284,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
   <div class="nav-items">
   <div style="padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:6px">PRINCIPAL</div>
   <button class="active" onclick="abrirAba(0,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span><span class="nav-label">Home</span></button>
+  <button onclick="abrirAba(14,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l3-4h8l3 4v14"/><path d="M9 21v-6h6v6"/><path d="M3 7h18"/><rect x="9" y="10" width="2" height="2"/><rect x="13" y="10" width="2" height="2"/></svg></span><span class="nav-label">AGB Maquinação</span></button>
   <div class="nav-group">
     <div class="nav-group-header" onclick="toggleSubmenu(this)">
       <span style="display:flex;align-items:center;gap:14px">
@@ -1706,6 +1707,135 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
 
 </div>
 
+<!-- ============ ABA 14: AGB MAQUINAÇÃO ============ -->
+<div class="tab-content" id="tab14">
+
+  <!-- DADOS DA MAQUINAÇÃO -->
+  <div class="acc-section">
+    <div class="acc-header open" onclick="toggleAcc(this)">
+      <h3>1. DADOS DA MAQUINAÇÃO - AGB ARAGUARI</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body open">
+      <div class="dual-panel">
+        <div class="panel-main">
+          <div class="acc-body-inner">
+            <div class="info-box azul"><b>AGB Araguari - Sr. Carlos:</b> Re-beneficiamento do café cru. Limpeza, separação por peneira e separação por cor (PVA). O café chega em lotes separados por peneira em Goiânia.</div>
+            <div class="form-grid" style="margin-top:14px">
+              <div class="form-group campo-obrigatorio"><label>Nº da NF-e Compra</label><input type="text" id="agb-nfe-compra" placeholder="NF de compra do café" required></div>
+              <div class="form-group campo-obrigatorio"><label>Fornecedor Café Cru</label><input type="text" id="agb-fornecedor" placeholder="De quem comprou" required></div>
+              <div class="form-group"><label>Origem / Região</label><input type="text" id="agb-origem" placeholder="Ex: Patrocínio-MG"></div>
+              <div class="form-group campo-obrigatorio"><label>Data Envio p/ AGB</label><input type="date" id="agb-data-envio" required></div>
+              <div class="form-group"><label>Peso Total Enviado (kg)</label><input type="number" step="0.01" id="agb-peso-enviado" oninput="calcAGB()" placeholder="kg"></div>
+              <div class="form-group"><label>Custo Café Cru (R$/kg)</label><input type="number" step="0.01" id="agb-custo-kg" oninput="calcAGB()" placeholder="R$"></div>
+              <div class="form-group"><label>Custo Maquinação AGB (R$)</label><input type="number" step="0.01" id="agb-custo-maq" oninput="calcAGB()" placeholder="R$"></div>
+              <div class="form-group"><label>Custo Frete (R$)</label><input type="number" step="0.01" id="agb-custo-frete" oninput="calcAGB()" placeholder="R$"></div>
+              <div class="form-group"><label>Custo Total (R$)</label><input type="text" class="calc" id="agb-custo-total" readonly></div>
+              <div class="form-group"><label>Custo/kg Final (R$)</label><input type="text" class="calc" id="agb-custo-kg-final" readonly></div>
+              <div class="form-group"><label>NF-e AGB (serviço)</label><input type="text" id="agb-nfe-servico" placeholder="NF da maquinação"></div>
+              <div class="form-group"><label>Status</label><select id="agb-status"><option>Enviado p/ AGB</option><option>Em Maquinação</option><option>Pronto p/ Retirar</option><option>Em Transporte</option><option>Recebido Goiânia</option></select></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-crono">
+          <div class="crono-label">MAQUINAÇÃO</div>
+          <div class="crono-display" id="cv-crono-agb">00:00:00</div>
+          <div class="crono-btns">
+            <button class="btn btn-success" onclick="cvCronoIniciar('agb')">Iniciar</button>
+            <button class="btn btn-danger" onclick="cvCronoParar('agb')">Parar</button>
+          </div>
+          <div class="crono-fields">
+            <div class="form-group"><label>Início</label><input type="time" id="cv-agb-inicio" readonly></div>
+            <div class="form-group"><label>Fim</label><input type="time" id="cv-agb-fim" readonly></div>
+            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-agb-tempo" readonly></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTADO DA MAQUINAÇÃO POR PENEIRA -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>2. RESULTADO DA MAQUINAÇÃO - LOTES POR PENEIRA</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="info-box verde"><b>Resultado AGB:</b> Cada peneira separada vira um lote. Registre o peso de cada lote que saiu da maquinação.</div>
+        <div style="overflow-x:auto;margin-top:14px">
+          <table id="tbl-agb-lotes">
+            <thead><tr>
+              <th>#</th><th>Peneira</th><th>Peso Saída AGB (kg)</th><th>% do Total</th>
+              <th>Nº Sacas</th><th>Lote Interno</th><th>Obs</th>
+            </tr></thead>
+            <tbody></tbody>
+            <tfoot><tr class="total-row">
+              <td><b>TOTAL</b></td><td></td>
+              <td><input class="calc" id="agb-peso-total-saida" readonly></td>
+              <td><input class="calc" id="agb-pct-total" readonly></td>
+              <td><input class="calc" id="agb-sacas-total" readonly></td>
+              <td></td><td></td>
+            </tr></tfoot>
+          </table>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="addAGBLoteRow()">+ Adicionar Lote</button>
+          <button class="btn btn-success" onclick="addAGBTodasPeneiras()">+ Todas Peneiras (FP5/FP8/FP10/P10-12/P13-14/P15-16/P17-18/PVA)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERDA NA MAQUINAÇÃO -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>3. PERDA NA MAQUINAÇÃO</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="kpi-grid">
+          <div class="kpi-card azul">
+            <div class="kpi-header"><span class="label">Peso Enviado</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="agb-kpi-enviado">0</span><span class="unit">kg</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+          </div>
+          <div class="kpi-card verde">
+            <div class="kpi-header"><span class="label">Peso Recebido</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="agb-kpi-recebido">0</span><span class="unit">kg</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" id="agb-kpi-rec-bar" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card vermelho">
+            <div class="kpi-header"><span class="label">Perda Maquinação</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="agb-kpi-perda">0</span><span class="unit">kg</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" id="agb-kpi-perda-bar" style="width:0%"></div></div>
+          </div>
+          <div class="kpi-card roxo">
+            <div class="kpi-header"><span class="label">Custo Total</span><span class="kpi-dot"></span></div>
+            <div class="kpi-body"><div><span class="value" id="agb-kpi-custo">0,00</span><span class="unit">R$</span></div></div>
+            <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OBSERVAÇÕES -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>4. OBSERVAÇÕES DA MAQUINAÇÃO</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <textarea id="agb-obs" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg-secondary);color:var(--text-primary);resize:vertical" placeholder="Observações sobre a maquinação, qualidade, problemas..."></textarea>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 <div class="toast" id="toast">Dados salvos com sucesso!</div>
 
 <script>
@@ -2471,7 +2601,8 @@ let cvLoteCount = 0;
 const cvCronos = {
   desc: { timer: null, seg: 0, rodando: false, display: 'cv-crono-display', inicio: 'cv-desc-inicio', fim: 'cv-desc-fim', tempo: 'cv-desc-tempo' },
   pesagem: { timer: null, seg: 0, rodando: false, display: 'cv-crono-pesagem', inicio: 'cv-pesagem-inicio', fim: 'cv-pesagem-fim', tempo: 'cv-pesagem-tempo' },
-  conf: { timer: null, seg: 0, rodando: false, display: 'cv-crono-conf', inicio: 'cv-conf-inicio', fim: 'cv-conf-fim', tempo: 'cv-conf-tempo' }
+  conf: { timer: null, seg: 0, rodando: false, display: 'cv-crono-conf', inicio: 'cv-conf-inicio', fim: 'cv-conf-fim', tempo: 'cv-conf-tempo' },
+  agb: { timer: null, seg: 0, rodando: false, display: 'cv-crono-agb', inicio: 'cv-agb-inicio', fim: 'cv-agb-fim', tempo: 'cv-agb-tempo' }
 };
 
 function addCafeVerdeRow(peneira) {
@@ -2629,6 +2760,68 @@ function cvCronoParar(tipo) {
     setText('cv-kpi-tempo', Math.round(c.seg / 60));
     setBar('cv-kpi-tempo-bar', Math.min(c.seg / 60 / 120 * 100, 100));
   }
+}
+
+// ============ AGB MAQUINAÇÃO ============
+function calcAGB() {
+  const enviado = parseFloat(document.getElementById('agb-peso-enviado').value) || 0;
+  const custoKg = parseFloat(document.getElementById('agb-custo-kg').value) || 0;
+  const custoMaq = parseFloat(document.getElementById('agb-custo-maq').value) || 0;
+  const custoFrete = parseFloat(document.getElementById('agb-custo-frete').value) || 0;
+  const custoTotal = (enviado * custoKg) + custoMaq + custoFrete;
+  const custoKgFinal = enviado > 0 ? custoTotal / enviado : 0;
+  document.getElementById('agb-custo-total').value = custoTotal > 0 ? fmtBRL(custoTotal) : '';
+  document.getElementById('agb-custo-kg-final').value = custoKgFinal > 0 ? fmtBRL(custoKgFinal) : '';
+  setText('agb-kpi-enviado', fmt(enviado));
+  setText('agb-kpi-custo', fmtBRL(custoTotal));
+  calcAGBLotes();
+}
+
+let agbLoteCount = 0;
+function addAGBLoteRow(peneira) {
+  agbLoteCount++;
+  const tbody = document.querySelector('#tbl-agb-lotes tbody');
+  const tr = document.createElement('tr');
+  const pv = peneira || '';
+  tr.innerHTML = `
+    <td><b>${agbLoteCount}</b></td>
+    <td><select class="agb-pen" onchange="calcAGBLotes()">
+      <option value="">Selecione...</option>
+      <option ${pv==='FP5'?'selected':''}>FP5</option><option ${pv==='FP8'?'selected':''}>FP8</option>
+      <option ${pv==='FP10'?'selected':''}>FP10</option><option ${pv==='P10/12'?'selected':''}>P10/12</option>
+      <option ${pv==='P13/14'?'selected':''}>P13/14</option><option ${pv==='P15/16'?'selected':''}>P15/16</option>
+      <option ${pv==='P17/18'?'selected':''}>P17/18</option><option ${pv==='PVA'?'selected':''}>PVA</option>
+    </select></td>
+    <td><input type="number" step="0.01" class="agb-peso" oninput="calcAGBLotes()" placeholder="kg"></td>
+    <td><input class="calc agb-pct" readonly></td>
+    <td><input type="number" class="agb-sacas" oninput="calcAGBLotes()" placeholder="0"></td>
+    <td><input type="text" value="AGB-${String(agbLoteCount).padStart(3,'0')}"></td>
+    <td><input type="text" placeholder="Obs"></td>`;
+  tbody.appendChild(tr);
+}
+
+function addAGBTodasPeneiras() {
+  ['FP5','FP8','FP10','P10/12','P13/14','P15/16','P17/18','PVA'].forEach(p => addAGBLoteRow(p));
+}
+
+function calcAGBLotes() {
+  let tPeso = 0, tSacas = 0;
+  const enviado = parseFloat(document.getElementById('agb-peso-enviado').value) || 0;
+  document.querySelectorAll('#tbl-agb-lotes tbody tr').forEach(tr => {
+    const peso = parseFloat(tr.querySelector('.agb-peso')?.value) || 0;
+    const sacas = parseFloat(tr.querySelector('.agb-sacas')?.value) || 0;
+    tPeso += peso; tSacas += sacas;
+    const pctEl = tr.querySelector('.agb-pct');
+    if (pctEl) pctEl.value = enviado > 0 && peso > 0 ? fmt(peso / enviado * 100, 1) + '%' : '';
+  });
+  document.getElementById('agb-peso-total-saida').value = tPeso > 0 ? fmt(tPeso) : '';
+  document.getElementById('agb-pct-total').value = enviado > 0 && tPeso > 0 ? fmt(tPeso / enviado * 100, 1) + '%' : '';
+  document.getElementById('agb-sacas-total').value = tSacas > 0 ? tSacas : '';
+  const perda = enviado - tPeso;
+  setText('agb-kpi-recebido', fmt(tPeso));
+  setText('agb-kpi-perda', enviado > 0 && tPeso > 0 ? fmt(perda) : '0');
+  setBar('agb-kpi-rec-bar', enviado > 0 ? tPeso / enviado * 100 : 0);
+  setBar('agb-kpi-perda-bar', enviado > 0 && perda > 0 ? perda / enviado * 100 : 0);
 }
 
 // ============ SELOS E CERTIFICADOS ============
@@ -2998,6 +3191,20 @@ function salvarDados(silencioso) {
     seloPuro: coletarDadosTabela('tbl-selo-puro'),
     laudos: coletarDadosTabela('tbl-laudos'),
     docsReg: coletarDadosTabela('tbl-docs-reg'),
+    agb: {
+      nfeCompra: document.getElementById('agb-nfe-compra').value,
+      fornecedor: document.getElementById('agb-fornecedor').value,
+      origem: document.getElementById('agb-origem').value,
+      dataEnvio: document.getElementById('agb-data-envio').value,
+      pesoEnviado: document.getElementById('agb-peso-enviado').value,
+      custoKg: document.getElementById('agb-custo-kg').value,
+      custoMaq: document.getElementById('agb-custo-maq').value,
+      custoFrete: document.getElementById('agb-custo-frete').value,
+      nfeServico: document.getElementById('agb-nfe-servico').value,
+      status: document.getElementById('agb-status').value,
+      obs: document.getElementById('agb-obs').value,
+      lotes: coletarDadosTabela('tbl-agb-lotes'),
+    },
     estoqueEmb: coletarDadosTabela('tbl-estoque-emb'),
     estoqueLenha: coletarDadosTabela('tbl-estoque-lenha'),
     cafeVerde: {
@@ -3116,6 +3323,22 @@ function carregarDados() {
     if (d.seloPuro) restaurarDadosTabela('tbl-selo-puro', d.seloPuro, addSeloPuroRow);
     if (d.laudos) restaurarDadosTabela('tbl-laudos', d.laudos, addLaudoRow);
     if (d.docsReg) restaurarDadosTabela('tbl-docs-reg', d.docsReg, addDocRegRow);
+    if (d.agb) {
+      const a = d.agb;
+      document.getElementById('agb-nfe-compra').value = a.nfeCompra || '';
+      document.getElementById('agb-fornecedor').value = a.fornecedor || '';
+      document.getElementById('agb-origem').value = a.origem || '';
+      document.getElementById('agb-data-envio').value = a.dataEnvio || '';
+      document.getElementById('agb-peso-enviado').value = a.pesoEnviado || '';
+      document.getElementById('agb-custo-kg').value = a.custoKg || '';
+      document.getElementById('agb-custo-maq').value = a.custoMaq || '';
+      document.getElementById('agb-custo-frete').value = a.custoFrete || '';
+      document.getElementById('agb-nfe-servico').value = a.nfeServico || '';
+      document.getElementById('agb-status').value = a.status || 'Enviado p/ AGB';
+      document.getElementById('agb-obs').value = a.obs || '';
+      if (a.lotes) restaurarDadosTabela('tbl-agb-lotes', a.lotes, addAGBLoteRow);
+      calcAGB();
+    }
     if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
     if (d.estoqueLenha) {
       restaurarDadosTabela('tbl-estoque-lenha', d.estoqueLenha, addEstoqueLenhaRow);
