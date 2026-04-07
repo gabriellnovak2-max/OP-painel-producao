@@ -1527,19 +1527,16 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
     </div>
     <div class="acc-body open">
       <div class="acc-body-inner">
-        <div class="info-box verde"><b>Cada cliente tem sua ficha:</b> define marca, blend%, Agtron, tipo embalagem, granulometria, perfil de torra. A OP puxa esses dados automaticamente.</div>
+        <div class="info-box verde"><b>Cada cliente tem sua ficha:</b> define marca, Agtron, tipo embalagem, granulometria, perfil de torra. A OP puxa esses dados automaticamente.</div>
         <div style="overflow-x:auto;margin-top:14px">
           <table id="tbl-fichas-produto">
             <thead><tr>
               <th>#</th><th>Cliente / Marca</th><th>Produto</th><th>Tipo Embalagem</th>
-              <th>Gramatura (g)</th><th>Ponto Torra (Agtron)</th><th>Granulometria</th>
-              <th>FP5 %</th><th>FP8 %</th><th>FP10 %</th>
-              <th>P10/12 %</th><th>P13/14 %</th><th>P15/16 %</th><th>P17/18 %</th>
-              <th>PVA %</th><th>Total</th><th>Obs</th>
+              <th>Gramatura (g)</th><th>Ponto Torra (Agtron)</th><th>Granulometria</th><th>Obs</th>
             </tr></thead>
             <tbody></tbody>
             <tfoot><tr class="total-row">
-              <td colspan="14" style="text-align:left;padding-left:18px"><b>Total de fichas: <span id="fichas-count">0</span></b></td>
+              <td colspan="8" style="text-align:left;padding-left:18px"><b>Total de fichas: <span id="fichas-count">0</span></b></td>
             </tr></tfoot>
           </table>
         </div>
@@ -2315,27 +2312,9 @@ function addFichaProdutoRow() {
     <td><select><option value="250">250g</option><option value="500" selected>500g</option><option value="1000">1000g</option></select></td>
     <td><input type="number" class="ficha-agtron" placeholder="25-95"></td>
     <td><select><option>Grossa (1.2-1.4)</option><option>Média (1.5-1.6)</option><option>Fina (Espresso)</option><option>N/A (Grão)</option></select></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input type="number" step="0.1" class="ficha-bp" oninput="calcFichaBlend(this)" placeholder="%" style="width:50px"></td>
-    <td><input class="calc ficha-blend-total" readonly></td>
     <td><input type="text" placeholder="Obs"></td>`;
   tbody.appendChild(tr);
   document.getElementById('fichas-count').textContent = fichaCount;
-}
-function calcFichaBlend(el) {
-  const tr = el.closest('tr');
-  const pcts = tr.querySelectorAll('.ficha-bp');
-  let total = 0;
-  pcts.forEach(p => { total += parseFloat(p.value) || 0; });
-  const totalEl = tr.querySelector('.ficha-blend-total');
-  totalEl.value = total > 0 ? fmt(total, 1) + '%' : '';
-  totalEl.style.color = Math.abs(total - 100) < 0.1 ? 'var(--green)' : total > 0 ? 'var(--red)' : '';
 }
 
 let perfilTorraCount = 0;
