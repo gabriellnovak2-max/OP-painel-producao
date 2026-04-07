@@ -3362,11 +3362,42 @@ function carregarDados() {
       document.getElementById('agb-custo-maq').value = a.custoMaq || '';
       document.getElementById('agb-status').value = a.status || 'Enviado p/ AGB';
       document.getElementById('agb-obs').value = a.obs || '';
-      if (a.lotes) {
-        // Limpa linhas padrão e restaura as salvas
-        document.getElementById('agb-lotes-body').innerHTML = '';
-        agbLoteCount = 0;
-        restaurarDadosTabela('tbl-agb-lotes', a.lotes, function(){ addAGBLoteRow(''); });
+      if (a.lotes && a.lotes.length) {
+        // Restaura por peneira: mantém ordem correta do initAGBLotes e só preenche valores
+        // Inputs por linha: [0]=loteAGB, [1]=loteTorr, [2]=peneira, [3]=peso, [4]=sacas
+        a.lotes.forEach(row => {
+          const pen = row[2]?.value || '';
+          const existingTr = Array.from(document.querySelectorAll('#agb-lotes-body tr')).find(tr => {
+            const pi = tr.querySelector('.agb-pen');
+            return pi && pi.value === pen;
+          });
+          if (existingTr) {
+            const la = existingTr.querySelector('.agb-lote-agb');
+            const lt = existingTr.querySelector('.agb-lote-torr');
+            const pe = existingTr.querySelector('.agb-peso');
+            const sc = existingTr.querySelector('.agb-sacas');
+            if (la) la.value = row[0]?.value || '';
+            if (lt) lt.value = row[1]?.value || '';
+            if (pe) pe.value = row[3]?.value || '';
+            if (sc) sc.value = row[4]?.value || '';
+          } else if (!AGB_PENEIRAS.includes(pen) || pen === '') {
+            // Linha extra (Outros personalizado)
+            addAGBLoteRow('Outros');
+            const newTr = document.querySelector('#agb-lotes-body tr:last-child');
+            if (newTr) {
+              const pi = newTr.querySelector('.agb-pen');
+              const la = newTr.querySelector('.agb-lote-agb');
+              const lt = newTr.querySelector('.agb-lote-torr');
+              const pe = newTr.querySelector('.agb-peso');
+              const sc = newTr.querySelector('.agb-sacas');
+              if (pi) pi.value = pen;
+              if (la) la.value = row[0]?.value || '';
+              if (lt) lt.value = row[1]?.value || '';
+              if (pe) pe.value = row[3]?.value || '';
+              if (sc) sc.value = row[4]?.value || '';
+            }
+          }
+        });
       }
       calcAGB();
     }
