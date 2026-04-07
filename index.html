@@ -847,9 +847,92 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
       <div class="btn-group"><button class="btn btn-primary" onclick="addBlendCompRow()">+ Adicionar Componente</button></div>
     </div>
   </div>
-</div>
 
-<!-- ============ ABA 5: MOAGEM E EMBALAGEM ============ -->
+  <!-- CALCULADORA INTERATIVA DE BLEND — SIMULADOR MAPA -->
+  <div class="section" style="border-left:4px solid var(--purple);margin-top:6px">
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:linear-gradient(135deg,rgba(167,139,250,.15),rgba(236,72,153,.08))">
+      <span style="color:var(--purple);display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="12" y1="10" x2="14" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="12" y1="14" x2="14" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+        SIMULADOR DE BLEND — IMPUREZA MAPA
+      </span>
+      <span style="font-size:10px;color:var(--text-secondary);font-weight:400">Limite MAPA: &lt; 1% impureza | Simule antes de blendar</span>
+    </div>
+    <div class="section-body">
+      <div class="info-box roxo" style="margin-bottom:14px;border-left-color:var(--purple);background:rgba(167,139,250,.06)">
+        <b>Simule o blend antes de produzir:</b> Adicione cada café com sua marca, embalagem, quantidade e % impureza do laudo SENAI. O simulador calcula a impureza ponderada e mostra se o blend vai passar na regra do MAPA (&lt; 1%). Use para decidir quais cafés misturar e em qual proporção.
+      </div>
+
+      <!-- Resultado destaque -->
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+        <div style="flex:1;min-width:160px;padding:14px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Peso Total Blend</div>
+          <div style="font-size:26px;font-weight:800;color:var(--teal);margin-top:4px" id="bld-calc-peso">0 kg</div>
+        </div>
+        <div style="flex:1;min-width:160px;padding:14px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Impureza Ponderada</div>
+          <div style="font-size:26px;font-weight:800;color:var(--yellow);margin-top:4px" id="bld-calc-imp">0,000 %</div>
+        </div>
+        <div style="flex:1;min-width:160px;padding:14px;border-radius:12px;border:2px solid var(--border);text-align:center" id="bld-calc-status-box">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Status MAPA</div>
+          <div style="font-size:20px;font-weight:800;margin-top:4px" id="bld-calc-status">AGUARDANDO</div>
+          <div style="font-size:11px;margin-top:2px" id="bld-calc-detalhe">Preencha os cafés abaixo</div>
+        </div>
+        <div style="flex:1;min-width:160px;padding:14px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Proporção Maior Café</div>
+          <div style="font-size:16px;font-weight:800;color:var(--cyan);margin-top:4px" id="bld-calc-maior">--</div>
+          <div style="font-size:10px;color:var(--text-muted)" id="bld-calc-maior-pct">--</div>
+        </div>
+      </div>
+
+      <!-- Barra visual -->
+      <div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--text-muted);margin-bottom:4px">
+          <span>0%</span>
+          <span style="color:var(--green)">&lt; 0.5% Excelente</span>
+          <span style="color:var(--yellow)">0.5-0.9% Atenção</span>
+          <span style="color:var(--red)">LIMITE 1%</span>
+          <span>2%+</span>
+        </div>
+        <div style="height:14px;background:var(--bg-secondary);border-radius:7px;overflow:hidden;position:relative;border:1px solid var(--border)">
+          <div style="position:absolute;left:50%;top:0;bottom:0;width:2px;background:rgba(239,68,68,.5)"></div>
+          <div id="bld-calc-barra" style="height:100%;width:0%;background:var(--green);border-radius:7px;transition:all .4s ease"></div>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div style="overflow-x:auto">
+        <table id="tbl-blend-calc">
+          <thead><tr>
+            <th style="width:35px"># / X</th>
+            <th>Marca / Café</th>
+            <th>Peneira / Tipo</th>
+            <th>Embalagem</th>
+            <th>Fardo / Caixa</th>
+            <th>Qtd (un)</th>
+            <th>Qtd Total (kg)</th>
+            <th>% do Blend</th>
+            <th>Impureza Laudo (%)</th>
+            <th>Impureza (kg)</th>
+          </tr></thead>
+          <tbody id="bld-calc-body"></tbody>
+          <tfoot><tr class="total-row">
+            <td colspan="6"><b>TOTAL BLEND</b></td>
+            <td><b id="bld-calc-ft-kg">0</b></td>
+            <td><b id="bld-calc-ft-pct-blend">100%</b></td>
+            <td><b id="bld-calc-ft-imp">0,000 %</b></td>
+            <td><b id="bld-calc-ft-impkg">0,000</b></td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <div class="btn-group" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="addBlendCalcRow()">+ Adicionar Café</button>
+        <button class="btn" style="background:var(--bg-secondary)" onclick="limparBlendCalc()">Limpar Tudo</button>
+        <button class="btn" style="background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3)" onclick="copiarBlendParaComp()" title="Copia cafés do simulador para a Composição do Blend acima">Aplicar na Composição</button>
+      </div>
+    </div>
+  </div>
+
+</div>
 <div class="tab-content" id="tab5">
   <div class="section">
     <div class="section-title">MOAGEM</div>
@@ -3342,6 +3425,7 @@ function salvarDados(silencioso) {
     silos: coletarDadosTabela('tbl-silos'),
     movSilos: coletarDadosTabela('tbl-mov-silos'),
     blendComp: coletarDadosTabela('tbl-blend-comp'),
+    blendCalc: coletarDadosTabela('tbl-blend-calc'),
     blendagem: {
       num: document.getElementById('bld-num').value,
       data: document.getElementById('bld-data').value,
@@ -3439,6 +3523,7 @@ function carregarDados() {
     if (d.bateladas) restaurarDadosTabela('tbl-bateladas', d.bateladas, addBateladaRow);
     if (d.movSilos) restaurarDadosTabela('tbl-mov-silos', d.movSilos, addMovSiloRow);
     if (d.blendComp) restaurarDadosTabela('tbl-blend-comp', d.blendComp, addBlendCompRow);
+    if (d.blendCalc) { restaurarDadosTabela('tbl-blend-calc', d.blendCalc, addBlendCalcRow); calcBlendSimulacao(); }
     if (d.blendagem) {
       document.getElementById('bld-num').value = d.blendagem.num || '';
       document.getElementById('bld-data').value = d.blendagem.data || '';
@@ -3842,6 +3927,173 @@ function fecharDetalheHist() {
   document.getElementById('hist-detalhe-section').style.display = 'none';
 }
 
+// ============ SIMULADOR DE BLEND — ABA BLENDAGEM ============
+let blendCalcCount = 0;
+
+function addBlendCalcRow() {
+  blendCalcCount++;
+  const tbody = document.getElementById('bld-calc-body');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="position:relative"><b class="bc-num">${blendCalcCount}</b><button onclick="removeBlendCalcRow(this)" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;position:absolute;top:1px;right:2px;opacity:.5" title="Excluir" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">x</button></td>
+    <td><input type="text" class="bc-marca" placeholder="Marca / Café"></td>
+    <td><select class="bc-peneira" style="min-width:90px">
+      <option value="">Selecione...</option>
+      <option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option>
+      <option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option>
+      <option>Blend Mix</option><option>Outro</option>
+    </select></td>
+    <td><select class="bc-embalagem" style="min-width:100px">
+      <option value="">Selecione...</option>
+      <option value="Almofada 250g">Almofada 250g</option>
+      <option value="Almofada 500g">Almofada 500g</option>
+      <option value="Vácuo 500g">Vácuo 500g</option>
+      <option value="Grãos 500g">Grãos 500g</option>
+      <option value="Grãos 1kg">Grãos 1kg</option>
+      <option value="A granel (kg)">A granel (kg)</option>
+    </select></td>
+    <td><select class="bc-fardo" style="min-width:90px" onchange="calcBlendCalcKg(this.closest('tr'))">
+      <option value="">Avulso (kg)</option>
+      <option value="5">Fardo 5kg</option>
+      <option value="10">Caixa 10kg</option>
+      <option value="30">Saca 30kg</option>
+      <option value="50">Saca 50kg</option>
+    </select></td>
+    <td><input type="number" step="1" min="0" class="bc-qtd" placeholder="Qtd" oninput="calcBlendCalcKg(this.closest('tr'))"></td>
+    <td><input type="number" step="0.01" class="bc-kg" placeholder="kg" oninput="calcBlendSimulacao()"></td>
+    <td><input type="text" class="bc-pct-blend calc" readonly></td>
+    <td><input type="number" step="0.001" min="0" class="bc-imp" placeholder="%" oninput="calcBlendSimulacao()"></td>
+    <td><input type="text" class="bc-impkg calc" readonly></td>`;
+  tbody.appendChild(tr);
+}
+
+function removeBlendCalcRow(btn) {
+  btn.closest('tr').remove();
+  document.querySelectorAll('#bld-calc-body tr').forEach((tr, i) => {
+    const num = tr.querySelector('.bc-num');
+    if (num) num.textContent = i + 1;
+  });
+  blendCalcCount = document.querySelectorAll('#bld-calc-body tr').length;
+  calcBlendSimulacao();
+}
+
+function calcBlendCalcKg(tr) {
+  const pesoFardo = parseFloat(tr.querySelector('.bc-fardo').value) || 0;
+  const qtd = parseFloat(tr.querySelector('.bc-qtd').value) || 0;
+  const kgInput = tr.querySelector('.bc-kg');
+  if (pesoFardo > 0 && qtd > 0) {
+    kgInput.value = (pesoFardo * qtd).toFixed(2);
+    kgInput.readOnly = true;
+    kgInput.style.opacity = '.7';
+  } else if (pesoFardo === 0) {
+    kgInput.readOnly = false;
+    kgInput.style.opacity = '1';
+  }
+  calcBlendSimulacao();
+}
+
+function calcBlendSimulacao() {
+  let totalKg = 0, somaImpKg = 0;
+  let maiorKg = 0, maiorMarca = '--';
+  const rows = document.querySelectorAll('#bld-calc-body tr');
+
+  // Primeira passada: somar total kg
+  rows.forEach(tr => {
+    totalKg += parseFloat(tr.querySelector('.bc-kg')?.value) || 0;
+  });
+
+  // Segunda passada: calcular % blend, impureza kg
+  rows.forEach(tr => {
+    const kg = parseFloat(tr.querySelector('.bc-kg')?.value) || 0;
+    const imp = parseFloat(tr.querySelector('.bc-imp')?.value) || 0;
+    const impKg = kg * (imp / 100);
+    const pctBlend = totalKg > 0 ? (kg / totalKg * 100) : 0;
+    const marca = tr.querySelector('.bc-marca')?.value || '';
+
+    tr.querySelector('.bc-pct-blend').value = pctBlend > 0 ? pctBlend.toFixed(1) + '%' : '';
+    tr.querySelector('.bc-impkg').value = impKg > 0 ? impKg.toFixed(3) : '';
+    somaImpKg += impKg;
+    if (kg > maiorKg) { maiorKg = kg; maiorMarca = marca || 'Café ' + (Array.from(rows).indexOf(tr) + 1); }
+  });
+
+  const media = totalKg > 0 ? (somaImpKg / totalKg) * 100 : 0;
+
+  // KPIs
+  document.getElementById('bld-calc-peso').textContent = totalKg.toFixed(1) + ' kg';
+  document.getElementById('bld-calc-imp').textContent = media.toFixed(3) + ' %';
+
+  // Maior café
+  document.getElementById('bld-calc-maior').textContent = maiorMarca;
+  document.getElementById('bld-calc-maior-pct').textContent = totalKg > 0 ? (maiorKg / totalKg * 100).toFixed(1) + '% do blend (' + maiorKg.toFixed(1) + ' kg)' : '--';
+
+  // Footer
+  document.getElementById('bld-calc-ft-kg').textContent = totalKg.toFixed(1);
+  document.getElementById('bld-calc-ft-pct-blend').textContent = totalKg > 0 ? '100%' : '0%';
+  document.getElementById('bld-calc-ft-imp').textContent = media.toFixed(3) + ' %';
+  document.getElementById('bld-calc-ft-impkg').textContent = somaImpKg.toFixed(3);
+
+  // Barra
+  const barra = document.getElementById('bld-calc-barra');
+  barra.style.width = Math.min((media / 2) * 100, 100) + '%';
+
+  // Status
+  const box = document.getElementById('bld-calc-status-box');
+  const txt = document.getElementById('bld-calc-status');
+  const det = document.getElementById('bld-calc-detalhe');
+  const impEl = document.getElementById('bld-calc-imp');
+
+  if (totalKg === 0) {
+    box.style.borderColor = 'var(--border)'; box.style.background = 'var(--bg-secondary)';
+    txt.textContent = 'AGUARDANDO'; txt.style.color = 'var(--text-muted)';
+    det.textContent = 'Preencha os cafés abaixo'; det.style.color = 'var(--text-muted)';
+    impEl.style.color = 'var(--yellow)'; barra.style.background = 'var(--green)'; barra.style.width = '0%';
+  } else if (media < 0.5) {
+    box.style.borderColor = 'var(--green)'; box.style.background = 'rgba(16,185,129,.08)';
+    txt.textContent = 'APROVADO'; txt.style.color = 'var(--green)';
+    det.textContent = 'Excelente! Bem abaixo de 1%'; det.style.color = 'var(--green)';
+    impEl.style.color = 'var(--green)'; barra.style.background = 'var(--green)';
+  } else if (media < 1.0) {
+    box.style.borderColor = 'var(--yellow)'; box.style.background = 'rgba(245,158,11,.08)';
+    txt.textContent = 'APROVADO'; txt.style.color = 'var(--yellow)';
+    det.textContent = 'Margem: ' + (1.0 - media).toFixed(3) + '% até o limite'; det.style.color = 'var(--yellow)';
+    impEl.style.color = 'var(--yellow)'; barra.style.background = 'linear-gradient(90deg,var(--green),var(--yellow))';
+  } else {
+    box.style.borderColor = 'var(--red)'; box.style.background = 'rgba(239,68,68,.08)';
+    txt.textContent = 'REPROVADO'; txt.style.color = 'var(--red)';
+    det.textContent = 'Excesso: ' + (media - 1.0).toFixed(3) + '%. Adicione café com menos impureza.'; det.style.color = 'var(--red)';
+    impEl.style.color = 'var(--red)'; barra.style.background = 'linear-gradient(90deg,var(--yellow),var(--red))';
+  }
+}
+
+function limparBlendCalc() {
+  if (!confirm('Limpar todos os cafés do simulador?')) return;
+  document.getElementById('bld-calc-body').innerHTML = '';
+  blendCalcCount = 0;
+  calcBlendSimulacao();
+}
+
+function copiarBlendParaComp() {
+  const rows = document.querySelectorAll('#bld-calc-body tr');
+  if (!rows.length) { showToast('Nenhum café no simulador para copiar.'); return; }
+  if (!confirm('Copiar os cafés do simulador para a Composição do Blend acima? Linhas existentes serão mantidas e novas adicionadas.')) return;
+  rows.forEach(tr => {
+    const marca = tr.querySelector('.bc-marca')?.value || '';
+    const kg = tr.querySelector('.bc-kg')?.value || '';
+    const lote = tr.querySelector('.bc-peneira')?.value || '';
+    addBlendCompRow();
+    const newTr = document.querySelector('#tbl-blend-comp tbody tr:last-child');
+    if (newTr) {
+      const inputs = newTr.querySelectorAll('input, select');
+      // [0]=silo select, [1]=tipo café, [2]=peso, [3]=%, [4]=lote
+      if (inputs[1]) inputs[1].value = marca;
+      if (inputs[2]) inputs[2].value = kg;
+      if (inputs[4]) inputs[4].value = lote;
+    }
+  });
+  calcBlendComp();
+  showToast('Cafés copiados para a Composição do Blend!');
+}
+
 // ============ CALCULADORA DE IMPUREZA — BLEND MAPA ============
 let calcImpCount = 0;
 
@@ -4039,6 +4291,7 @@ function init() {
   for (let i = 0; i < 3; i++) addBateladaRow();
   for (let i = 0; i < 3; i++) addBlendCompRow();
   initAGBLotes();
+  for (let i = 0; i < 3; i++) addBlendCalcRow();
   for (let i = 0; i < 3; i++) addCalcImpRow();
   carregarDados();
   inicializarGraficos();
