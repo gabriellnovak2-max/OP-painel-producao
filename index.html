@@ -324,6 +324,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
   <button onclick="abrirAba(7,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="nav-label">Quebra e Fiscal</span></button>
   <button onclick="abrirAba(8,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="nav-label">Cadastros</span></button>
   <button onclick="abrirAba(13,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="nav-label">Selos e Certificados</span></button>
+  <button onclick="abrirAba(15,this);renderizarHistorico()"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/><path d="M3.05 11a9 9 0 0117.9 0"/></svg></span><span class="nav-label">Histórico de OPs</span></button>
   </div>
 </nav>
 
@@ -362,7 +363,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
         <button class="btn btn-primary" onclick="novaOP()" style="padding:18px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:14px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nova OP</button>
         <button class="btn btn-success" onclick="abrirAba(1,document.querySelectorAll('.nav button')[1])" style="padding:18px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:14px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>Ordem de Produção</button>
         <button class="btn" style="padding:18px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#0d1117" onclick="abrirAba(3,document.querySelectorAll('.nav button')[3])"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="14" rx="1"/><path d="M9 16l3 6 3-6"/></svg>Ver Silos</button>
-        <button class="btn" style="padding:18px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff" onclick="listarHistorico()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>Histórico OPs</button>
+        <button class="btn" style="padding:18px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:8px;border-radius:14px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff" onclick="listarHistorico()"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/></svg>Histórico OPs</button>
       </div>
     </div>
   </div>
@@ -1847,6 +1848,76 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
     </div>
   </div>
 
+</div>
+
+<!-- ============ ABA 15: HISTÓRICO DE OPs ============ -->
+<div class="tab-content" id="tab15">
+  <div class="section" style="border-left:4px solid var(--purple)">
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <span>HISTÓRICO DE ORDENS DE PRODUÇÃO</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="hist-busca" placeholder="Buscar OP, data, operador..." oninput="filtrarHistorico()" style="padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg-secondary);color:var(--text-primary);width:220px">
+        <select id="hist-filtro-status" onchange="filtrarHistorico()" style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:var(--bg-secondary);color:var(--text-primary)">
+          <option value="">Todos Status</option>
+          <option value="Concluída">Concluída</option>
+          <option value="Em Andamento">Em Andamento</option>
+          <option value="Planejada">Planejada</option>
+          <option value="Cancelada">Cancelada</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-body">
+      <!-- KPIs do histórico -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px">
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:10px;border:1px solid var(--border);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Total OPs</div>
+          <div style="font-size:24px;font-weight:800;color:var(--teal)" id="hist-total">0</div>
+        </div>
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:10px;border:1px solid var(--border);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Concluídas</div>
+          <div style="font-size:24px;font-weight:800;color:var(--green)" id="hist-concluidas">0</div>
+        </div>
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:10px;border:1px solid var(--border);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Em Andamento</div>
+          <div style="font-size:24px;font-weight:800;color:var(--yellow)" id="hist-andamento">0</div>
+        </div>
+        <div style="padding:14px;background:var(--bg-secondary);border-radius:10px;border:1px solid var(--border);text-align:center">
+          <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Última OP</div>
+          <div style="font-size:14px;font-weight:700;color:var(--purple)" id="hist-ultima">--</div>
+        </div>
+      </div>
+      <!-- Tabela do histórico -->
+      <div style="overflow-x:auto">
+        <table id="tbl-historico">
+          <thead><tr>
+            <th style="width:40px">#</th>
+            <th>Nº OP</th>
+            <th>Data</th>
+            <th>Operador</th>
+            <th>Status</th>
+            <th>Bateladas</th>
+            <th>Salvo em</th>
+            <th style="width:140px">Ações</th>
+          </tr></thead>
+          <tbody id="hist-corpo"></tbody>
+        </table>
+      </div>
+      <div id="hist-vazio" style="text-align:center;padding:40px 20px;color:var(--text-muted);display:none">
+        <div style="font-size:40px;margin-bottom:10px;opacity:.4">📋</div>
+        <div style="font-size:14px;font-weight:600">Nenhuma OP no histórico</div>
+        <div style="font-size:12px;margin-top:4px">Salve uma OP usando o botão "Salvar no Histórico" no cabeçalho.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETALHE DA OP SELECIONADA -->
+  <div class="section" id="hist-detalhe-section" style="display:none;border-left:4px solid var(--teal)">
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span id="hist-detalhe-titulo">DETALHES DA OP</span>
+      <button class="btn" style="padding:5px 14px;font-size:11px;background:var(--bg-secondary)" onclick="fecharDetalheHist()">Fechar</button>
+    </div>
+    <div class="section-body" id="hist-detalhe-corpo"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast">Dados salvos com sucesso!</div>
@@ -3428,7 +3499,13 @@ function carregarDados() {
 }
 
 function novaOP() {
-  if (confirm('Iniciar uma nova Ordem de Produção? Os dados atuais serão limpos.')) {
+  const numAtual = document.getElementById('op-numero').value;
+  let msg = 'Iniciar uma nova Ordem de Produção?';
+  if (numAtual) msg += '\n\nA OP atual (' + numAtual + ') será limpa.';
+  msg += '\n\nDeseja salvar a OP atual no histórico antes?';
+  const salvar = numAtual ? confirm(msg) : false;
+  if (salvar) salvarOPnoHistorico();
+  if (!numAtual || confirm('Confirma limpar tudo e iniciar nova OP?')) {
     localStorage.removeItem('painel_torrefacao');
     location.reload();
   }
@@ -3450,39 +3527,241 @@ document.addEventListener('visibilitychange', function() {
 // ============ HISTÓRICO DE OPs ============
 function salvarOPnoHistorico() {
   const numOP = document.getElementById('op-numero').value;
-  if (!numOP) { alert('Preencha o número da OP antes de salvar no histórico.'); return; }
+  if (!numOP) { showToast('Preencha o número da OP antes de salvar no histórico.'); return; }
+  salvarDados(true); // Garante que tudo está salvo antes
   const historico = JSON.parse(localStorage.getItem('historico_ops') || '[]');
   const dados = JSON.parse(localStorage.getItem('painel_torrefacao') || '{}');
   dados.salvoEm = new Date().toISOString();
+  dados.id = dados.id || ('op_' + Date.now() + '_' + Math.random().toString(36).substr(2,6));
+  // Conta bateladas preenchidas
+  let numBat = 0;
+  if (dados.bateladas) dados.bateladas.forEach(r => { if (r.some(c => c.value)) numBat++; });
+  dados.numBateladas = numBat;
   // Verificar se já existe essa OP no histórico
   const idx = historico.findIndex(h => h.op && h.op.numero === numOP);
   if (idx >= 0) {
-    if (confirm('OP ' + numOP + ' já existe no histórico. Deseja atualizar?')) {
-      historico[idx] = dados;
-    } else return;
+    if (!confirm('OP ' + numOP + ' já existe no histórico. Deseja atualizar?')) return;
+    dados.id = historico[idx].id; // mantém o ID original
+    historico[idx] = dados;
   } else {
     historico.push(dados);
   }
-  localStorage.setItem('historico_ops', JSON.stringify(historico));
-  showToast('OP ' + numOP + ' salva no histórico!');
+  try {
+    localStorage.setItem('historico_ops', JSON.stringify(historico));
+    showToast('OP ' + numOP + ' salva no histórico!');
+  } catch(e) {
+    showToast('ERRO: Espaço insuficiente no navegador!');
+  }
 }
 
 function listarHistorico() {
-  const historico = JSON.parse(localStorage.getItem('historico_ops') || '[]');
-  if (!historico.length) { alert('Nenhuma OP salva no histórico.'); return; }
-  let msg = 'HISTÓRICO DE OPs:\n\n';
-  historico.forEach((h, i) => {
-    msg += (i+1) + '. ' + (h.op?.numero || 'Sem número') + ' - ' + (h.op?.data || 'Sem data') + ' - ' + (h.op?.status || 'Sem status') + '\n';
+  const navBtns = document.querySelectorAll('.nav button');
+  let histBtn = null;
+  navBtns.forEach(b => { if (b.textContent.includes('Histórico')) histBtn = b; });
+  abrirAba(15, histBtn);
+  renderizarHistorico();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function getHistorico() {
+  return JSON.parse(localStorage.getItem('historico_ops') || '[]');
+}
+
+function renderizarHistorico() {
+  const historico = getHistorico();
+  const corpo = document.getElementById('hist-corpo');
+  const vazio = document.getElementById('hist-vazio');
+  const busca = (document.getElementById('hist-busca')?.value || '').toLowerCase();
+  const filtroStatus = document.getElementById('hist-filtro-status')?.value || '';
+
+  // Filtra
+  const filtrado = historico.filter(h => {
+    const num = (h.op?.numero || '').toLowerCase();
+    const data = (h.op?.data || '').toLowerCase();
+    const oper = (h.op?.operador || '').toLowerCase();
+    const status = h.op?.status || '';
+    const matchBusca = !busca || num.includes(busca) || data.includes(busca) || oper.includes(busca);
+    const matchStatus = !filtroStatus || status === filtroStatus;
+    return matchBusca && matchStatus;
   });
-  msg += '\nDeseja carregar alguma? Digite o número (1, 2, 3...) ou cancele.';
-  const escolha = prompt(msg);
-  if (escolha && !isNaN(escolha)) {
-    const idx = parseInt(escolha) - 1;
-    if (historico[idx]) {
-      localStorage.setItem('painel_torrefacao', JSON.stringify(historico[idx]));
-      location.reload();
+
+  // KPIs
+  document.getElementById('hist-total').textContent = historico.length;
+  document.getElementById('hist-concluidas').textContent = historico.filter(h => h.op?.status === 'Concluída').length;
+  document.getElementById('hist-andamento').textContent = historico.filter(h => h.op?.status === 'Em Andamento').length;
+  const ultima = historico.length ? historico[historico.length - 1] : null;
+  document.getElementById('hist-ultima').textContent = ultima ? (ultima.op?.numero || '--') + ' (' + (ultima.op?.data || '--') + ')' : '--';
+
+  // Tabela
+  corpo.innerHTML = '';
+  if (!filtrado.length) {
+    vazio.style.display = 'block';
+    corpo.parentElement.parentElement.querySelector('table').style.display = 'none';
+    return;
+  }
+  vazio.style.display = 'none';
+  corpo.parentElement.parentElement.querySelector('table').style.display = '';
+
+  filtrado.forEach((h, i) => {
+    const realIdx = historico.indexOf(h);
+    const statusBadge = h.op?.status === 'Concluída' ? 'badge-green' :
+                        h.op?.status === 'Em Andamento' ? 'badge-yellow' :
+                        h.op?.status === 'Cancelada' ? 'badge-red' : 'badge-gray';
+    const salvoEm = h.salvoEm ? new Date(h.salvoEm).toLocaleString('pt-BR') : '--';
+    const numBat = h.numBateladas || 0;
+    const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td><b style="color:var(--teal)">${h.op?.numero || '--'}</b></td>
+      <td>${h.op?.data || '--'}</td>
+      <td>${h.op?.operador || '--'}</td>
+      <td><span class="badge ${statusBadge}">${h.op?.status || '--'}</span></td>
+      <td>${numBat}</td>
+      <td style="font-size:11px;color:var(--text-secondary)">${salvoEm}</td>
+      <td>
+        <button class="btn btn-success" style="padding:3px 8px;font-size:10px;border-radius:6px" onclick="event.stopPropagation();carregarDoHistorico(${realIdx})" title="Carregar esta OP">Carregar</button>
+        <button class="btn" style="padding:3px 8px;font-size:10px;border-radius:6px;background:var(--bg-secondary)" onclick="event.stopPropagation();verDetalheHist(${realIdx})" title="Ver detalhes">Ver</button>
+        <button class="btn btn-danger" style="padding:3px 8px;font-size:10px;border-radius:6px;background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)" onclick="event.stopPropagation();excluirDoHistorico(${realIdx})" title="Excluir">X</button>
+      </td>`;
+    tr.addEventListener('click', () => verDetalheHist(realIdx));
+    corpo.appendChild(tr);
+  });
+}
+
+function filtrarHistorico() {
+  renderizarHistorico();
+}
+
+function carregarDoHistorico(idx) {
+  const historico = getHistorico();
+  if (!historico[idx]) return;
+  if (!confirm('Carregar OP ' + (historico[idx].op?.numero || '') + '? Os dados atuais serão substituídos.')) return;
+  localStorage.setItem('painel_torrefacao', JSON.stringify(historico[idx]));
+  location.reload();
+}
+
+function excluirDoHistorico(idx) {
+  const historico = getHistorico();
+  if (!historico[idx]) return;
+  if (!confirm('Excluir OP ' + (historico[idx].op?.numero || '') + ' do histórico? Esta ação não pode ser desfeita.')) return;
+  historico.splice(idx, 1);
+  localStorage.setItem('historico_ops', JSON.stringify(historico));
+  showToast('OP excluída do histórico.');
+  renderizarHistorico();
+  document.getElementById('hist-detalhe-section').style.display = 'none';
+}
+
+function verDetalheHist(idx) {
+  const historico = getHistorico();
+  const h = historico[idx];
+  if (!h) return;
+  const sec = document.getElementById('hist-detalhe-section');
+  const corpo = document.getElementById('hist-detalhe-corpo');
+  document.getElementById('hist-detalhe-titulo').textContent = 'DETALHES — ' + (h.op?.numero || 'OP');
+  sec.style.display = 'block';
+
+  // Monta resumo detalhado
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px">';
+
+  // Identificação
+  html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:16px;border:1px solid var(--border)">';
+  html += '<h4 style="color:var(--teal);font-size:12px;margin-bottom:10px;letter-spacing:.5px">IDENTIFICAÇÃO</h4>';
+  html += detalheItem('Nº OP', h.op?.numero);
+  html += detalheItem('Data', h.op?.data);
+  html += detalheItem('Turno', h.op?.turno);
+  html += detalheItem('Operador', h.op?.operador);
+  html += detalheItem('Torrador', h.op?.torrador);
+  html += detalheItem('Status', h.op?.status);
+  html += '</div>';
+
+  // Lenha
+  if (h.lenha && (h.lenha.tipo || h.lenha.qtd)) {
+    html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:16px;border:1px solid var(--border)">';
+    html += '<h4 style="color:var(--orange);font-size:12px;margin-bottom:10px;letter-spacing:.5px">LENHA</h4>';
+    html += detalheItem('Tipo', h.lenha.tipo);
+    html += detalheItem('Quantidade', h.lenha.qtd ? h.lenha.qtd + ' kg' : '');
+    html += detalheItem('Início', h.lenha.inicio);
+    html += detalheItem('Pronta', h.lenha.pronta);
+    html += '</div>';
+  }
+
+  // Blendagem
+  if (h.blendagem && (h.blendagem.num || h.blendagem.cliente)) {
+    html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:16px;border:1px solid var(--border)">';
+    html += '<h4 style="color:var(--purple);font-size:12px;margin-bottom:10px;letter-spacing:.5px">BLENDAGEM</h4>';
+    html += detalheItem('Nº Blend', h.blendagem.num);
+    html += detalheItem('Data', h.blendagem.data);
+    html += detalheItem('OP Ref', h.blendagem.op);
+    html += detalheItem('Operador', h.blendagem.operador);
+    html += detalheItem('Cliente', h.blendagem.cliente);
+    html += detalheItem('Produto', h.blendagem.tipoProd);
+    html += detalheItem('Gramatura', h.blendagem.gram);
+    html += '</div>';
+  }
+
+  // Café Verde
+  if (h.cafeVerde && (h.cafeVerde.nfe || h.cafeVerde.fornecedor)) {
+    html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:16px;border:1px solid var(--border)">';
+    html += '<h4 style="color:var(--green);font-size:12px;margin-bottom:10px;letter-spacing:.5px">CAFÉ VERDE CRU</h4>';
+    html += detalheItem('NF-e', h.cafeVerde.nfe);
+    html += detalheItem('Fornecedor', h.cafeVerde.fornecedor);
+    html += detalheItem('Data', h.cafeVerde.data);
+    html += detalheItem('Placa', h.cafeVerde.placa);
+    html += detalheItem('Peso Bruto', h.cafeVerde.pesoBruto ? h.cafeVerde.pesoBruto + ' kg' : '');
+    html += detalheItem('Peso Tara', h.cafeVerde.pesoTara ? h.cafeVerde.pesoTara + ' kg' : '');
+    html += '</div>';
+  }
+
+  // AGB
+  if (h.agb && (h.agb.nfeCompra || h.agb.fornecedor)) {
+    html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:16px;border:1px solid var(--border)">';
+    html += '<h4 style="color:var(--cyan);font-size:12px;margin-bottom:10px;letter-spacing:.5px">AGB MAQUINAÇÃO</h4>';
+    html += detalheItem('NF-e Compra', h.agb.nfeCompra);
+    html += detalheItem('Fornecedor', h.agb.fornecedor);
+    html += detalheItem('Origem', h.agb.origem);
+    html += detalheItem('Peso Enviado', h.agb.pesoEnviado ? h.agb.pesoEnviado + ' kg' : '');
+    html += detalheItem('Custo/kg', h.agb.custoKg ? 'R$ ' + h.agb.custoKg : '');
+    html += detalheItem('Status', h.agb.status);
+    html += '</div>';
+  }
+
+  // Bateladas resumo
+  if (h.bateladas && h.bateladas.length) {
+    const batPreenchidas = h.bateladas.filter(r => r.some(c => c.value));
+    if (batPreenchidas.length) {
+      html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:16px;border:1px solid var(--border);grid-column:1/-1">';
+      html += '<h4 style="color:var(--yellow);font-size:12px;margin-bottom:10px;letter-spacing:.5px">BATELADAS (' + batPreenchidas.length + ')</h4>';
+      html += '<div style="font-size:11px;color:var(--text-secondary)">Dados completos de ' + batPreenchidas.length + ' batelada(s) registradas nesta OP.</div>';
+      html += '</div>';
     }
   }
+
+  // Salvo em
+  html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:16px;border:1px solid var(--border)">';
+  html += '<h4 style="color:var(--text-muted);font-size:12px;margin-bottom:10px;letter-spacing:.5px">REGISTRO</h4>';
+  html += detalheItem('Salvo em', h.salvoEm ? new Date(h.salvoEm).toLocaleString('pt-BR') : '--');
+  html += detalheItem('Timestamp', h.timestamp ? new Date(h.timestamp).toLocaleString('pt-BR') : '--');
+  html += '</div>';
+
+  html += '</div>';
+
+  // Botões de ação
+  html += '<div style="margin-top:16px;display:flex;gap:10px">';
+  html += '<button class="btn btn-success" style="padding:8px 20px;font-size:13px" onclick="carregarDoHistorico(' + idx + ')">Carregar esta OP</button>';
+  html += '<button class="btn btn-danger" style="padding:8px 20px;font-size:13px;background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)" onclick="excluirDoHistorico(' + idx + ')">Excluir</button>';
+  html += '</div>';
+
+  corpo.innerHTML = html;
+  sec.scrollIntoView({ behavior: 'smooth' });
+}
+
+function detalheItem(label, valor) {
+  return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span style="font-size:11px;color:var(--text-muted)">' + label + '</span><span style="font-size:12px;font-weight:600;color:var(--text-primary)">' + (valor || '--') + '</span></div>';
+}
+
+function fecharDetalheHist() {
+  document.getElementById('hist-detalhe-section').style.display = 'none';
 }
 
 // ============ VALIDAÇÃO DE CAMPOS OBRIGATÓRIOS ============
