@@ -320,7 +320,19 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
   <div class="nav-items">
   <div style="padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:6px">PRINCIPAL</div>
   <button class="active" onclick="abrirAba(0,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span><span class="nav-label">Home</span></button>
-  <button onclick="abrirAba(14,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l3-4h8l3 4v14"/><path d="M9 21v-6h6v6"/><path d="M3 7h18"/><rect x="9" y="10" width="2" height="2"/><rect x="13" y="10" width="2" height="2"/></svg></span><span class="nav-label">AGB Maquinação</span></button>
+  <div class="nav-group">
+    <div class="nav-group-header" onclick="toggleSubmenu(this)">
+      <span style="display:flex;align-items:center;gap:14px">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l3-4h8l3 4v14"/><path d="M9 21v-6h6v6"/><path d="M3 7h18"/><rect x="9" y="10" width="2" height="2"/><rect x="13" y="10" width="2" height="2"/></svg></span>
+        <span class="nav-label">AGB Recebimento</span>
+      </span>
+      <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="nav-submenu" id="submenu-agb">
+      <button onclick="abrirAbaSub(16,this)">Descarregamento Torrefação</button>
+      <button onclick="abrirAbaSub(14,this)">AGB Maquinação</button>
+    </div>
+  </div>
   <div class="nav-group">
     <div class="nav-group-header" onclick="toggleSubmenu(this)">
       <span style="display:flex;align-items:center;gap:14px">
@@ -331,6 +343,8 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
     </div>
     <div class="nav-submenu" id="submenu-estoque">
       <button onclick="abrirAbaSub(9,this)">Café Verde Cru</button>
+      <button onclick="abrirAbaSub(17,this)">Café Grão Torrado</button>
+      <button onclick="abrirAbaSub(18,this)">Café Torrado em Pó</button>
       <button onclick="abrirAbaSub(10,this)">Estoque Embalagens</button>
       <button onclick="abrirAbaSub(11,this)">Estoque Lenha</button>
     </div>
@@ -1272,279 +1286,35 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
 
 <!-- ============ ABA 9: CAFÉ VERDE CRU ============ -->
 <div class="tab-content" id="tab9">
-
-  <!-- SEÇÃO 1: CHEGADA + CRONÔMETRO LATERAL -->
-  <div class="acc-section">
-    <div class="acc-header open" onclick="toggleAcc(this)">
-      <h3>1. CHEGADA E DESCARGA DO CAFÉ VERDE</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body open">
-      <div class="dual-panel">
-        <div class="panel-main">
-          <div class="acc-body-inner">
-            <div class="form-grid">
-              <div class="form-group campo-obrigatorio"><label>Nº da NF-e</label><input type="text" id="cv-nfe" placeholder="Ex: 000123456" required></div>
-              <div class="form-group campo-obrigatorio"><label>Fornecedor</label><input type="text" id="cv-fornecedor" placeholder="Nome do fornecedor" required></div>
-              <div class="form-group campo-obrigatorio"><label>Data de Chegada</label><input type="date" id="cv-data" required></div>
-              <div class="form-group campo-obrigatorio"><label>Hora de Chegada</label><input type="time" id="cv-hora" required></div>
-              <div class="form-group campo-obrigatorio"><label>Placa do Caminhão</label><input type="text" id="cv-placa" placeholder="Ex: ABC-1234" required></div>
-              <div class="form-group"><label>Motorista</label><input type="text" id="cv-motorista" placeholder="Nome do motorista"></div>
-              <div class="form-group"><label>Responsável Recebimento</label><input type="text" id="cv-responsavel" placeholder="Quem recebeu"></div>
-              <div class="form-group"><label>Status</label><select id="cv-status"><option value="Aguardando">Aguardando Descarga</option><option value="Em Descarga">Em Descarga</option><option value="Conferindo">Conferindo Lotes</option><option value="Armazenado">Armazenado</option><option value="Concluído">Concluído</option></select></div>
-            </div>
-          </div>
-        </div>
-        <div class="panel-crono">
-          <div class="crono-label">DESCARGA</div>
-          <div class="crono-display" id="cv-crono-display">00:00:00</div>
-          <div class="crono-btns">
-            <button class="btn btn-success" onclick="cvCronoIniciar('desc')">Iniciar</button>
-            <button class="btn btn-danger" onclick="cvCronoParar('desc')">Parar</button>
-          </div>
-          <div class="crono-fields">
-            <div class="form-group"><label>Início</label><input type="time" id="cv-desc-inicio" readonly></div>
-            <div class="form-group"><label>Fim</label><input type="time" id="cv-desc-fim" readonly></div>
-            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-desc-tempo" readonly></div>
-          </div>
-        </div>
+  <div class="section">
+    <div class="section-title">ESTOQUE — CAFÉ VERDE CRU</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Estoque de café verde cru (não torrado).</b> Para registrar chegada e descarga, acesse <b>AGB Recebimento > Descarregamento Torrefação</b>.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px" id="cv-peneiras-resumo">
+        <div class="pen-card hover3d" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)"><div class="pen-label" style="color:var(--blue)">FP5</div><div class="pen-value" style="color:var(--blue)" id="cv-pen-fp5-est">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.3)"><div class="pen-label" style="color:var(--teal)">FP8</div><div class="pen-value" style="color:var(--teal)" id="cv-pen-fp8-est">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3)"><div class="pen-label" style="color:var(--green)">FP10</div><div class="pen-value" style="color:var(--green)" id="cv-pen-fp10-est">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)"><div class="pen-label" style="color:var(--yellow)">P10/12</div><div class="pen-value" style="color:var(--yellow)" id="cv-pen-p1012-est">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3)"><div class="pen-label" style="color:var(--orange)">P13/14</div><div class="pen-value" style="color:var(--orange)" id="cv-pen-p1314-est">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.3)"><div class="pen-label" style="color:var(--pink)">P15/16</div><div class="pen-value" style="color:var(--pink)" id="cv-pen-p1516-est">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3)"><div class="pen-label" style="color:var(--red)">P17/18</div><div class="pen-value" style="color:var(--red)" id="cv-pen-p1718-est">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3)"><div class="pen-label" style="color:var(--purple)">PVA</div><div class="pen-value" style="color:var(--purple)" id="cv-pen-pva-est">0 kg</div></div>
       </div>
+      <div style="overflow-x:auto">
+        <table id="tbl-estoque-cafe-verde">
+          <thead><tr>
+            <th>#</th><th>Peneira</th><th>Fornecedor</th><th>Lote Interno</th>
+            <th>Peso Disponível (kg)</th><th>Umidade (%)</th><th>Defeitos (%)</th>
+            <th>Data Entrada</th><th>Local Armazém</th><th>Obs</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueCafeVerdeRow()">+ Adicionar Lote</button></div>
     </div>
   </div>
-
-  <!-- SEÇÃO 2: PESAGEM + CRONÔMETRO LATERAL -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>2. PESAGEM DO CAMINHÃO</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="dual-panel">
-        <div class="panel-main">
-          <div class="acc-body-inner">
-            <div class="info-box azul"><b>Procedimento:</b> Pesar cheio. Descarregar. Pesar vazio. Diferença = peso líquido.</div>
-            <div class="form-grid" style="margin-top:14px">
-              <div class="form-group"><label>Peso Bruto (kg)</label><input type="number" step="0.01" id="cv-peso-bruto" oninput="calcPesagemCaminhao()" placeholder="Caminhão cheio"></div>
-              <div class="form-group"><label>Peso Tara (kg)</label><input type="number" step="0.01" id="cv-peso-tara" oninput="calcPesagemCaminhao()" placeholder="Caminhão vazio"></div>
-              <div class="form-group"><label>Peso Líquido (kg)</label><input type="number" class="calc" id="cv-peso-liquido" readonly></div>
-              <div class="form-group"><label>Peso NF-e (kg)</label><input type="number" step="0.01" id="cv-peso-nfe" oninput="calcPesagemCaminhao()" placeholder="Peso declarado"></div>
-              <div class="form-group"><label>Diferença vs NF (kg)</label><input type="text" class="calc" id="cv-dif-peso" readonly></div>
-              <div class="form-group"><label>Tolerância (±0.5%)</label><input type="text" class="calc" id="cv-tolerancia" readonly></div>
-            </div>
-            <div class="info-box" id="cv-alerta-peso" style="display:none;margin-top:10px"></div>
-          </div>
-        </div>
-        <div class="panel-crono">
-          <div class="crono-label">PESAGEM</div>
-          <div class="crono-display" id="cv-crono-pesagem">00:00:00</div>
-          <div class="crono-btns">
-            <button class="btn btn-success" onclick="cvCronoIniciar('pesagem')">Iniciar</button>
-            <button class="btn btn-danger" onclick="cvCronoParar('pesagem')">Parar</button>
-          </div>
-          <div class="crono-fields">
-            <div class="form-group"><label>Início</label><input type="time" id="cv-pesagem-inicio" readonly></div>
-            <div class="form-group"><label>Fim</label><input type="time" id="cv-pesagem-fim" readonly></div>
-            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-pesagem-tempo" readonly></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SEÇÃO 3: CONFERÊNCIA + CRONÔMETRO LATERAL -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>3. CONFERÊNCIA DE LOTES POR PENEIRA</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="dual-panel">
-        <div class="panel-main">
-          <div class="acc-body-inner">
-            <div class="info-box verde"><b>ATENÇÃO:</b> Cada peneira deve ser pesada separadamente. <b>NUNCA misturar peneiras!</b></div>
-            <div style="overflow-x:auto;margin-top:14px">
-              <table id="tbl-cafe-verde">
-                <thead><tr>
-                  <th>#</th><th>Peneira</th><th>Nº Sacas</th><th>Peso Bruto (kg)</th><th>Peso Sacaria (kg)</th>
-                  <th>Peso Líquido (kg)</th><th>Umidade (%)</th><th>Defeitos (%)</th>
-                  <th>Local Armazém</th><th>Lote Interno</th><th>Foto Balança</th><th>Obs</th>
-                </tr></thead>
-                <tbody></tbody>
-                <tfoot><tr class="total-row">
-                  <td><b>TOTAIS</b></td><td></td>
-                  <td><input class="calc" id="cv-sacas-total" readonly></td>
-                  <td><input class="calc" id="cv-bruto-total" readonly></td>
-                  <td><input class="calc" id="cv-sacaria-total" readonly></td>
-                  <td><input class="calc" id="cv-liquido-total" readonly></td>
-                  <td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr></tfoot>
-              </table>
-            </div>
-            <div class="btn-group">
-              <button class="btn btn-primary" onclick="addCafeVerdeRow()">+ Adicionar Lote</button>
-              <button class="btn btn-success" onclick="addCafeVerdePeneiras()">+ Todas Peneiras</button>
-            </div>
-          </div>
-        </div>
-        <div class="panel-crono">
-          <div class="crono-label">CONFERÊNCIA</div>
-          <div class="crono-display" id="cv-crono-conf">00:00:00</div>
-          <div class="crono-btns">
-            <button class="btn btn-success" onclick="cvCronoIniciar('conf')">Iniciar</button>
-            <button class="btn btn-danger" onclick="cvCronoParar('conf')">Parar</button>
-          </div>
-          <div class="crono-fields">
-            <div class="form-group"><label>Início</label><input type="time" id="cv-conf-inicio" readonly></div>
-            <div class="form-group"><label>Fim</label><input type="time" id="cv-conf-fim" readonly></div>
-            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-conf-tempo" readonly></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SEÇÃO 4: DISTRIBUIÇÃO POR PENEIRA (cards com hover) -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>4. DISTRIBUIÇÃO POR PENEIRA (kg)</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="acc-body-inner">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px" id="cv-peneiras-resumo">
-          <div class="pen-card" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)">
-            <div class="pen-label" style="color:var(--blue)">FP5</div>
-            <div class="pen-value" style="color:var(--blue)" id="cv-pen-fp5">0 kg</div>
-          </div>
-          <div class="pen-card" style="background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.3)">
-            <div class="pen-label" style="color:var(--teal)">FP8</div>
-            <div class="pen-value" style="color:var(--teal)" id="cv-pen-fp8">0 kg</div>
-          </div>
-          <div class="pen-card" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3)">
-            <div class="pen-label" style="color:var(--green)">FP10</div>
-            <div class="pen-value" style="color:var(--green)" id="cv-pen-fp10">0 kg</div>
-          </div>
-          <div class="pen-card" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)">
-            <div class="pen-label" style="color:var(--yellow)">P10/12</div>
-            <div class="pen-value" style="color:var(--yellow)" id="cv-pen-p1012">0 kg</div>
-          </div>
-          <div class="pen-card" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3)">
-            <div class="pen-label" style="color:var(--orange)">P13/14</div>
-            <div class="pen-value" style="color:var(--orange)" id="cv-pen-p1314">0 kg</div>
-          </div>
-          <div class="pen-card" style="background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.3)">
-            <div class="pen-label" style="color:var(--pink)">P15/16</div>
-            <div class="pen-value" style="color:var(--pink)" id="cv-pen-p1516">0 kg</div>
-          </div>
-          <div class="pen-card" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3)">
-            <div class="pen-label" style="color:var(--red)">P17/18</div>
-            <div class="pen-value" style="color:var(--red)" id="cv-pen-p1718">0 kg</div>
-          </div>
-          <div class="pen-card" style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3)">
-            <div class="pen-label" style="color:var(--purple)">PVA</div>
-            <div class="pen-value" style="color:var(--purple)" id="cv-pen-pva">0 kg</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SEÇÃO 5: FOTOS (com registro automático de hora) -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>5. FOTOS OBRIGATÓRIAS DO RECEBIMENTO</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="acc-body-inner">
-        <div class="info-box vermelho"><b>OBRIGATÓRIO:</b> Ao tirar cada foto, o sistema registra automaticamente data e hora.</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:14px">
-          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:4px">📄</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Foto NF-e</div>
-            <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="nfe" style="font-size:10px;width:100%">
-            <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
-            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
-          </div>
-          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:4px">🚛</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Caminhão</div>
-            <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="caminhao" style="font-size:10px;width:100%">
-            <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
-            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
-          </div>
-          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:4px">⚖️</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Balança Cheio</div>
-            <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="balanca-cheio" style="font-size:10px;width:100%">
-            <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
-            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
-          </div>
-          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:4px">⚖️</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Balança Vazio</div>
-            <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="balanca-vazio" style="font-size:10px;width:100%">
-            <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
-            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
-          </div>
-          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center">
-            <div style="font-size:22px;margin-bottom:4px">🏭</div>
-            <div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Local Armazém</div>
-            <input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="armazem" style="font-size:10px;width:100%">
-            <div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div>
-            <div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div>
-          </div>
-        </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--text-muted)">Fotos: <span id="cv-fotos-count" style="color:var(--teal);font-weight:700">0</span> / 5</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SEÇÃO 6: RESUMO + OBSERVAÇÕES -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>6. RESUMO DO RECEBIMENTO</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="acc-body-inner">
-        <div class="kpi-grid">
-          <div class="kpi-card azul">
-            <div class="kpi-header"><span class="label">Total Café Recebido</span><span class="kpi-dot"></span></div>
-            <div class="kpi-body"><div><span class="value" id="cv-kpi-total">0</span><span class="unit">kg</span></div></div>
-            <div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-total-bar" style="width:0%"></div></div>
-          </div>
-          <div class="kpi-card verde">
-            <div class="kpi-header"><span class="label">Total de Sacas</span><span class="kpi-dot"></span></div>
-            <div class="kpi-body"><div><span class="value" id="cv-kpi-sacas">0</span><span class="unit">sacas</span></div></div>
-            <div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-sacas-bar" style="width:0%"></div></div>
-          </div>
-          <div class="kpi-card amarelo">
-            <div class="kpi-header"><span class="label">Umidade Média</span><span class="kpi-dot"></span></div>
-            <div class="kpi-body"><div><span class="value" id="cv-kpi-umidade">0</span><span class="unit">%</span></div></div>
-            <div class="kpi-footer"><span class="kpi-footer-label">Faixa ideal</span><span class="kpi-footer-value">10-12%</span></div>
-            <div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-umid-bar" style="width:0%"></div></div>
-          </div>
-          <div class="kpi-card laranja">
-            <div class="kpi-header"><span class="label">Tempo Descarga</span><span class="kpi-dot"></span></div>
-            <div class="kpi-body"><div><span class="value" id="cv-kpi-tempo">0</span><span class="unit">min</span></div></div>
-            <div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-tempo-bar" style="width:0%"></div></div>
-          </div>
-          <div class="kpi-card vermelho">
-            <div class="kpi-header"><span class="label">Diferença vs NF</span><span class="kpi-dot"></span></div>
-            <div class="kpi-body"><div><span class="value" id="cv-kpi-dif">0</span><span class="unit">kg</span></div></div>
-            <div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-dif-bar" style="width:0%"></div></div>
-          </div>
-        </div>
-        <div style="margin-top:16px">
-          <label style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">OBSERVAÇÕES DO RECEBIMENTO</label>
-          <textarea id="cv-obs" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg-secondary);color:var(--text-primary);resize:vertical;margin-top:6px" placeholder="Qualidade visual, problemas, avarias, sacas rasgadas..."></textarea>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </div>
+
 
 <!-- ============ ABA 10: ESTOQUE EMBALAGENS ============ -->
 <div class="tab-content" id="tab10">
@@ -2071,6 +1841,249 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
       <button class="btn" style="padding:5px 14px;font-size:11px;background:var(--bg-secondary)" onclick="fecharDetalheHist()">Fechar</button>
     </div>
     <div class="section-body" id="hist-detalhe-corpo"></div>
+  </div>
+</div>
+
+<!-- ============ ABA 16: DESCARREGAMENTO TORREFAÇÃO ============ -->
+<div class="tab-content" id="tab16">
+
+  <!-- SEÇÃO 1: CHEGADA + CRONÔMETRO LATERAL -->
+  <div class="acc-section">
+    <div class="acc-header open" onclick="toggleAcc(this)">
+      <h3>1. CHEGADA E DESCARGA DO CAFÉ VERDE</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body open">
+      <div class="dual-panel">
+        <div class="panel-main">
+          <div class="acc-body-inner">
+            <div class="form-grid">
+              <div class="form-group campo-obrigatorio"><label>Nº da NF-e</label><input type="text" id="cv-nfe" placeholder="Ex: 000123456" required></div>
+              <div class="form-group campo-obrigatorio"><label>Fornecedor</label><input type="text" id="cv-fornecedor" placeholder="Nome do fornecedor" required></div>
+              <div class="form-group campo-obrigatorio"><label>Data de Chegada</label><input type="date" id="cv-data" required></div>
+              <div class="form-group campo-obrigatorio"><label>Hora de Chegada</label><input type="time" id="cv-hora" required></div>
+              <div class="form-group campo-obrigatorio"><label>Placa do Caminhão</label><input type="text" id="cv-placa" placeholder="Ex: ABC-1234" required></div>
+              <div class="form-group"><label>Motorista</label><input type="text" id="cv-motorista" placeholder="Nome do motorista"></div>
+              <div class="form-group"><label>Responsável Recebimento</label><input type="text" id="cv-responsavel" placeholder="Quem recebeu"></div>
+              <div class="form-group"><label>Status</label><select id="cv-status"><option value="Aguardando">Aguardando Descarga</option><option value="Em Descarga">Em Descarga</option><option value="Conferindo">Conferindo Lotes</option><option value="Armazenado">Armazenado</option><option value="Concluído">Concluído</option></select></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-crono">
+          <div class="crono-label">DESCARGA</div>
+          <div class="crono-display" id="cv-crono-display">00:00:00</div>
+          <div class="crono-btns">
+            <button class="btn btn-success" onclick="cvCronoIniciar('desc')">Iniciar</button>
+            <button class="btn btn-danger" onclick="cvCronoParar('desc')">Parar</button>
+          </div>
+          <div class="crono-fields">
+            <div class="form-group"><label>Início</label><input type="time" id="cv-desc-inicio" readonly></div>
+            <div class="form-group"><label>Fim</label><input type="time" id="cv-desc-fim" readonly></div>
+            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-desc-tempo" readonly></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 2: PESAGEM + CRONÔMETRO LATERAL -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>2. PESAGEM DO CAMINHÃO</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="dual-panel">
+        <div class="panel-main">
+          <div class="acc-body-inner">
+            <div class="info-box azul"><b>Procedimento:</b> Pesar cheio. Descarregar. Pesar vazio. Diferença = peso líquido.</div>
+            <div class="form-grid" style="margin-top:14px">
+              <div class="form-group"><label>Peso Bruto (kg)</label><input type="number" step="0.01" id="cv-peso-bruto" oninput="calcPesagemCaminhao()" placeholder="Caminhão cheio"></div>
+              <div class="form-group"><label>Peso Tara (kg)</label><input type="number" step="0.01" id="cv-peso-tara" oninput="calcPesagemCaminhao()" placeholder="Caminhão vazio"></div>
+              <div class="form-group"><label>Peso Líquido (kg)</label><input type="number" class="calc" id="cv-peso-liquido" readonly></div>
+              <div class="form-group"><label>Peso NF-e (kg)</label><input type="number" step="0.01" id="cv-peso-nfe" oninput="calcPesagemCaminhao()" placeholder="Peso declarado"></div>
+              <div class="form-group"><label>Diferença vs NF (kg)</label><input type="text" class="calc" id="cv-dif-peso" readonly></div>
+              <div class="form-group"><label>Tolerância (±0.5%)</label><input type="text" class="calc" id="cv-tolerancia" readonly></div>
+            </div>
+            <div class="info-box" id="cv-alerta-peso" style="display:none;margin-top:10px"></div>
+          </div>
+        </div>
+        <div class="panel-crono">
+          <div class="crono-label">PESAGEM</div>
+          <div class="crono-display" id="cv-crono-pesagem">00:00:00</div>
+          <div class="crono-btns">
+            <button class="btn btn-success" onclick="cvCronoIniciar('pesagem')">Iniciar</button>
+            <button class="btn btn-danger" onclick="cvCronoParar('pesagem')">Parar</button>
+          </div>
+          <div class="crono-fields">
+            <div class="form-group"><label>Início</label><input type="time" id="cv-pesagem-inicio" readonly></div>
+            <div class="form-group"><label>Fim</label><input type="time" id="cv-pesagem-fim" readonly></div>
+            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-pesagem-tempo" readonly></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 3: CONFERÊNCIA + CRONÔMETRO LATERAL -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>3. CONFERÊNCIA DE LOTES POR PENEIRA</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="dual-panel">
+        <div class="panel-main">
+          <div class="acc-body-inner">
+            <div class="info-box verde"><b>ATENÇÃO:</b> Cada peneira deve ser pesada separadamente. <b>NUNCA misturar peneiras!</b></div>
+            <div style="overflow-x:auto;margin-top:14px">
+              <table id="tbl-cafe-verde">
+                <thead><tr>
+                  <th>#</th><th>Peneira</th><th>Nº Sacas</th><th>Peso Bruto (kg)</th><th>Peso Sacaria (kg)</th>
+                  <th>Peso Líquido (kg)</th><th>Umidade (%)</th><th>Defeitos (%)</th>
+                  <th>Local Armazém</th><th>Lote Interno</th><th>Foto Balança</th><th>Obs</th>
+                </tr></thead>
+                <tbody></tbody>
+                <tfoot><tr class="total-row">
+                  <td><b>TOTAIS</b></td><td></td>
+                  <td><input class="calc" id="cv-sacas-total" readonly></td>
+                  <td><input class="calc" id="cv-bruto-total" readonly></td>
+                  <td><input class="calc" id="cv-sacaria-total" readonly></td>
+                  <td><input class="calc" id="cv-liquido-total" readonly></td>
+                  <td></td><td></td><td></td><td></td><td></td><td></td>
+                </tr></tfoot>
+              </table>
+            </div>
+            <div class="btn-group">
+              <button class="btn btn-primary" onclick="addCafeVerdeRow()">+ Adicionar Lote</button>
+              <button class="btn btn-success" onclick="addCafeVerdePeneiras()">+ Todas Peneiras</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-crono">
+          <div class="crono-label">CONFERÊNCIA</div>
+          <div class="crono-display" id="cv-crono-conf">00:00:00</div>
+          <div class="crono-btns">
+            <button class="btn btn-success" onclick="cvCronoIniciar('conf')">Iniciar</button>
+            <button class="btn btn-danger" onclick="cvCronoParar('conf')">Parar</button>
+          </div>
+          <div class="crono-fields">
+            <div class="form-group"><label>Início</label><input type="time" id="cv-conf-inicio" readonly></div>
+            <div class="form-group"><label>Fim</label><input type="time" id="cv-conf-fim" readonly></div>
+            <div class="form-group"><label>Total</label><input type="text" class="calc" id="cv-conf-tempo" readonly></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 4: DISTRIBUIÇÃO POR PENEIRA -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>4. DISTRIBUIÇÃO POR PENEIRA (kg)</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px" id="cv-peneiras-resumo">
+          <div class="pen-card" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)"><div class="pen-label" style="color:var(--blue)">FP5</div><div class="pen-value" style="color:var(--blue)" id="cv-pen-fp5">0 kg</div></div>
+          <div class="pen-card" style="background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.3)"><div class="pen-label" style="color:var(--teal)">FP8</div><div class="pen-value" style="color:var(--teal)" id="cv-pen-fp8">0 kg</div></div>
+          <div class="pen-card" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3)"><div class="pen-label" style="color:var(--green)">FP10</div><div class="pen-value" style="color:var(--green)" id="cv-pen-fp10">0 kg</div></div>
+          <div class="pen-card" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)"><div class="pen-label" style="color:var(--yellow)">P10/12</div><div class="pen-value" style="color:var(--yellow)" id="cv-pen-p1012">0 kg</div></div>
+          <div class="pen-card" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3)"><div class="pen-label" style="color:var(--orange)">P13/14</div><div class="pen-value" style="color:var(--orange)" id="cv-pen-p1314">0 kg</div></div>
+          <div class="pen-card" style="background:rgba(236,72,153,.08);border:1px solid rgba(236,72,153,.3)"><div class="pen-label" style="color:var(--pink)">P15/16</div><div class="pen-value" style="color:var(--pink)" id="cv-pen-p1516">0 kg</div></div>
+          <div class="pen-card" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3)"><div class="pen-label" style="color:var(--red)">P17/18</div><div class="pen-value" style="color:var(--red)" id="cv-pen-p1718">0 kg</div></div>
+          <div class="pen-card" style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.3)"><div class="pen-label" style="color:var(--purple)">PVA</div><div class="pen-value" style="color:var(--purple)" id="cv-pen-pva">0 kg</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 5: FOTOS -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>5. FOTOS OBRIGATÓRIAS DO RECEBIMENTO</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="info-box vermelho"><b>OBRIGATÓRIO:</b> Ao tirar cada foto, o sistema registra automaticamente data e hora.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:14px">
+          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:22px;margin-bottom:4px">📄</div><div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Foto NF-e</div><input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="nfe" style="font-size:10px;width:100%"><div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div><div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div></div>
+          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:22px;margin-bottom:4px">🚛</div><div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Caminhão</div><input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="caminhao" style="font-size:10px;width:100%"><div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div><div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div></div>
+          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:22px;margin-bottom:4px">⚖️</div><div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Balança Cheio</div><input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="balanca-cheio" style="font-size:10px;width:100%"><div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div><div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div></div>
+          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:22px;margin-bottom:4px">⚖️</div><div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Balança Vazio</div><input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="balanca-vazio" style="font-size:10px;width:100%"><div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div><div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div></div>
+          <div style="padding:14px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;text-align:center"><div style="font-size:22px;margin-bottom:4px">🏭</div><div style="font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:6px">Local Armazém</div><input type="file" accept="image/*" capture="environment" class="cv-foto" data-tipo="armazem" style="font-size:10px;width:100%"><div class="cv-foto-status" style="font-size:9px;color:var(--text-muted);margin-top:3px">Pendente</div><div class="cv-foto-hora" style="font-size:9px;color:var(--orange);margin-top:2px"></div></div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:var(--text-muted)">Fotos: <span id="cv-fotos-count" style="color:var(--teal);font-weight:700">0</span> / 5</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO 6: RESUMO -->
+  <div class="acc-section">
+    <div class="acc-header" onclick="toggleAcc(this)">
+      <h3>6. RESUMO DO RECEBIMENTO</h3>
+      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="acc-body">
+      <div class="acc-body-inner">
+        <div class="kpi-grid">
+          <div class="kpi-card azul"><div class="kpi-header"><span class="label">Total Café Recebido</span><span class="kpi-dot"></span></div><div class="kpi-body"><div><span class="value" id="cv-kpi-total">0</span><span class="unit">kg</span></div></div><div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-total-bar" style="width:0%"></div></div></div>
+          <div class="kpi-card verde"><div class="kpi-header"><span class="label">Total de Sacas</span><span class="kpi-dot"></span></div><div class="kpi-body"><div><span class="value" id="cv-kpi-sacas">0</span><span class="unit">sacas</span></div></div><div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-sacas-bar" style="width:0%"></div></div></div>
+          <div class="kpi-card amarelo"><div class="kpi-header"><span class="label">Umidade Média</span><span class="kpi-dot"></span></div><div class="kpi-body"><div><span class="value" id="cv-kpi-umidade">0</span><span class="unit">%</span></div></div><div class="kpi-footer"><span class="kpi-footer-label">Faixa ideal</span><span class="kpi-footer-value">10-12%</span></div><div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-umid-bar" style="width:0%"></div></div></div>
+          <div class="kpi-card laranja"><div class="kpi-header"><span class="label">Tempo Descarga</span><span class="kpi-dot"></span></div><div class="kpi-body"><div><span class="value" id="cv-kpi-tempo">0</span><span class="unit">min</span></div></div><div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-tempo-bar" style="width:0%"></div></div></div>
+          <div class="kpi-card vermelho"><div class="kpi-header"><span class="label">Diferença vs NF</span><span class="kpi-dot"></span></div><div class="kpi-body"><div><span class="value" id="cv-kpi-dif">0</span><span class="unit">kg</span></div></div><div class="kpi-bar"><div class="kpi-bar-fill" id="cv-kpi-dif-bar" style="width:0%"></div></div></div>
+        </div>
+        <div style="margin-top:16px">
+          <label style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">OBSERVAÇÕES DO RECEBIMENTO</label>
+          <textarea id="cv-obs" rows="3" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg-secondary);color:var(--text-primary);resize:vertical;margin-top:6px" placeholder="Qualidade visual, problemas, avarias, sacas rasgadas..."></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ ABA 17: CAFÉ GRÃO TORRADO ============ -->
+<div class="tab-content" id="tab17">
+  <div class="section">
+    <div class="section-title">ESTOQUE — CAFÉ GRÃO TORRADO</div>
+    <div class="section-body">
+      <div class="info-box verde"><b>Registre aqui</b> todo o café torrado em grão disponível em estoque, separado por lote, peneira, blend e quantidade.</div>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table id="tbl-cafe-grao-torrado">
+          <thead><tr>
+            <th>#</th><th>Lote / Blend</th><th>Peneira</th><th>Tipo (Puro/Blend)</th>
+            <th>Peso Disponível (kg)</th><th>Data Torra</th><th>Agtron</th>
+            <th>Silo Origem</th><th>Destino</th><th>Obs</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addCafeGraoTorradoRow()">+ Adicionar Lote</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 18: CAFÉ TORRADO EM PÓ ============ -->
+<div class="tab-content" id="tab18">
+  <div class="section">
+    <div class="section-title">ESTOQUE — CAFÉ TORRADO EM PÓ</div>
+    <div class="section-body">
+      <div class="info-box verde"><b>Registre aqui</b> todo o café moído (em pó) disponível em estoque, separado por marca, gramatura, tipo de embalagem e quantidade.</div>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table id="tbl-cafe-po">
+          <thead><tr>
+            <th>#</th><th>Marca / Produto</th><th>Tipo Embalagem</th><th>Gramatura</th>
+            <th>Fardo/Caixa</th><th>Qtd (fardos/cx)</th><th>Peso Total (kg)</th>
+            <th>Lote Origem</th><th>Data Moagem</th><th>Granulometria</th><th>Obs</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addCafePoRow()">+ Adicionar Lote</button></div>
+    </div>
   </div>
 </div>
 
@@ -3498,6 +3511,9 @@ function salvarDados(silencioso) {
       obs: document.getElementById('agb-obs').value,
       lotes: coletarDadosTabela('tbl-agb-lotes'),
     },
+    estoqueCafeVerde: coletarDadosTabela('tbl-estoque-cafe-verde'),
+    cafeGraoTorrado: coletarDadosTabela('tbl-cafe-grao-torrado'),
+    cafePo: coletarDadosTabela('tbl-cafe-po'),
     estoqueEmb: coletarDadosTabela('tbl-estoque-emb'),
     estoqueLenha: coletarDadosTabela('tbl-estoque-lenha'),
     cafeVerde: {
@@ -3669,6 +3685,9 @@ function carregarDados() {
       }
       calcAGB();
     }
+    if (d.estoqueCafeVerde) restaurarDadosTabela('tbl-estoque-cafe-verde', d.estoqueCafeVerde, addEstoqueCafeVerdeRow);
+    if (d.cafeGraoTorrado) restaurarDadosTabela('tbl-cafe-grao-torrado', d.cafeGraoTorrado, addCafeGraoTorradoRow);
+    if (d.cafePo) restaurarDadosTabela('tbl-cafe-po', d.cafePo, addCafePoRow);
     if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
     if (d.estoqueLenha) {
       restaurarDadosTabela('tbl-estoque-lenha', d.estoqueLenha, addEstoqueLenhaRow);
@@ -3959,6 +3978,33 @@ function detalheItem(label, valor) {
 
 function fecharDetalheHist() {
   document.getElementById('hist-detalhe-section').style.display = 'none';
+}
+
+// ============ ESTOQUE CAFÉ VERDE CRU (tab9) ============
+function addEstoqueCafeVerdeRow() {
+  const tbody = document.querySelector('#tbl-estoque-cafe-verde tbody');
+  const n = tbody.querySelectorAll('tr').length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td>'+n+'</td><td><select style="min-width:80px"><option value="">Selecione</option><option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option><option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option></select></td><td><input type="text" placeholder="Fornecedor"></td><td><input type="text" placeholder="Lote"></td><td><input type="number" step="0.01" placeholder="kg"></td><td><input type="number" step="0.01" placeholder="%"></td><td><input type="number" step="0.01" placeholder="%"></td><td><input type="date"></td><td><input type="text" placeholder="Local"></td><td><input type="text" placeholder="Obs"></td>';
+  tbody.appendChild(tr);
+}
+
+// ============ ESTOQUE CAFÉ GRÃO TORRADO (tab17) ============
+function addCafeGraoTorradoRow() {
+  const tbody = document.querySelector('#tbl-cafe-grao-torrado tbody');
+  const n = tbody.querySelectorAll('tr').length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td>'+n+'</td><td><input type="text" placeholder="Lote/Blend"></td><td><select style="min-width:80px"><option value="">Selecione</option><option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option><option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option><option>Blend Mix</option></select></td><td><select><option>Puro</option><option>Blend</option></select></td><td><input type="number" step="0.01" placeholder="kg"></td><td><input type="date"></td><td><input type="text" placeholder="Agtron"></td><td><select><option>Silo 1</option><option>Silo 2</option><option>Silo 3</option></select></td><td><input type="text" placeholder="Destino"></td><td><input type="text" placeholder="Obs"></td>';
+  tbody.appendChild(tr);
+}
+
+// ============ ESTOQUE CAFÉ TORRADO EM PÓ (tab18) ============
+function addCafePoRow() {
+  const tbody = document.querySelector('#tbl-cafe-po tbody');
+  const n = tbody.querySelectorAll('tr').length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td>'+n+'</td><td><input type="text" placeholder="Marca/Produto"></td><td><select><option value="">Selecione</option><option>Almofada</option><option>Vácuo</option><option>Drip</option></select></td><td><select><option value="">Selecione</option><option>250g</option><option>500g</option><option>1kg</option></select></td><td><select><option value="">Avulso</option><option>Fardo 5kg</option><option>Caixa 10kg</option></select></td><td><input type="number" step="1" placeholder="Qtd"></td><td><input type="number" step="0.01" placeholder="kg"></td><td><input type="text" placeholder="Lote"></td><td><input type="date"></td><td><select><option>Grossa (1.2-1.4)</option><option>Média (0.8-1.0)</option><option>Fina (0.4-0.6)</option></select></td><td><input type="text" placeholder="Obs"></td>';
+  tbody.appendChild(tr);
 }
 
 // ============ SIMULADOR DE BLEND — ABA BLENDAGEM ============
