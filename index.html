@@ -1002,6 +1002,98 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
     </div>
   </div>
 
+  <!-- SUB-CALCULADORA: BLEND PROPORCIONAL POR QUANTIDADE -->
+  <div class="section hover3d" id="painel-blend-proporcional" style="border-left:4px solid var(--cyan);margin-top:6px">
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(0,212,170,.08))">
+      <span style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">⚡</span> BLEND PROPORCIONAL — Produção Parcial</span>
+    </div>
+    <div class="section-body">
+      <div class="info-box azul" style="margin-bottom:14px">
+        <b>Como funciona:</b> O blend total já foi decidido acima. Aqui você informa quanto quer produzir AGORA (ex: 250 kg para um cliente urgente) e a calculadora mostra quanto pegar de cada lote, mantendo a mesma proporção exata. Assim o blend sai perfeito mesmo em quantidade menor.
+      </div>
+
+      <!-- CLIENTES -->
+      <div style="margin-bottom:16px;padding:14px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.15);border-radius:12px">
+        <h4 style="color:var(--purple);font-size:12px;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px">Clientes deste Blend</h4>
+        <div style="overflow-x:auto">
+          <table id="tbl-blend-clientes">
+            <thead><tr>
+              <th style="width:30px">#</th>
+              <th>Cliente / Marca</th>
+              <th>Quantidade (kg)</th>
+              <th style="width:50px">X</th>
+            </tr></thead>
+            <tbody id="blend-clientes-body"></tbody>
+            <tfoot><tr style="font-weight:800;color:var(--teal)">
+              <td colspan="2" style="text-align:right">TOTAL CLIENTES:</td>
+              <td id="blend-clientes-total">0 kg</td>
+              <td></td>
+            </tr></tfoot>
+          </table>
+        </div>
+        <button class="btn" style="margin-top:8px;background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:12px" onclick="addBlendClienteRow()">+ Adicionar Cliente</button>
+      </div>
+
+      <!-- CALCULADORA PROPORCIONAL -->
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;padding:14px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.15);border-radius:12px">
+        <label style="font-weight:700;color:var(--cyan);font-size:13px;white-space:nowrap">Produzir agora:</label>
+        <input type="number" id="blend-prop-qtd" placeholder="Ex: 250" oninput="calcBlendProporcional()" style="width:140px;font-size:16px;font-weight:800;text-align:center;border:2px solid rgba(34,211,238,.4);border-radius:8px">
+        <span style="font-weight:700;color:var(--text-secondary)">kg</span>
+        <select id="blend-prop-cliente" onchange="preencherQtdCliente()" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);font-size:12px">
+          <option value="">— ou selecione um cliente —</option>
+        </select>
+        <button class="btn btn-primary" onclick="calcBlendProporcional()" style="font-size:12px;padding:8px 16px">Calcular</button>
+      </div>
+
+      <!-- RESULTADO -->
+      <div id="blend-prop-resultado" style="display:none">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px">
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:1px solid rgba(34,211,238,.2)">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">Blend Total</div>
+            <div style="font-size:22px;font-weight:900;color:var(--text-secondary)" id="bp-total-blend">0 kg</div>
+          </div>
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:1px solid rgba(0,212,170,.2)">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">Produzindo Agora</div>
+            <div style="font-size:22px;font-weight:900;color:var(--cyan)" id="bp-produzindo">0 kg</div>
+          </div>
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:1px solid rgba(245,158,11,.2)">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">Restante p/ Depois</div>
+            <div style="font-size:22px;font-weight:900;color:var(--yellow)" id="bp-restante">0 kg</div>
+          </div>
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:1px solid rgba(16,185,129,.2)">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">% do Blend Total</div>
+            <div style="font-size:22px;font-weight:900;color:var(--green)" id="bp-percentual">0%</div>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table id="tbl-blend-proporcional">
+            <thead><tr>
+              <th>#</th>
+              <th>Marca / Café</th>
+              <th>% do Blend</th>
+              <th>Qtd Total (kg)</th>
+              <th style="color:var(--cyan);font-weight:900">Pegar Agora (kg)</th>
+              <th>Restante (kg)</th>
+            </tr></thead>
+            <tbody id="blend-prop-body"></tbody>
+            <tfoot><tr style="font-weight:800;color:var(--teal)">
+              <td colspan="2">TOTAL</td>
+              <td id="bp-foot-pct">100%</td>
+              <td id="bp-foot-total">0</td>
+              <td id="bp-foot-agora" style="color:var(--cyan);font-size:14px;font-weight:900">0</td>
+              <td id="bp-foot-rest">0</td>
+            </tr></tfoot>
+          </table>
+        </div>
+
+        <div class="btn-group" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" style="background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)" onclick="imprimirBlendProporcional()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir Parcial</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PAINEL ESTOQUE EXPANSÍVEL -->
   <div class="section" id="painel-estoque-blend" style="display:none;border-left:4px solid var(--teal);margin-top:6px">
     <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(0,212,170,.15),rgba(34,211,238,.08))">
@@ -3918,6 +4010,8 @@ function salvarDados(silencioso) {
     movSilos: coletarDadosTabela('tbl-mov-silos'),
     blendComp: coletarDadosTabela('tbl-blend-comp'),
     blendCalc: coletarDadosTabela('tbl-blend-calc'),
+    blendClientes: coletarDadosTabela('tbl-blend-clientes'),
+    blendPropQtd: document.getElementById('blend-prop-qtd')?.value || '',
     blendagem: {
       num: document.getElementById('bld-num').value,
       data: document.getElementById('bld-data').value,
@@ -4018,6 +4112,8 @@ function carregarDados() {
     if (d.movSilos) restaurarDadosTabela('tbl-mov-silos', d.movSilos, addMovSiloRow);
     if (d.blendComp) restaurarDadosTabela('tbl-blend-comp', d.blendComp, addBlendCompRow);
     if (d.blendCalc) { restaurarDadosTabela('tbl-blend-calc', d.blendCalc, addBlendCalcRow); calcBlendSimulacao(); }
+    if (d.blendClientes) { restaurarDadosTabela('tbl-blend-clientes', d.blendClientes, addBlendClienteRow); calcBlendClientesTotal(); }
+    if (d.blendPropQtd) { document.getElementById('blend-prop-qtd').value = d.blendPropQtd; calcBlendProporcional(); }
     if (d.blendagem) {
       document.getElementById('bld-num').value = d.blendagem.num || '';
       document.getElementById('bld-data').value = d.blendagem.data || '';
@@ -4661,6 +4757,192 @@ td{padding:6px 8px;border:1px solid #ddd;text-align:center}tr:nth-child(even){ba
 <div><div class="label">Status MAPA</div><div class="val ${status==='REPROVADO'?'status-fail':'status-ok'}">${status}</div></div>
 </div>
 <table><thead><tr><th>#</th><th>Marca/Café</th><th>Peneira</th><th>Embalagem</th><th>Peso (kg)</th><th>% Blend</th><th>Impureza (%)</th><th>Impureza (kg)</th></tr></thead>
+<tbody>${tabelaHTML}</tbody></table>
+<div class="footer"><span>Impresso em: ${new Date().toLocaleString('pt-BR')}</span><span>Patrocínio Torrefação de Café — Goiânia</span></div>
+<script>window.print();<\/script></body></html>`);
+  win.document.close();
+}
+
+// ============ BLEND PROPORCIONAL — PRODUÇÃO PARCIAL ============
+function addBlendClienteRow() {
+  const tbody = document.getElementById('blend-clientes-body');
+  const tr = document.createElement('tr');
+  const n = tbody.children.length + 1;
+  tr.innerHTML = `
+    <td>${n}</td>
+    <td><input type="text" class="bpc-cliente" placeholder="Ex: Benevita / Jiré" style="width:100%"></td>
+    <td><input type="number" class="bpc-qtd" placeholder="kg" oninput="calcBlendClientesTotal()" style="width:100px;text-align:center"></td>
+    <td><button class="btn" style="padding:2px 8px;font-size:10px;color:var(--red);background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:4px" onclick="this.closest('tr').remove();reindexClienteRows();calcBlendClientesTotal()">X</button></td>`;
+  tbody.appendChild(tr);
+  atualizarSelectClientes();
+}
+
+function reindexClienteRows() {
+  document.querySelectorAll('#blend-clientes-body tr').forEach((tr, i) => {
+    tr.querySelector('td').textContent = i + 1;
+  });
+}
+
+function calcBlendClientesTotal() {
+  let total = 0;
+  document.querySelectorAll('#blend-clientes-body .bpc-qtd').forEach(inp => {
+    total += parseFloat(inp.value) || 0;
+  });
+  document.getElementById('blend-clientes-total').textContent = fmt(total) + ' kg';
+  atualizarSelectClientes();
+}
+
+function atualizarSelectClientes() {
+  const sel = document.getElementById('blend-prop-cliente');
+  const atual = sel.value;
+  sel.innerHTML = '<option value="">— ou selecione um cliente —</option>';
+  document.querySelectorAll('#blend-clientes-body tr').forEach(tr => {
+    const nome = tr.querySelector('.bpc-cliente')?.value || '';
+    const qtd = tr.querySelector('.bpc-qtd')?.value || '';
+    if (nome || qtd) {
+      const opt = document.createElement('option');
+      opt.value = qtd;
+      opt.textContent = (nome || 'Cliente') + ' — ' + (qtd || '0') + ' kg';
+      sel.appendChild(opt);
+    }
+  });
+  sel.value = atual;
+}
+
+function preencherQtdCliente() {
+  const sel = document.getElementById('blend-prop-cliente');
+  if (sel.value) {
+    document.getElementById('blend-prop-qtd').value = sel.value;
+    calcBlendProporcional();
+  }
+}
+
+function calcBlendProporcional() {
+  const qtdDesejada = parseFloat(document.getElementById('blend-prop-qtd').value) || 0;
+  const rows = document.querySelectorAll('#bld-calc-body tr');
+  const resultado = document.getElementById('blend-prop-resultado');
+
+  if (!rows.length || qtdDesejada <= 0) {
+    resultado.style.display = 'none';
+    return;
+  }
+
+  // Pegar dados do blend total
+  let totalBlend = 0;
+  const lotes = [];
+  rows.forEach((tr, i) => {
+    const marca = tr.querySelector('.bc-marca')?.value || 'Lote ' + (i+1);
+    const kgStr = tr.querySelector('.bc-kg')?.value || '0';
+    const kg = parseFloat(kgStr.replace(',','.')) || 0;
+    const pctStr = tr.querySelector('.bc-pct-blend')?.value || '0';
+    const pct = parseFloat(pctStr.replace('%','').replace(',','.')) || 0;
+    totalBlend += kg;
+    lotes.push({ marca, kg, pct });
+  });
+
+  if (totalBlend <= 0) {
+    showToast('Preencha o blend acima primeiro.');
+    resultado.style.display = 'none';
+    return;
+  }
+
+  if (qtdDesejada > totalBlend) {
+    showToast('Quantidade desejada (' + qtdDesejada + ' kg) é maior que o blend total (' + fmt(totalBlend) + ' kg).');
+  }
+
+  // Calcular proporcionais
+  const tbody = document.getElementById('blend-prop-body');
+  tbody.innerHTML = '';
+  let somaAgora = 0, somaRest = 0;
+
+  lotes.forEach((lote, i) => {
+    const proporcao = totalBlend > 0 ? lote.kg / totalBlend : 0;
+    const pegarAgora = parseFloat((qtdDesejada * proporcao).toFixed(2));
+    const restante = parseFloat((lote.kg - pegarAgora).toFixed(2));
+    somaAgora += pegarAgora;
+    somaRest += restante;
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td style="font-weight:700">${lote.marca}</td>
+      <td><span style="color:var(--teal);font-weight:700">${lote.pct.toFixed(1)}%</span></td>
+      <td>${fmt(lote.kg)} kg</td>
+      <td style="font-weight:900;font-size:14px;color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.3)">${fmt(pegarAgora)} kg</td>
+      <td style="color:var(--yellow)">${fmt(restante)} kg</td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Cards resumo
+  document.getElementById('bp-total-blend').textContent = fmt(totalBlend) + ' kg';
+  document.getElementById('bp-produzindo').textContent = fmt(qtdDesejada) + ' kg';
+  document.getElementById('bp-restante').textContent = fmt(totalBlend - qtdDesejada) + ' kg';
+  document.getElementById('bp-percentual').textContent = (qtdDesejada / totalBlend * 100).toFixed(1) + '%';
+
+  // Footer
+  document.getElementById('bp-foot-pct').textContent = '100%';
+  document.getElementById('bp-foot-total').textContent = fmt(totalBlend) + ' kg';
+  document.getElementById('bp-foot-agora').textContent = fmt(somaAgora) + ' kg';
+  document.getElementById('bp-foot-rest').textContent = fmt(somaRest) + ' kg';
+
+  resultado.style.display = 'block';
+  resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function imprimirBlendProporcional() {
+  const rows = document.querySelectorAll('#blend-prop-body tr');
+  if (!rows.length) { showToast('Calcule o blend proporcional primeiro.'); return; }
+
+  const numBlend = document.getElementById('bld-num')?.value || '--';
+  const dataBlend = document.getElementById('bld-data')?.value || new Date().toISOString().split('T')[0];
+  const operador = document.getElementById('bld-operador')?.value || '--';
+  const produzindo = document.getElementById('bp-produzindo')?.textContent || '0 kg';
+  const totalBlend = document.getElementById('bp-total-blend')?.textContent || '0 kg';
+  const restante = document.getElementById('bp-restante')?.textContent || '0 kg';
+  const percentual = document.getElementById('bp-percentual')?.textContent || '0%';
+
+  // Clientes
+  let clientesHTML = '';
+  document.querySelectorAll('#blend-clientes-body tr').forEach(tr => {
+    const nome = tr.querySelector('.bpc-cliente')?.value || '';
+    const qtd = tr.querySelector('.bpc-qtd')?.value || '';
+    if (nome || qtd) clientesHTML += '<tr><td>' + (nome||'--') + '</td><td>' + (qtd||'0') + ' kg</td></tr>';
+  });
+
+  let tabelaHTML = '';
+  rows.forEach(tr => {
+    const cells = tr.querySelectorAll('td');
+    tabelaHTML += '<tr>';
+    cells.forEach(td => { tabelaHTML += '<td>' + td.textContent + '</td>'; });
+    tabelaHTML += '</tr>';
+  });
+
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Blend Parcial - ${numBlend}</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;padding:30px;color:#222}
+h1{font-size:20px;margin-bottom:4px}h2{font-size:14px;color:#666;margin-bottom:20px}
+.info{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}.info div{flex:1;min-width:120px;padding:10px;border:1px solid #ddd;border-radius:6px;text-align:center}
+.info .label{font-size:9px;text-transform:uppercase;color:#888;font-weight:700;letter-spacing:.5px}.info .val{font-size:18px;font-weight:800;margin-top:4px}
+.destaque{color:#0891b2;font-size:22px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px}
+th{background:#f3f4f6;padding:8px;border:1px solid #ddd;font-size:10px;text-transform:uppercase}
+td{padding:6px 8px;border:1px solid #ddd;text-align:center}tr:nth-child(even){background:#f9fafb}
+.footer{margin-top:20px;padding-top:12px;border-top:1px solid #ddd;font-size:10px;color:#888;display:flex;justify-content:space-between}
+.alert{background:#fef3c7;border:1px solid #f59e0b;padding:10px;border-radius:6px;margin-bottom:16px;font-size:12px;color:#92400e}
+h3{font-size:13px;margin:16px 0 8px;color:#555}
+@media print{body{padding:15px}}</style></head><body>
+<h1>BLEND PARCIAL ${numBlend} — Patrocínio Torrefação de Café</h1>
+<h2>Data: ${dataBlend} | Operador: ${operador}</h2>
+<div class="alert"><b>PRODUÇÃO PARCIAL:</b> Este é um recorte proporcional do blend total. A proporção de cada lote foi mantida exatamente igual.</div>
+<div class="info">
+<div><div class="label">Blend Total</div><div class="val">${totalBlend}</div></div>
+<div><div class="label">Produzindo Agora</div><div class="val destaque">${produzindo}</div></div>
+<div><div class="label">Restante</div><div class="val">${restante}</div></div>
+<div><div class="label">% do Total</div><div class="val">${percentual}</div></div>
+</div>
+${clientesHTML ? '<h3>Clientes</h3><table><thead><tr><th>Cliente / Marca</th><th>Quantidade</th></tr></thead><tbody>' + clientesHTML + '</tbody></table>' : ''}
+<h3>Proporção por Lote — Pegar Agora</h3>
+<table><thead><tr><th>#</th><th>Marca/Café</th><th>% Blend</th><th>Qtd Total</th><th style="background:#e0f2fe;color:#0369a1">PEGAR AGORA</th><th>Restante</th></tr></thead>
 <tbody>${tabelaHTML}</tbody></table>
 <div class="footer"><span>Impresso em: ${new Date().toLocaleString('pt-BR')}</span><span>Patrocínio Torrefação de Café — Goiânia</span></div>
 <script>window.print();<\/script></body></html>`);
