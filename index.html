@@ -1109,12 +1109,14 @@ body.tema-fosco *{text-shadow:none!important}
               <th>Impureza (%)</th>
               <th>% do Blend</th>
               <th style="color:var(--cyan);font-weight:900;font-size:13px">Pegar Agora (kg)</th>
+              <th style="width:50px">OK</th>
             </tr></thead>
             <tbody id="blend-prop-body"></tbody>
             <tfoot><tr style="font-weight:800;color:var(--teal)">
               <td colspan="5">TOTAL</td>
               <td id="bp-foot-pct">100%</td>
               <td id="bp-foot-agora" style="color:var(--cyan);font-size:14px;font-weight:900">0</td>
+              <td></td>
             </tr></tfoot>
           </table>
         </div>
@@ -4927,7 +4929,8 @@ function calcBlendProporcional() {
       <td>${lote.fardo || '-'}</td>
       <td>${lote.imp ? lote.imp + '%' : '-'}</td>
       <td><span style="color:var(--teal);font-weight:700">${lote.pct.toFixed(1)}%</span></td>
-      <td style="font-weight:900;font-size:15px;color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.3)">${fmt(pegarAgora)} kg</td>`;
+      <td style="font-weight:900;font-size:15px;color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.3)">${fmt(pegarAgora)} kg</td>
+      <td style="text-align:center"><button class="bp-ok-btn" onclick="this.textContent=this.textContent==='OK'?'—':'OK';this.style.background=this.textContent==='OK'?'rgba(16,185,129,.25)':'rgba(100,100,100,.1)';this.style.color=this.textContent==='OK'?'var(--green)':'var(--text-muted)'" style="padding:4px 10px;font-size:11px;font-weight:800;border-radius:6px;border:1px solid var(--border);background:rgba(100,100,100,.1);color:var(--text-muted);cursor:pointer">—</button></td>`;
     tbody.appendChild(tr);
   });
 
@@ -4989,11 +4992,14 @@ function imprimirBlendProporcional() {
   let propHTML = '';
   propRows.forEach(tr => {
     const cells = tr.querySelectorAll('td');
+    const totalCols = cells.length;
     propHTML += '<tr>';
     cells.forEach((td, ci) => {
-      const isDestaque = ci === cells.length - 1;
+      if (ci === totalCols - 1) return;
+      const isDestaque = ci === totalCols - 2;
       propHTML += '<td' + (isDestaque ? ' style="font-weight:900;font-size:13px;color:#0369a1;background:#e0f2fe"' : '') + '>' + td.textContent + '</td>';
     });
+    propHTML += '<td style="width:50px;text-align:center"><div style="width:20px;height:20px;border:2px solid #999;border-radius:3px;margin:0 auto"></div></td>';
     propHTML += '</tr>';
   });
 
@@ -5044,7 +5050,7 @@ ${clientesHTML ? '<h3>Clientes deste Blend</h3><table><thead><tr><th>Cliente / M
 <div><div class="label">% do Total</div><div class="val">${percentual}</div></div>
 </div>
 <table>
-<thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="background:#e0f2fe;color:#0369a1;font-size:10px">PEGAR AGORA (kg)</th></tr></thead>
+<thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="background:#e0f2fe;color:#0369a1;font-size:10px">PEGAR AGORA (kg)</th><th style="width:50px">Status</th></tr></thead>
 <tbody>${propHTML}</tbody>
 </table>
 
