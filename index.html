@@ -3485,20 +3485,25 @@ function atualizarDashboard() {
   // Silos - kg torrado que caiu em cada silo
   for (let i = 1; i <= 3; i++) {
     const kgTorr = sk[`Silo ${i}`] || 0;
-    document.getElementById(`silo${i}-kg-torrado`).textContent = fmt(kgTorr) + ' kg';
     const cap = parseFloat(document.getElementById(`silo${i}-cap-input`)?.value) || 0;
     const est = parseFloat(document.getElementById(`silo${i}-est-input`)?.value) || 0;
     const lote = document.getElementById(`silo${i}-lote-input`)?.value || '-';
     const status = document.getElementById(`silo${i}-st-input`)?.value || 'Disponível';
     const pct = cap > 0 ? (est/cap*100) : 0;
-    document.getElementById(`silo${i}-kg`).textContent = fmt(est);
-    document.getElementById(`silo${i}-cap`).textContent = fmt(cap, 0);
-    document.getElementById(`silo${i}-pct`).textContent = fmt(pct, 1);
-    document.getElementById(`silo${i}-bar`).style.width = Math.min(pct, 100) + '%';
-    document.getElementById(`silo${i}-blend`).textContent = lote || '-';
+    const elKgTorr = document.getElementById(`silo${i}-kg-torrado`);
+    const elKg = document.getElementById(`silo${i}-kg`);
+    const elCap = document.getElementById(`silo${i}-cap`);
+    const elPct = document.getElementById(`silo${i}-pct`);
+    const elBar = document.getElementById(`silo${i}-bar`);
+    const elBlend = document.getElementById(`silo${i}-blend`);
     const badge = document.getElementById(`silo${i}-status`);
-    badge.textContent = status;
-    badge.className = 'badge ' + (status === 'Ocupado' ? 'badge-green' : status === 'Manutenção' ? 'badge-red' : 'badge-gray');
+    if (elKgTorr) elKgTorr.textContent = fmt(kgTorr) + ' kg';
+    if (elKg) elKg.textContent = fmt(est);
+    if (elCap) elCap.textContent = fmt(cap, 0);
+    if (elPct) elPct.textContent = fmt(pct, 1);
+    if (elBar) elBar.style.width = Math.min(pct, 100) + '%';
+    if (elBlend) elBlend.textContent = lote || '-';
+    if (badge) { badge.textContent = status; badge.className = 'badge ' + (status === 'Ocupado' ? 'badge-green' : status === 'Manutenção' ? 'badge-red' : 'badge-gray'); }
   }
 
   atualizarGraficos();
