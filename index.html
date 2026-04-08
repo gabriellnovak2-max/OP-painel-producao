@@ -1075,17 +1075,13 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
               <th>Fardo/Caixa</th>
               <th>Impureza (%)</th>
               <th>% do Blend</th>
-              <th>Qtd Total (kg)</th>
-              <th style="color:var(--cyan);font-weight:900">Pegar Agora (kg)</th>
-              <th>Restante (kg)</th>
+              <th style="color:var(--cyan);font-weight:900;font-size:13px">Pegar Agora (kg)</th>
             </tr></thead>
             <tbody id="blend-prop-body"></tbody>
             <tfoot><tr style="font-weight:800;color:var(--teal)">
               <td colspan="5">TOTAL</td>
               <td id="bp-foot-pct">100%</td>
-              <td id="bp-foot-total">0</td>
               <td id="bp-foot-agora" style="color:var(--cyan);font-size:14px;font-weight:900">0</td>
-              <td id="bp-foot-rest">0</td>
             </tr></tfoot>
           </table>
         </div>
@@ -4878,9 +4874,7 @@ function calcBlendProporcional() {
       <td>${lote.fardo || '-'}</td>
       <td>${lote.imp ? lote.imp + '%' : '-'}</td>
       <td><span style="color:var(--teal);font-weight:700">${lote.pct.toFixed(1)}%</span></td>
-      <td>${fmt(lote.kg)} kg</td>
-      <td style="font-weight:900;font-size:14px;color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.3)">${fmt(pegarAgora)} kg</td>
-      <td style="color:var(--yellow)">${fmt(restante)} kg</td>`;
+      <td style="font-weight:900;font-size:15px;color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.3)">${fmt(pegarAgora)} kg</td>`;
     tbody.appendChild(tr);
   });
 
@@ -4892,25 +4886,27 @@ function calcBlendProporcional() {
 
   // Footer
   document.getElementById('bp-foot-pct').textContent = '100%';
-  document.getElementById('bp-foot-total').textContent = fmt(totalBlend) + ' kg';
   document.getElementById('bp-foot-agora').textContent = fmt(somaAgora) + ' kg';
-  document.getElementById('bp-foot-rest').textContent = fmt(somaRest) + ' kg';
 
   resultado.style.display = 'block';
   resultado.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function imprimirBlendProporcional() {
-  const rows = document.querySelectorAll('#blend-prop-body tr');
-  if (!rows.length) { showToast('Calcule o blend proporcional primeiro.'); return; }
+  const propRows = document.querySelectorAll('#blend-prop-body tr');
+  if (!propRows.length) { showToast('Calcule o blend proporcional primeiro.'); return; }
 
   const numBlend = document.getElementById('bld-num')?.value || '--';
   const dataBlend = document.getElementById('bld-data')?.value || new Date().toISOString().split('T')[0];
   const operador = document.getElementById('bld-operador')?.value || '--';
+  const cliente = document.getElementById('bld-cliente')?.value || '--';
   const produzindo = document.getElementById('bp-produzindo')?.textContent || '0 kg';
-  const totalBlend = document.getElementById('bp-total-blend')?.textContent || '0 kg';
+  const totalBlendTxt = document.getElementById('bp-total-blend')?.textContent || '0 kg';
   const restante = document.getElementById('bp-restante')?.textContent || '0 kg';
   const percentual = document.getElementById('bp-percentual')?.textContent || '0%';
+  const pesoTotal = document.getElementById('bld-calc-peso')?.textContent || '0 kg';
+  const impTotal = document.getElementById('bld-calc-imp')?.textContent || '0%';
+  const statusMapa = document.getElementById('bld-calc-status')?.textContent || '--';
 
   // Clientes
   let clientesHTML = '';
@@ -4920,41 +4916,85 @@ function imprimirBlendProporcional() {
     if (nome || qtd) clientesHTML += '<tr><td>' + (nome||'--') + '</td><td>' + (qtd||'0') + ' kg</td></tr>';
   });
 
-  let tabelaHTML = '';
-  rows.forEach(tr => {
+  // SEÇÃO 1: Tabela do BLEND TOTAL (simulador de cima)
+  let blendTotalHTML = '';
+  document.querySelectorAll('#bld-calc-body tr').forEach((tr, i) => {
+    const marca = tr.querySelector('.bc-marca')?.value || '--';
+    const pen = tr.querySelector('.bc-peneira')?.value || '--';
+    const emb = tr.querySelector('.bc-embalagem')?.value || '--';
+    const fardoSel = tr.querySelector('.bc-fardo');
+    const fardo = fardoSel ? (fardoSel.options[fardoSel.selectedIndex]?.text || '--') : '--';
+    const qtdUn = tr.querySelector('.bc-qtd')?.value || '';
+    const kg = tr.querySelector('.bc-kg')?.value || '0';
+    const pct = tr.querySelector('.bc-pct-blend')?.value || '0%';
+    const imp = tr.querySelector('.bc-imp')?.value || '0';
+    const impkg = tr.querySelector('.bc-impkg')?.value || '0';
+    blendTotalHTML += '<tr><td>'+(i+1)+'</td><td>'+marca+'</td><td>'+emb+'</td><td>'+fardo+'</td><td>'+(qtdUn||'-')+'</td><td>'+kg+' kg</td><td>'+pct+'</td><td>'+imp+'%</td><td>'+impkg+' kg</td></tr>';
+  });
+
+  // SEÇÃO 2: Tabela do BLEND PROPORCIONAL (o que pegar agora)
+  let propHTML = '';
+  propRows.forEach(tr => {
     const cells = tr.querySelectorAll('td');
-    tabelaHTML += '<tr>';
-    cells.forEach(td => { tabelaHTML += '<td>' + td.textContent + '</td>'; });
-    tabelaHTML += '</tr>';
+    propHTML += '<tr>';
+    cells.forEach((td, ci) => {
+      const isDestaque = ci === cells.length - 1;
+      propHTML += '<td' + (isDestaque ? ' style="font-weight:900;font-size:13px;color:#0369a1;background:#e0f2fe"' : '') + '>' + td.textContent + '</td>';
+    });
+    propHTML += '</tr>';
   });
 
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><title>Blend Parcial - ${numBlend}</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;padding:30px;color:#222}
-h1{font-size:20px;margin-bottom:4px}h2{font-size:14px;color:#666;margin-bottom:20px}
-.info{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:20px}.info div{flex:1;min-width:120px;padding:10px;border:1px solid #ddd;border-radius:6px;text-align:center}
-.info .label{font-size:9px;text-transform:uppercase;color:#888;font-weight:700;letter-spacing:.5px}.info .val{font-size:18px;font-weight:800;margin-top:4px}
-.destaque{color:#0891b2;font-size:22px}
-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:16px}
-th{background:#f3f4f6;padding:8px;border:1px solid #ddd;font-size:10px;text-transform:uppercase}
-td{padding:6px 8px;border:1px solid #ddd;text-align:center}tr:nth-child(even){background:#f9fafb}
-.footer{margin-top:20px;padding-top:12px;border-top:1px solid #ddd;font-size:10px;color:#888;display:flex;justify-content:space-between}
-.alert{background:#fef3c7;border:1px solid #f59e0b;padding:10px;border-radius:6px;margin-bottom:16px;font-size:12px;color:#92400e}
-h3{font-size:13px;margin:16px 0 8px;color:#555}
-@media print{body{padding:15px}}</style></head><body>
-<h1>BLEND PARCIAL ${numBlend} — Patrocínio Torrefação de Café</h1>
-<h2>Data: ${dataBlend} | Operador: ${operador}</h2>
-<div class="alert"><b>PRODUÇÃO PARCIAL:</b> Este é um recorte proporcional do blend total. A proporção de cada lote foi mantida exatamente igual.</div>
+  win.document.write(`<!DOCTYPE html><html><head><title>Blend ${numBlend} - Total + Parcial</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;padding:24px;color:#222;font-size:11px}
+h1{font-size:18px;margin-bottom:2px}h2{font-size:12px;color:#666;margin-bottom:14px}
+.info{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}.info div{flex:1;min-width:100px;padding:8px;border:1px solid #ddd;border-radius:6px;text-align:center}
+.info .label{font-size:8px;text-transform:uppercase;color:#888;font-weight:700;letter-spacing:.5px}.info .val{font-size:16px;font-weight:800;margin-top:2px}
+.destaque{color:#0891b2;font-size:20px}
+.status-ok{color:#10b981}.status-fail{color:#ef4444}
+table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px}
+th{background:#f3f4f6;padding:6px;border:1px solid #ddd;font-size:9px;text-transform:uppercase;letter-spacing:.3px}
+td{padding:5px 6px;border:1px solid #ddd;text-align:center}tr:nth-child(even){background:#f9fafb}
+.footer{margin-top:16px;padding-top:10px;border-top:1px solid #ddd;font-size:9px;color:#888;display:flex;justify-content:space-between}
+.divider{border:none;border-top:3px solid #0891b2;margin:18px 0 14px}
+h3{font-size:13px;margin:12px 0 8px;color:#333;border-bottom:2px solid #eee;padding-bottom:4px}
+.alert{background:#fef3c7;border:1px solid #f59e0b;padding:8px 10px;border-radius:6px;margin-bottom:12px;font-size:11px;color:#92400e}
+.alert-blue{background:#e0f2fe;border:1px solid #0891b2;padding:8px 10px;border-radius:6px;margin-bottom:12px;font-size:11px;color:#0c4a6e}
+@media print{body{padding:12px}}</style></head><body>
+
+<h1>BLEND ${numBlend} — Patrocínio Torrefação de Café</h1>
+<h2>Data: ${dataBlend} | Operador: ${operador} | Cliente: ${cliente}</h2>
+
+${clientesHTML ? '<h3>Clientes deste Blend</h3><table><thead><tr><th>Cliente / Marca</th><th>Quantidade</th></tr></thead><tbody>' + clientesHTML + '</tbody></table>' : ''}
+
+<!-- ===== SEÇÃO 1: BLEND TOTAL ===== -->
+<h3>1. BLEND TOTAL — Composição Completa</h3>
 <div class="info">
-<div><div class="label">Blend Total</div><div class="val">${totalBlend}</div></div>
+<div><div class="label">Peso Total Blend</div><div class="val">${pesoTotal}</div></div>
+<div><div class="label">Impureza Ponderada</div><div class="val">${impTotal}</div></div>
+<div><div class="label">Status MAPA</div><div class="val ${statusMapa==='REPROVADO'?'status-fail':'status-ok'}">${statusMapa}</div></div>
+</div>
+<table>
+<thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Qtd (un)</th><th>Peso (kg)</th><th>% Blend</th><th>Impureza (%)</th><th>Impureza (kg)</th></tr></thead>
+<tbody>${blendTotalHTML}</tbody>
+</table>
+
+<hr class="divider">
+
+<!-- ===== SEÇÃO 2: BLEND PROPORCIONAL ===== -->
+<h3>2. PRODUÇÃO PARCIAL — O que Produzir Agora</h3>
+<div class="alert-blue"><b>ATENÇÃO PRODUÇÃO:</b> Pegar SOMENTE as quantidades da coluna "PEGAR AGORA". A proporção do blend foi mantida exatamente igual ao blend total.</div>
+<div class="info">
+<div><div class="label">Blend Total</div><div class="val">${totalBlendTxt}</div></div>
 <div><div class="label">Produzindo Agora</div><div class="val destaque">${produzindo}</div></div>
-<div><div class="label">Restante</div><div class="val">${restante}</div></div>
+<div><div class="label">Restante p/ Depois</div><div class="val">${restante}</div></div>
 <div><div class="label">% do Total</div><div class="val">${percentual}</div></div>
 </div>
-${clientesHTML ? '<h3>Clientes</h3><table><thead><tr><th>Cliente / Marca</th><th>Quantidade</th></tr></thead><tbody>' + clientesHTML + '</tbody></table>' : ''}
-<h3>Proporção por Lote — Pegar Agora</h3>
-<table><thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th>Qtd Total</th><th style="background:#e0f2fe;color:#0369a1">PEGAR AGORA</th><th>Restante</th></tr></thead>
-<tbody>${tabelaHTML}</tbody></table>
+<table>
+<thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="background:#e0f2fe;color:#0369a1;font-size:10px">PEGAR AGORA (kg)</th></tr></thead>
+<tbody>${propHTML}</tbody>
+</table>
+
 <div class="footer"><span>Impresso em: ${new Date().toLocaleString('pt-BR')}</span><span>Patrocínio Torrefação de Café — Goiânia</span></div>
 <script>window.print();<\/script></body></html>`);
   win.document.close();
