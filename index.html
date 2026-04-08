@@ -129,6 +129,19 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
 .kpi-card.vermelho .kpi-footer-value{color:#ef4444} .kpi-card.vermelho .kpi-bar-fill{background:linear-gradient(90deg,#ef4444,#f87171)}
 .kpi-card.roxo .value{color:#a78bfa} .kpi-card.roxo .kpi-dot{color:#a78bfa;background:#a78bfa}
 .kpi-card.roxo .kpi-footer-value{color:#a78bfa} .kpi-card.roxo .kpi-bar-fill{background:linear-gradient(90deg,#a78bfa,#c4b5fd)}
+.charts-grid-8{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1400px){.charts-grid-8{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){.charts-grid-8{grid-template-columns:1fr}}
+.chart-box-neo{background:linear-gradient(145deg,rgba(28,35,51,.95),rgba(13,17,23,.98));border-radius:16px;padding:20px 18px 14px;border:1px solid rgba(0,212,170,.12);box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.04);transition:all .4s cubic-bezier(.23,1,.32,1);position:relative;overflow:hidden}
+.chart-box-neo::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,170,.5),rgba(34,211,238,.5),transparent);opacity:0;transition:opacity .4s}
+.chart-box-neo:hover{box-shadow:0 12px 40px rgba(0,212,170,.15),0 4px 20px rgba(0,0,0,.5);transform:translateY(-4px);border-color:rgba(0,212,170,.3)}
+.chart-box-neo:hover::before{opacity:1}
+.chart-box-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.chart-icon{font-size:18px;filter:drop-shadow(0 0 6px rgba(0,212,170,.4))}
+.chart-box-neo h4{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin:0}
+.chart-footer{font-size:10px;color:var(--text-muted);text-align:center;margin-top:10px;padding-top:8px;border-top:1px solid rgba(48,54,61,.5);letter-spacing:.3px;transition:color .3s}
+.chart-box-neo:hover .chart-footer{color:var(--teal)}
+.gauge-center{position:absolute;bottom:18%;left:50%;transform:translateX(-50%);font-size:28px;font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(34,211,238,.4);pointer-events:none}
 .charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
 .chart-box{background:var(--bg-card);border-radius:12px;padding:18px;border:1px solid var(--border);box-shadow:0 4px 12px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.03);transition:all .3s}
 .chart-box:hover{box-shadow:0 8px 24px rgba(0,0,0,.35);transform:translateY(-2px)}
@@ -179,6 +192,7 @@ tr.total-row td{border-color:rgba(0,212,170,.3);color:var(--teal)}
   .kpi-card .value{font-size:22px}
   .kpi-card{padding:14px 16px 12px}
   .charts-grid{grid-template-columns:1fr}
+  .charts-grid-8{grid-template-columns:1fr}
   table{font-size:11px}
   th,td{padding:4px 3px}
 }
@@ -597,13 +611,55 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
 
   <!-- GRÁFICOS INTERATIVOS -->
   <div class="section hover3d">
-    <div class="section-title">GRÁFICOS INTERATIVOS</div>
+    <div class="section-title" style="display:flex;align-items:center;gap:10px">GRÁFICOS INTERATIVOS <span style="font-size:10px;color:var(--text-muted);font-weight:400">Hover para explorar dados em tempo real</span></div>
     <div class="section-body">
-      <div class="charts-grid">
-        <div class="chart-box hover3d"><h4>Peso por Batelada (Cru vs Torrado)</h4><canvas id="chart-bateladas"></canvas></div>
-        <div class="chart-box hover3d"><h4>Quebra (%) por Batelada</h4><canvas id="chart-quebra"></canvas></div>
-        <div class="chart-box hover3d"><h4>Distribuição por Silo (kg Torrado)</h4><canvas id="chart-silos"></canvas></div>
-        <div class="chart-box hover3d"><h4>Tempo por Batelada (min)</h4><canvas id="chart-tempos"></canvas></div>
+      <div class="charts-grid-8">
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">📊</span><h4>Produção: Cru vs Torrado</h4></div>
+          <canvas id="chart-bateladas"></canvas>
+          <div class="chart-footer" id="chart-bat-footer">Sem dados — preencha bateladas</div>
+        </div>
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">📉</span><h4>Quebra por Batelada (%)</h4></div>
+          <canvas id="chart-quebra"></canvas>
+          <div class="chart-footer" id="chart-quebra-footer">Meta: ≤ 18% | Alerta: > 22%</div>
+        </div>
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">⚡</span><h4>Rendimento Geral</h4></div>
+          <div style="position:relative">
+            <canvas id="chart-rendimento"></canvas>
+            <div class="gauge-center" id="gauge-rend-val">0%</div>
+          </div>
+          <div class="chart-footer" id="chart-rend-footer">Eficiência da torra (torrado/cru)</div>
+        </div>
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">🏗️</span><h4>Distribuição por Silo</h4></div>
+          <canvas id="chart-silos"></canvas>
+          <div class="chart-footer" id="chart-silos-footer">Ocupação dos 3 silos</div>
+        </div>
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">⏱️</span><h4>Tempo por Batelada (min)</h4></div>
+          <canvas id="chart-tempos"></canvas>
+          <div class="chart-footer" id="chart-tempo-footer">Meta: ≤ 12 min por batelada</div>
+        </div>
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">🎯</span><h4>Radar de Performance</h4></div>
+          <canvas id="chart-radar"></canvas>
+          <div class="chart-footer" id="chart-radar-footer">Visão 360° da produção</div>
+        </div>
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">🔥</span><h4>Nível de Quebra</h4></div>
+          <div style="position:relative">
+            <canvas id="chart-gauge-quebra"></canvas>
+            <div class="gauge-center" id="gauge-quebra-val">0%</div>
+          </div>
+          <div class="chart-footer" id="chart-gq-footer">Verde ≤18% | Amarelo ≤22% | Vermelho >22%</div>
+        </div>
+        <div class="chart-box-neo hover3d">
+          <div class="chart-box-header"><span class="chart-icon">📈</span><h4>Evolução Acumulada (kg)</h4></div>
+          <canvas id="chart-acumulado"></canvas>
+          <div class="chart-footer" id="chart-acum-footer">Acúmulo progressivo cru + torrado</div>
+        </div>
       </div>
     </div>
   </div>
@@ -3290,58 +3346,272 @@ document.addEventListener('change', function(e) {
   }
 });
 
-// ============ GRÁFICOS (Chart.js) ============
-let chartBat, chartQuebra, chartSilos, chartTempos;
-function inicializarGraficos() {
-  const ctxBat = document.getElementById('chart-bateladas').getContext('2d');
-  const darkGrid = {color:'rgba(48,54,61,.6)'};
-  const darkTick = {color:'#8b949e'};
-  const darkScales = {x:{grid:darkGrid,ticks:darkTick},y:{beginAtZero:true,grid:darkGrid,ticks:darkTick}};
-  const darkPlugins = {legend:{labels:{color:'#e6edf3'}}};
+// ============ GRÁFICOS INTERATIVOS (Chart.js) ============
+let chartBat, chartQuebra, chartSilos, chartTempos, chartRendimento, chartRadar, chartGaugeQuebra, chartAcumulado;
 
+function criarGradiente(ctx, cor1, cor2, h) {
+  const g = ctx.createLinearGradient(0, 0, 0, h || 300);
+  g.addColorStop(0, cor1);
+  g.addColorStop(1, cor2);
+  return g;
+}
+
+function tooltipRico() {
+  return {
+    enabled: true,
+    backgroundColor: 'rgba(13,17,23,.95)',
+    titleColor: '#00d4aa',
+    bodyColor: '#e6edf3',
+    borderColor: 'rgba(0,212,170,.3)',
+    borderWidth: 1,
+    cornerRadius: 10,
+    padding: 14,
+    titleFont: { size: 13, weight: '800' },
+    bodyFont: { size: 12 },
+    displayColors: true,
+    boxPadding: 6,
+    caretSize: 8,
+    caretPadding: 8,
+    usePointStyle: true
+  };
+}
+
+function inicializarGraficos() {
+  const darkGrid = {color:'rgba(48,54,61,.4)', drawBorder: false};
+  const darkTick = {color:'#6e7681', font:{size:10,weight:'600'}};
+  const darkScales = {x:{grid:darkGrid,ticks:darkTick},y:{beginAtZero:true,grid:darkGrid,ticks:darkTick}};
+  const neonLegend = {labels:{color:'#e6edf3',font:{size:11,weight:'600'},padding:14,usePointStyle:true,pointStyle:'rectRounded'}};
+  const animDelay = {animation:{delay:(ctx)=>ctx.dataIndex*120+ctx.datasetIndex*60,duration:1200,easing:'easeOutQuart'}};
+
+  // 1. PRODUÇÃO CRU vs TORRADO (bar com gradiente neon)
+  const ctxBat = document.getElementById('chart-bateladas').getContext('2d');
+  const gCru = criarGradiente(ctxBat, 'rgba(59,130,246,.7)', 'rgba(59,130,246,.05)');
+  const gTorr = criarGradiente(ctxBat, 'rgba(0,212,170,.7)', 'rgba(0,212,170,.05)');
   chartBat = new Chart(ctxBat, {
     type: 'bar',
     data: { labels: [], datasets: [
-      { label: 'Café Cru (kg)', data: [], backgroundColor: 'rgba(59,130,246,.35)', borderColor: '#3b82f6', borderWidth: 2, borderRadius: 6 },
-      { label: 'Café Torrado (kg)', data: [], backgroundColor: 'rgba(0,212,170,.35)', borderColor: '#00d4aa', borderWidth: 2, borderRadius: 6 }
+      { label: 'Café Cru (kg)', data: [], backgroundColor: gCru, borderColor: '#3b82f6', borderWidth: 2, borderRadius: 8, hoverBackgroundColor: 'rgba(59,130,246,.85)' },
+      { label: 'Café Torrado (kg)', data: [], backgroundColor: gTorr, borderColor: '#00d4aa', borderWidth: 2, borderRadius: 8, hoverBackgroundColor: 'rgba(0,212,170,.85)' }
     ]},
-    options: { responsive: true, scales: darkScales, plugins: darkPlugins }
+    options: { responsive: true, maintainAspectRatio: true, ...animDelay,
+      interaction: {mode:'index',intersect:false},
+      scales: darkScales,
+      plugins: {legend:neonLegend, tooltip:{...tooltipRico(),
+        callbacks:{
+          title:(items)=>'Batelada ' + items[0].label,
+          afterBody:(items)=>{
+            const cru=items[0]?.raw||0, torr=items[1]?.raw||0;
+            const q=cru>0?((cru-torr)/cru*100).toFixed(1):'0';
+            return ['─────────────','Quebra: '+q+'%  |  Rend: '+(100-parseFloat(q)).toFixed(1)+'%'];
+          }
+        }
+      }}
+    }
   });
 
+  // 2. QUEBRA POR BATELADA (line com área gradiente + linha meta)
   const ctxQ = document.getElementById('chart-quebra').getContext('2d');
+  const gQuebra = criarGradiente(ctxQ, 'rgba(239,68,68,.35)', 'rgba(239,68,68,.02)');
   chartQuebra = new Chart(ctxQ, {
     type: 'line',
-    data: { labels: [], datasets: [{
-      label: 'Quebra (%)', data: [], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,.08)',
-      fill: true, tension: 0.4, pointRadius: 5, pointBackgroundColor: '#ef4444', pointBorderColor: '#1c2333', pointBorderWidth: 2
-    }]},
-    options: { responsive: true, scales: {...darkScales, y:{...darkScales.y, max:30}}, plugins: darkPlugins }
+    data: { labels: [], datasets: [
+      { label: 'Quebra (%)', data: [], borderColor: '#ef4444', backgroundColor: gQuebra,
+        fill: true, tension: 0.45, pointRadius: 6, pointHoverRadius: 10,
+        pointBackgroundColor: '#ef4444', pointBorderColor: '#1c2333', pointBorderWidth: 3,
+        pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#ef4444', pointHoverBorderWidth: 3 },
+      { label: 'Meta 18%', data: [], borderColor: 'rgba(16,185,129,.6)', borderDash: [8,4], borderWidth: 2,
+        pointRadius: 0, fill: false, tension: 0 },
+      { label: 'Alerta 22%', data: [], borderColor: 'rgba(245,158,11,.5)', borderDash: [4,4], borderWidth: 1.5,
+        pointRadius: 0, fill: false, tension: 0 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: true, ...animDelay,
+      interaction: {mode:'index',intersect:false},
+      scales: {...darkScales, y:{...darkScales.y, max:35, ticks:{...darkTick, callback:v=>v+'%'}}},
+      plugins: {legend:neonLegend, tooltip:{...tooltipRico(),
+        callbacks:{
+          label:(ctx)=>{
+            if(ctx.datasetIndex===0) {
+              const v=ctx.raw;
+              const emoji = v<=18?'🟢':v<=22?'🟡':'🔴';
+              return emoji+' Quebra: '+v+'%'+(v<=18?' (Ideal)':v<=22?' (Atenção)':' (ALTO!)');
+            }
+            return ctx.dataset.label+': '+ctx.raw+'%';
+          }
+        }
+      }}
+    }
   });
 
+  // 3. GAUGE DE RENDIMENTO (semicírculo velocímetro)
+  const ctxR = document.getElementById('chart-rendimento').getContext('2d');
+  chartRendimento = new Chart(ctxR, {
+    type: 'doughnut',
+    data: { labels: ['Rendimento','Perda'], datasets: [{
+      data: [0, 100],
+      backgroundColor: [criarGradiente(ctxR,'#00d4aa','#22d3ee',200), 'rgba(48,54,61,.3)'],
+      borderWidth: 0, hoverOffset: 4
+    }]},
+    options: { responsive: true, maintainAspectRatio: true,
+      rotation: -90, circumference: 180, cutout: '78%',
+      animation: {duration:1500, easing:'easeOutCubic', animateRotate:true},
+      plugins: {legend:{display:false}, tooltip:{...tooltipRico(),
+        callbacks:{label:(ctx)=>ctx.label+': '+ctx.raw.toFixed(1)+'%'}
+      }}
+    }
+  });
+
+  // 4. DISTRIBUIÇÃO POR SILO (doughnut neon animado)
   const ctxS = document.getElementById('chart-silos').getContext('2d');
   chartSilos = new Chart(ctxS, {
     type: 'doughnut',
     data: { labels: ['Silo 1', 'Silo 2', 'Silo 3'], datasets: [{
       data: [0, 0, 0],
-      backgroundColor: ['rgba(59,130,246,.4)', 'rgba(0,212,170,.4)', 'rgba(249,115,22,.4)'],
+      backgroundColor: ['rgba(59,130,246,.6)', 'rgba(0,212,170,.6)', 'rgba(249,115,22,.6)'],
       borderColor: ['#3b82f6', '#00d4aa', '#f97316'],
-      borderWidth: 2, hoverOffset: 8
+      hoverBackgroundColor: ['rgba(59,130,246,.9)', 'rgba(0,212,170,.9)', 'rgba(249,115,22,.9)'],
+      borderWidth: 2, hoverOffset: 14, spacing: 4
     }]},
-    options: { responsive: true, plugins: {...darkPlugins, legend:{labels:{color:'#e6edf3',padding:16}}} }
+    options: { responsive: true, maintainAspectRatio: true,
+      cutout: '55%',
+      animation: {duration:1500, easing:'easeOutBounce', animateRotate:true, animateScale:true},
+      plugins: {legend:{...neonLegend,position:'bottom'}, tooltip:{...tooltipRico(),
+        callbacks:{
+          label:(ctx)=>{
+            const total=ctx.dataset.data.reduce((a,b)=>a+b,0);
+            const pct=total>0?(ctx.raw/total*100).toFixed(1):'0';
+            return ' '+ctx.label+': '+ctx.raw.toFixed(1)+' kg ('+pct+'%)';
+          },
+          afterLabel:(ctx)=>{
+            const cap=parseFloat(document.getElementById('silo'+(ctx.dataIndex+1)+'-cap-input')?.value)||0;
+            return cap>0?'Capacidade: '+cap+' kg | Ocupação: '+(ctx.raw/cap*100).toFixed(0)+'%':'';
+          }
+        }
+      }}
+    }
   });
 
+  // 5. TEMPO POR BATELADA (bar horizontal gradiente roxo)
   const ctxT = document.getElementById('chart-tempos').getContext('2d');
+  const gTempo = criarGradiente(ctxT, 'rgba(167,139,250,.75)', 'rgba(167,139,250,.05)');
   chartTempos = new Chart(ctxT, {
     type: 'bar',
     data: { labels: [], datasets: [{
-      label: 'Tempo (min)', data: [], backgroundColor: 'rgba(167,139,250,.35)', borderColor: '#a78bfa', borderWidth: 2, borderRadius: 6
+      label: 'Tempo (min)', data: [], backgroundColor: gTempo,
+      borderColor: '#a78bfa', borderWidth: 2, borderRadius: 8, hoverBackgroundColor: 'rgba(167,139,250,.9)'
     }]},
-    options: { responsive: true, scales: darkScales, plugins: darkPlugins }
+    options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y', ...animDelay,
+      scales: {x:{...darkScales.x, ticks:{...darkTick, callback:v=>v+' min'}},y:{...darkScales.y}},
+      plugins: {legend:{display:false}, tooltip:{...tooltipRico(),
+        callbacks:{
+          title:(items)=>items[0].label,
+          label:(ctx)=>{
+            const v=ctx.raw;
+            const emoji = v<=12?'🟢 Rápido':v<=15?'🟡 Normal':'🔴 Lento';
+            return emoji+' — '+v+' min';
+          },
+          afterLabel:(ctx)=>{
+            const meta=12;
+            const diff=ctx.raw-meta;
+            return diff<=0?'✅ '+Math.abs(diff).toFixed(0)+' min abaixo da meta':'⚠️ '+diff.toFixed(0)+' min acima da meta';
+          }
+        }
+      }}
+    }
+  });
+
+  // 6. RADAR DE PERFORMANCE (multi-eixo)
+  const ctxRd = document.getElementById('chart-radar').getContext('2d');
+  chartRadar = new Chart(ctxRd, {
+    type: 'radar',
+    data: { labels: ['Rendimento','Velocidade','Consistência','Volume','Efic. Água','Economia'], datasets: [{
+      label: 'Atual',
+      data: [0,0,0,0,0,0],
+      backgroundColor: 'rgba(0,212,170,.15)',
+      borderColor: '#00d4aa', borderWidth: 2.5,
+      pointBackgroundColor: '#00d4aa', pointBorderColor: '#1c2333', pointBorderWidth: 2,
+      pointRadius: 5, pointHoverRadius: 9, pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#00d4aa'
+    },{
+      label: 'Meta Ideal',
+      data: [82,83,90,80,85,80],
+      backgroundColor: 'rgba(59,130,246,.06)',
+      borderColor: 'rgba(59,130,246,.4)', borderWidth: 1.5, borderDash: [6,3],
+      pointRadius: 0, pointHoverRadius: 4
+    }]},
+    options: { responsive: true, maintainAspectRatio: true,
+      animation: {duration:1800, easing:'easeOutQuart'},
+      scales: {r:{
+        grid:{color:'rgba(48,54,61,.4)',circular:true},
+        angleLines:{color:'rgba(48,54,61,.4)'},
+        pointLabels:{color:'#e6edf3',font:{size:10,weight:'700'}},
+        ticks:{display:false}, min:0, max:100
+      }},
+      plugins: {legend:neonLegend, tooltip:{...tooltipRico(),
+        callbacks:{
+          label:(ctx)=>{
+            const labels=['Rendimento da torra','Velocidade (tempo/bat)','Consistência de quebra','Volume produzido','Eficiência de água','Economia de lenha'];
+            return ' '+ctx.dataset.label+': '+(ctx.raw||0).toFixed(0)+'% — '+labels[ctx.dataIndex];
+          }
+        }
+      }}
+    }
+  });
+
+  // 7. GAUGE DE QUEBRA (semicírculo tricolor)
+  const ctxGQ = document.getElementById('chart-gauge-quebra').getContext('2d');
+  chartGaugeQuebra = new Chart(ctxGQ, {
+    type: 'doughnut',
+    data: { labels: ['Quebra Atual','Margem Restante'], datasets: [{
+      data: [0, 30],
+      backgroundColor: ['#10b981', 'rgba(48,54,61,.25)'],
+      borderWidth: 0
+    }]},
+    options: { responsive: true, maintainAspectRatio: true,
+      rotation: -90, circumference: 180, cutout: '78%',
+      animation: {duration:1500, easing:'easeOutCubic', animateRotate:true},
+      plugins: {legend:{display:false}, tooltip:{...tooltipRico(),
+        callbacks:{label:(ctx)=>ctx.dataIndex===0?'Quebra: '+ctx.raw.toFixed(1)+'%':'Margem: '+ctx.raw.toFixed(1)+'%'}
+      }}
+    }
+  });
+
+  // 8. EVOLUÇÃO ACUMULADA (line com área gradiente dupla)
+  const ctxA = document.getElementById('chart-acumulado').getContext('2d');
+  const gACru = criarGradiente(ctxA, 'rgba(59,130,246,.4)', 'rgba(59,130,246,.02)');
+  const gATorr = criarGradiente(ctxA, 'rgba(0,212,170,.4)', 'rgba(0,212,170,.02)');
+  chartAcumulado = new Chart(ctxA, {
+    type: 'line',
+    data: { labels: [], datasets: [
+      { label: 'Cru Acumulado (kg)', data: [], borderColor: '#3b82f6', backgroundColor: gACru,
+        fill: true, tension: 0.4, pointRadius: 5, pointHoverRadius: 9,
+        pointBackgroundColor: '#3b82f6', pointBorderColor: '#1c2333', pointBorderWidth: 2,
+        pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#3b82f6' },
+      { label: 'Torrado Acumulado (kg)', data: [], borderColor: '#00d4aa', backgroundColor: gATorr,
+        fill: true, tension: 0.4, pointRadius: 5, pointHoverRadius: 9,
+        pointBackgroundColor: '#00d4aa', pointBorderColor: '#1c2333', pointBorderWidth: 2,
+        pointHoverBackgroundColor: '#fff', pointHoverBorderColor: '#00d4aa' }
+    ]},
+    options: { responsive: true, maintainAspectRatio: true, ...animDelay,
+      interaction: {mode:'index',intersect:false},
+      scales: {...darkScales, y:{...darkScales.y, ticks:{...darkTick, callback:v=>v+' kg'}}},
+      plugins: {legend:neonLegend, tooltip:{...tooltipRico(),
+        callbacks:{
+          afterBody:(items)=>{
+            const cAcum=items[0]?.raw||0, tAcum=items[1]?.raw||0;
+            const perdaAcum=cAcum-tAcum;
+            const rendAcum=cAcum>0?(tAcum/cAcum*100).toFixed(1):'0';
+            return ['─────────────','Perda acumulada: '+perdaAcum.toFixed(1)+' kg','Rendimento: '+rendAcum+'%'];
+          }
+        }
+      }}
+    }
   });
 }
 
 function atualizarGraficos() {
   const labels = [], crus = [], torrs = [], quebras = [], tempos = [];
+  const acumCru = [], acumTorr = [];
+  let sumCru = 0, sumTorr = 0;
+
   document.querySelectorAll('#tbl-bateladas tbody tr').forEach((tr, i) => {
     const c = parseFloat(tr.querySelector('.bat-cru')?.value) || 0;
     const t = parseFloat(tr.querySelector('.bat-torr')?.value) || 0;
@@ -3351,25 +3621,114 @@ function atualizarGraficos() {
       crus.push(c); torrs.push(t);
       quebras.push(c > 0 ? parseFloat(((c-t)/c*100).toFixed(1)) : 0);
       tempos.push(tm);
+      sumCru += c; sumTorr += t;
+      acumCru.push(parseFloat(sumCru.toFixed(1)));
+      acumTorr.push(parseFloat(sumTorr.toFixed(1)));
     }
   });
 
+  // 1. Produção Cru vs Torrado
   chartBat.data.labels = labels;
   chartBat.data.datasets[0].data = crus;
   chartBat.data.datasets[1].data = torrs;
   chartBat.update();
+  document.getElementById('chart-bat-footer').textContent = labels.length > 0
+    ? labels.length + ' bateladas | Total Cru: ' + sumCru.toFixed(1) + ' kg | Torrado: ' + sumTorr.toFixed(1) + ' kg'
+    : 'Sem dados — preencha bateladas';
 
+  // 2. Quebra por Batelada (com linhas de meta)
   chartQuebra.data.labels = labels;
   chartQuebra.data.datasets[0].data = quebras;
+  chartQuebra.data.datasets[1].data = labels.map(() => 18);
+  chartQuebra.data.datasets[2].data = labels.map(() => 22);
   chartQuebra.update();
+  const quebraMedia = quebras.length > 0 ? (quebras.reduce((a,b)=>a+b,0)/quebras.length) : 0;
+  const qEmoji = quebraMedia<=18?'🟢':quebraMedia<=22?'🟡':'🔴';
+  document.getElementById('chart-quebra-footer').textContent = quebras.length > 0
+    ? qEmoji + ' Média: ' + quebraMedia.toFixed(1) + '% | Min: ' + Math.min(...quebras).toFixed(1) + '% | Max: ' + Math.max(...quebras).toFixed(1) + '%'
+    : 'Meta: ≤ 18% | Alerta: > 22%';
 
+  // 3. Gauge de Rendimento
+  const rendimento = sumCru > 0 ? (sumTorr / sumCru * 100) : 0;
+  chartRendimento.data.datasets[0].data = [rendimento, 100 - rendimento];
+  const rCor = rendimento >= 80 ? '#00d4aa' : rendimento >= 70 ? '#f59e0b' : '#ef4444';
+  chartRendimento.data.datasets[0].backgroundColor[0] = rCor;
+  chartRendimento.update();
+  document.getElementById('gauge-rend-val').textContent = rendimento.toFixed(1) + '%';
+  document.getElementById('gauge-rend-val').style.color = rCor;
+  document.getElementById('chart-rend-footer').textContent = rendimento > 0
+    ? (rendimento >= 80 ? '🟢 Excelente' : rendimento >= 70 ? '🟡 Atenção' : '🔴 Crítico') + ' — Perda: ' + (100-rendimento).toFixed(1) + '%'
+    : 'Eficiência da torra (torrado/cru)';
+
+  // 4. Distribuição por Silo
   const sk = window._siloKg || {};
-  chartSilos.data.datasets[0].data = [sk['Silo 1']||0, sk['Silo 2']||0, sk['Silo 3']||0];
+  const siloData = [sk['Silo 1']||0, sk['Silo 2']||0, sk['Silo 3']||0];
+  chartSilos.data.datasets[0].data = siloData;
   chartSilos.update();
+  const siloTotal = siloData.reduce((a,b)=>a+b,0);
+  document.getElementById('chart-silos-footer').textContent = siloTotal > 0
+    ? 'Total: ' + siloTotal.toFixed(1) + ' kg | S1: ' + siloData[0].toFixed(1) + ' | S2: ' + siloData[1].toFixed(1) + ' | S3: ' + siloData[2].toFixed(1)
+    : 'Ocupação dos 3 silos';
 
+  // 5. Tempo por Batelada
   chartTempos.data.labels = labels;
   chartTempos.data.datasets[0].data = tempos;
   chartTempos.update();
+  const tMedia = tempos.length > 0 ? tempos.reduce((a,b)=>a+b,0)/tempos.length : 0;
+  const tEmoji = tMedia<=12?'🟢':tMedia<=15?'🟡':'🔴';
+  document.getElementById('chart-tempo-footer').textContent = tempos.length > 0
+    ? tEmoji + ' Média: ' + tMedia.toFixed(1) + ' min | Total: ' + tempos.reduce((a,b)=>a+b,0).toFixed(0) + ' min'
+    : 'Meta: ≤ 12 min por batelada';
+
+  // 6. Radar de Performance (calcular os 6 eixos em escala 0-100)
+  const bd = window._batData || {};
+  const metaBat = 10, metaTempo = 12;
+  const radarRendimento = rendimento > 0 ? Math.min(rendimento / 85 * 100, 100) : 0;
+  const radarVelocidade = tMedia > 0 ? Math.min(metaTempo / tMedia * 100, 100) : 0;
+  const quebraConsistencia = quebras.length > 1
+    ? Math.max(0, 100 - (Math.max(...quebras) - Math.min(...quebras)) * 10)
+    : (quebras.length === 1 ? 80 : 0);
+  const radarVolume = Math.min((bd.count || 0) / metaBat * 100, 100);
+  const radarAgua = bd.tAgua > 0 && bd.count > 0 ? Math.min(85 / (bd.tAgua / bd.count) * 100, 100) : 0;
+  const lenhaVal = parseFloat(document.getElementById('lenha-qtd')?.value) || 0;
+  const radarLenha = lenhaVal > 0 && bd.count > 0 ? Math.min(15 / (lenhaVal / bd.count) * 100, 100) : 0;
+
+  chartRadar.data.datasets[0].data = [
+    parseFloat(radarRendimento.toFixed(0)),
+    parseFloat(radarVelocidade.toFixed(0)),
+    parseFloat(quebraConsistencia.toFixed(0)),
+    parseFloat(radarVolume.toFixed(0)),
+    parseFloat(radarAgua.toFixed(0)),
+    parseFloat(radarLenha.toFixed(0))
+  ];
+  chartRadar.update();
+  const radarAvg = chartRadar.data.datasets[0].data.reduce((a,b)=>a+b,0) / 6;
+  document.getElementById('chart-radar-footer').textContent = radarAvg > 0
+    ? 'Score geral: ' + radarAvg.toFixed(0) + '/100 — ' + (radarAvg>=80?'🟢 Excelente':radarAvg>=60?'🟡 Bom':'🔴 Melhorar')
+    : 'Visão 360° da produção';
+
+  // 7. Gauge de Quebra
+  const quebraPct = sumCru > 0 ? ((sumCru-sumTorr)/sumCru*100) : 0;
+  const gaugeMax = 30;
+  const gaugeVal = Math.min(quebraPct, gaugeMax);
+  chartGaugeQuebra.data.datasets[0].data = [gaugeVal, gaugeMax - gaugeVal];
+  const gqCor = quebraPct <= 18 ? '#10b981' : quebraPct <= 22 ? '#f59e0b' : '#ef4444';
+  chartGaugeQuebra.data.datasets[0].backgroundColor[0] = gqCor;
+  chartGaugeQuebra.update();
+  document.getElementById('gauge-quebra-val').textContent = quebraPct.toFixed(1) + '%';
+  document.getElementById('gauge-quebra-val').style.color = gqCor;
+  document.getElementById('chart-gq-footer').textContent = quebraPct > 0
+    ? (quebraPct<=18?'🟢 Normal':quebraPct<=22?'🟡 Atenção':'🔴 Crítico') + ' — Perda: ' + (sumCru-sumTorr).toFixed(1) + ' kg'
+    : 'Verde ≤18% | Amarelo ≤22% | Vermelho >22%';
+
+  // 8. Evolução Acumulada
+  chartAcumulado.data.labels = labels;
+  chartAcumulado.data.datasets[0].data = acumCru;
+  chartAcumulado.data.datasets[1].data = acumTorr;
+  chartAcumulado.update();
+  document.getElementById('chart-acum-footer').textContent = acumCru.length > 0
+    ? 'Cru total: ' + sumCru.toFixed(1) + ' kg → Torrado: ' + sumTorr.toFixed(1) + ' kg | Gap: ' + (sumCru-sumTorr).toFixed(1) + ' kg'
+    : 'Acúmulo progressivo cru + torrado';
 }
 
 // ============ DASHBOARD ============
