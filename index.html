@@ -1071,6 +1071,9 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
             <thead><tr>
               <th>#</th>
               <th>Marca / Café</th>
+              <th>Embalagem</th>
+              <th>Fardo/Caixa</th>
+              <th>Impureza (%)</th>
               <th>% do Blend</th>
               <th>Qtd Total (kg)</th>
               <th style="color:var(--cyan);font-weight:900">Pegar Agora (kg)</th>
@@ -1078,7 +1081,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
             </tr></thead>
             <tbody id="blend-prop-body"></tbody>
             <tfoot><tr style="font-weight:800;color:var(--teal)">
-              <td colspan="2">TOTAL</td>
+              <td colspan="5">TOTAL</td>
               <td id="bp-foot-pct">100%</td>
               <td id="bp-foot-total">0</td>
               <td id="bp-foot-agora" style="color:var(--cyan);font-size:14px;font-weight:900">0</td>
@@ -4832,12 +4835,17 @@ function calcBlendProporcional() {
   const lotes = [];
   rows.forEach((tr, i) => {
     const marca = tr.querySelector('.bc-marca')?.value || 'Lote ' + (i+1);
+    const peneira = tr.querySelector('.bc-peneira')?.value || '';
+    const embalagem = tr.querySelector('.bc-embalagem')?.value || '';
+    const fardoSel = tr.querySelector('.bc-fardo');
+    const fardo = fardoSel ? (fardoSel.options[fardoSel.selectedIndex]?.text || '') : '';
     const kgStr = tr.querySelector('.bc-kg')?.value || '0';
     const kg = parseFloat(kgStr.replace(',','.')) || 0;
     const pctStr = tr.querySelector('.bc-pct-blend')?.value || '0';
     const pct = parseFloat(pctStr.replace('%','').replace(',','.')) || 0;
+    const imp = tr.querySelector('.bc-imp')?.value || '';
     totalBlend += kg;
-    lotes.push({ marca, kg, pct });
+    lotes.push({ marca, peneira, embalagem, fardo, kg, pct, imp });
   });
 
   if (totalBlend <= 0) {
@@ -4865,7 +4873,10 @@ function calcBlendProporcional() {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${i+1}</td>
-      <td style="font-weight:700">${lote.marca}</td>
+      <td style="font-weight:700;white-space:nowrap">${lote.marca}</td>
+      <td>${lote.embalagem || '-'}</td>
+      <td>${lote.fardo || '-'}</td>
+      <td>${lote.imp ? lote.imp + '%' : '-'}</td>
       <td><span style="color:var(--teal);font-weight:700">${lote.pct.toFixed(1)}%</span></td>
       <td>${fmt(lote.kg)} kg</td>
       <td style="font-weight:900;font-size:14px;color:var(--cyan);text-shadow:0 0 10px rgba(34,211,238,.3)">${fmt(pegarAgora)} kg</td>
@@ -4942,7 +4953,7 @@ h3{font-size:13px;margin:16px 0 8px;color:#555}
 </div>
 ${clientesHTML ? '<h3>Clientes</h3><table><thead><tr><th>Cliente / Marca</th><th>Quantidade</th></tr></thead><tbody>' + clientesHTML + '</tbody></table>' : ''}
 <h3>Proporção por Lote — Pegar Agora</h3>
-<table><thead><tr><th>#</th><th>Marca/Café</th><th>% Blend</th><th>Qtd Total</th><th style="background:#e0f2fe;color:#0369a1">PEGAR AGORA</th><th>Restante</th></tr></thead>
+<table><thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th>Qtd Total</th><th style="background:#e0f2fe;color:#0369a1">PEGAR AGORA</th><th>Restante</th></tr></thead>
 <tbody>${tabelaHTML}</tbody></table>
 <div class="footer"><span>Impresso em: ${new Date().toLocaleString('pt-BR')}</span><span>Patrocínio Torrefação de Café — Goiânia</span></div>
 <script>window.print();<\/script></body></html>`);
