@@ -281,6 +281,39 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
 @keyframes shakeField{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .validacao-msg{font-size:11px;color:var(--red);margin-top:6px;padding:8px 14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;display:none}
 .validacao-msg.show{display:block}
+/* ====== TEMA FOSCO (protege olhos) ====== */
+body.tema-fosco{--bg-primary:#1a1a1a;--bg-secondary:#222;--bg-card:#252525;--bg-header:#1a1a1a;--bg-nav:#1e1e1e;--text-primary:#b8b8b8;--text-secondary:#8a8a8a;--text-muted:#666;--border:#333;--teal:#6a9a8f;--cyan:#6a9aaa;--green:#6a9a6f;--yellow:#aa9a5a;--red:#aa6a6a;--blue:#6a7aaa;--orange:#aa8a5a;--purple:#8a7aaa;--pink:#aa6a8a}
+body.tema-fosco .header{background:#1a1a1a;border-bottom:1px solid #2a2a2a;box-shadow:none}
+body.tema-fosco .nav{background:#1e1e1e;border-right:1px solid #2a2a2a;box-shadow:none}
+body.tema-fosco .section{border-color:#2a2a2a;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+body.tema-fosco .section-title{background:#222;color:#8a8a8a}
+body.tema-fosco .section-body{background:#1e1e1e}
+body.tema-fosco .kpi-card{background:#222;border-color:#2a2a2a;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+body.tema-fosco .kpi-card .value{filter:brightness(.75)saturate(.6)}
+body.tema-fosco .chart-box-neo{background:#222;border-color:#2a2a2a;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+body.tema-fosco .chart-box-neo::before{opacity:0!important}
+body.tema-fosco .chart-box-neo:hover{box-shadow:0 4px 12px rgba(0,0,0,.4);border-color:#3a3a3a}
+body.tema-fosco table{border-color:#2a2a2a}
+body.tema-fosco th{background:#252525;color:#7a7a7a;border-color:#2a2a2a}
+body.tema-fosco td{border-color:#2a2a2a;color:#9a9a9a}
+body.tema-fosco input,body.tema-fosco select,body.tema-fosco textarea{background:#252525;border-color:#333;color:#aaa}
+body.tema-fosco input:focus,body.tema-fosco select:focus{border-color:#5a5a5a;box-shadow:0 0 4px rgba(100,100,100,.15)}
+body.tema-fosco .btn-primary{background:#3a4a5a;color:#aaa;border:1px solid #4a5a6a}
+body.tema-fosco .btn-success{background:#3a4a3a;color:#aaa;border:1px solid #4a5a4a}
+body.tema-fosco .hover3d:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+body.tema-fosco .badge{filter:brightness(.7)saturate(.5)}
+body.tema-fosco .nav button:hover{background:rgba(100,100,100,.15)}
+body.tema-fosco .nav button.active{background:rgba(100,100,100,.2);color:#8a9a8a;border-left-color:#6a9a8f}
+body.tema-fosco .info-box{filter:brightness(.7)saturate(.5)}
+body.tema-fosco .cal-full th{background:#252525;color:#6a6a6a}
+body.tema-fosco .cal-full td{background:#1e1e1e;border-color:#2a2a2a;color:#8a8a8a}
+body.tema-fosco .cal-hoje{background:rgba(106,154,143,.15)!important;border-color:rgba(106,154,143,.3)!important}
+body.tema-fosco .cal-feriado{background:rgba(170,106,106,.1)!important}
+body.tema-fosco .toast{background:#4a5a5a;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+body.tema-fosco .silo-bar{background:#252525;border-color:#333}
+body.tema-fosco .gauge-center{color:#8a9aaa;text-shadow:none}
+body.tema-fosco .chart-footer{color:#555}
+body.tema-fosco *{text-shadow:none!important}
 </style>
 </head>
 <body>
@@ -320,6 +353,7 @@ input.campo-erro,select.campo-erro{border-color:var(--red)!important;box-shadow:
       <button class="btn-logout" onclick="fazerLogout()">Sair</button>
     </div>
     <div class="btn-group" style="margin:0">
+      <button class="btn" id="btn-tema-fosco" onclick="toggleTemaFosco()" title="Modo Fosco (protege os olhos)" style="padding:6px 10px;background:rgba(100,100,100,.2);border:1px solid rgba(100,100,100,.3);border-radius:8px;font-size:16px;line-height:1;cursor:pointer">🌙</button>
       <button class="btn btn-success" onclick="salvarDados()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg> Salvar</button>
       <button class="btn btn-primary" onclick="salvarOPnoHistorico()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M2 12h20"/></svg> Histórico</button>
       <button class="btn btn-primary" onclick="listarHistorico()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg> Consultar</button>
@@ -2261,6 +2295,25 @@ document.addEventListener('keydown', function(e) {
     fazerLogin();
   }
 });
+
+// ============ TEMA FOSCO (protege olhos) ============
+function toggleTemaFosco() {
+  const body = document.body;
+  const btn = document.getElementById('btn-tema-fosco');
+  body.classList.toggle('tema-fosco');
+  const foscoAtivo = body.classList.contains('tema-fosco');
+  btn.textContent = foscoAtivo ? '☀️' : '🌙';
+  btn.title = foscoAtivo ? 'Modo Normal' : 'Modo Fosco (protege os olhos)';
+  localStorage.setItem('tema-fosco', foscoAtivo ? '1' : '0');
+}
+function carregarTemaFosco() {
+  if (localStorage.getItem('tema-fosco') === '1') {
+    document.body.classList.add('tema-fosco');
+    const btn = document.getElementById('btn-tema-fosco');
+    if (btn) { btn.textContent = '☀️'; btn.title = 'Modo Normal'; }
+  }
+}
+carregarTemaFosco();
 
 // ============ HOME - SAUDAÇÃO E CALENDÁRIO ============
 let calMesAtual, calAnoAtual;
