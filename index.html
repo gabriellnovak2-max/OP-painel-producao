@@ -1033,15 +1033,14 @@ body.tema-fosco *{text-shadow:none!important}
         <button class="btn" style="background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)" onclick="imprimirBlend()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir Blend</button>
         <button class="btn" style="background:rgba(0,212,170,.12);color:var(--teal);border:1px solid rgba(0,212,170,.3)" onclick="toggleEstoquePanel()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M20 4H4v4h16V4z"/><path d="M6 8v10a2 2 0 002 2h8a2 2 0 002-2V8"/><path d="M10 12h4"/></svg> Ver Estoque</button>
       </div>
-    </div>
-  </div>
 
-  <!-- SUB-CALCULADORA: BLEND PROPORCIONAL POR QUANTIDADE -->
-  <div class="section hover3d" id="painel-blend-proporcional" style="border-left:4px solid var(--cyan);margin-top:6px">
-    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(34,211,238,.12),rgba(0,212,170,.08))">
-      <span style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">⚡</span> BLEND PROPORCIONAL — Produção Parcial</span>
-    </div>
-    <div class="section-body">
+      <!-- ═══════════ DIVISÓRIA ═══════════ -->
+      <div style="margin:24px 0 18px;border:none;border-top:3px solid var(--cyan);opacity:.4"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+        <span style="font-size:18px">⚡</span>
+        <h3 style="font-size:14px;font-weight:800;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin:0">BLEND PROPORCIONAL — Produção Parcial</h3>
+      </div>
+
       <div class="info-box azul" style="margin-bottom:14px">
         <b>Como funciona:</b> O blend total já foi decidido acima. Aqui você informa quanto quer produzir AGORA (ex: 250 kg para um cliente urgente) e a calculadora mostra quanto pegar de cada lote, mantendo a mesma proporção exata. Assim o blend sai perfeito mesmo em quantidade menor.
       </div>
@@ -1122,6 +1121,7 @@ body.tema-fosco *{text-shadow:none!important}
 
         <div class="btn-group" style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn" style="background:rgba(59,130,246,.15);color:var(--blue);border:1px solid rgba(59,130,246,.3)" onclick="imprimirBlendProporcional()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir Parcial</button>
+          <button class="btn" style="background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)" onclick="imprimirBlendCompleto()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimir Tudo (Blend + Parcial)</button>
         </div>
       </div>
     </div>
@@ -5051,6 +5051,18 @@ ${clientesHTML ? '<h3>Clientes deste Blend</h3><table><thead><tr><th>Cliente / M
 <div class="footer"><span>Impresso em: ${new Date().toLocaleString('pt-BR')}</span><span>Patrocínio Torrefação de Café — Goiânia</span></div>
 <script>window.print();<\/script></body></html>`);
   win.document.close();
+}
+
+function imprimirBlendCompleto() {
+  // Checa se tem blend proporcional calculado
+  const temProp = document.querySelectorAll('#blend-prop-body tr').length > 0;
+  if (!temProp) {
+    // Se não tem proporcional, imprime só o blend total
+    imprimirBlend();
+    return;
+  }
+  // Se tem, usa a função que já imprime tudo junto
+  imprimirBlendProporcional();
 }
 
 // ============ VER ESTOQUE NO BLEND ============
