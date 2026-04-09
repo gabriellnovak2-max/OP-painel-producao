@@ -5056,7 +5056,7 @@ function imprimirBlendProporcional() {
       const isDestaque = ci === totalCols - 2;
       propHTML += '<td' + (isDestaque ? ' style="font-weight:900;font-size:13px;color:#0369a1;background:#e0f2fe"' : '') + '>' + td.textContent + '</td>';
     });
-    propHTML += '<td style="width:50px;text-align:center"><div style="width:20px;height:20px;border:2px solid #999;border-radius:3px;margin:0 auto"></div></td>';
+    propHTML += '<td style="width:50px;text-align:center"><div style="width:14px;height:14px;border:1.5px solid #999;border-radius:2px;margin:0 auto"></div></td>';
     propHTML += '</tr>';
   });
 
@@ -5082,13 +5082,13 @@ function imprimirBlendProporcional() {
       const cNome = tr.querySelector('.bpc-cliente')?.value||'';
       const cQtd = parseFloat(tr.querySelector('.bpc-qtd')?.value)||0;
       if (!cNome || cQtd <= 0) return;
-      multiClientesPrintHTML += '<div style="margin-top:16px;padding:12px;border:2px solid #0891b2;border-radius:8px"><h4 style="font-size:13px;color:#0891b2;margin-bottom:8px">'+cNome+' — '+cQtd+' kg ('+(cQtd/tBlend*100).toFixed(1)+'% do blend)</h4>';
-      multiClientesPrintHTML += '<table><thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="background:#e0f2fe;color:#0369a1">PEGAR (kg)</th><th style="width:50px">Status</th></tr></thead><tbody>';
+      multiClientesPrintHTML += '<div class="cli-block"><h4>'+cNome+' — '+cQtd+' kg ('+(cQtd/tBlend*100).toFixed(1)+'% do blend)</h4>';
+      multiClientesPrintHTML += '<table><thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo</th><th>Imp.</th><th>%</th><th style="background:#e0f2fe;color:#0369a1">PEGAR (kg)</th><th style="width:35px">OK</th></tr></thead><tbody>';
       let soma = 0;
       lotesP.forEach((l,i) => {
         const pg = parseFloat((cQtd * (l.k/tBlend)).toFixed(2));
         soma += pg;
-        multiClientesPrintHTML += '<tr><td>'+(i+1)+'</td><td>'+l.m+'</td><td>'+l.e+'</td><td>'+l.f+'</td><td>'+(l.imp?l.imp+'%':'-')+'</td><td>'+l.p.toFixed(1)+'%</td><td style="font-weight:900;color:#0369a1;background:#e0f2fe">'+pg.toFixed(2)+' kg</td><td style="width:50px;text-align:center"><div style="width:18px;height:18px;border:2px solid #999;border-radius:3px;margin:0 auto"></div></td></tr>';
+        multiClientesPrintHTML += '<tr><td>'+(i+1)+'</td><td>'+l.m+'</td><td>'+l.e+'</td><td>'+l.f+'</td><td>'+(l.imp?l.imp+'%':'-')+'</td><td>'+l.p.toFixed(1)+'%</td><td style="font-weight:900;color:#0369a1;background:#e0f2fe">'+pg.toFixed(2)+' kg</td><td style="width:50px;text-align:center"><div style="width:14px;height:14px;border:1.5px solid #999;border-radius:2px;margin:0 auto"></div></td></tr>';
       });
       multiClientesPrintHTML += '<tr style="font-weight:800"><td colspan="5">TOTAL '+cNome+'</td><td>100%</td><td style="color:#0369a1">'+soma.toFixed(2)+' kg</td><td></td></tr>';
       multiClientesPrintHTML += '</tbody></table></div>';
@@ -5097,21 +5097,22 @@ function imprimirBlendProporcional() {
 
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html><head><title>Blend ${numBlend} - Total + Parcial</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;padding:24px;color:#222;font-size:11px}
-h1{font-size:18px;margin-bottom:2px}h2{font-size:12px;color:#666;margin-bottom:14px}
-.info{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}.info div{flex:1;min-width:100px;padding:8px;border:1px solid #ddd;border-radius:6px;text-align:center}
-.info .label{font-size:8px;text-transform:uppercase;color:#888;font-weight:700;letter-spacing:.5px}.info .val{font-size:16px;font-weight:800;margin-top:2px}
-.destaque{color:#0891b2;font-size:20px}
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;padding:10px 14px;color:#222;font-size:9px}
+h1{font-size:14px;margin-bottom:1px}h2{font-size:10px;color:#666;margin-bottom:8px}
+.info{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.info div{flex:1;min-width:80px;padding:4px 6px;border:1px solid #ddd;border-radius:4px;text-align:center}
+.info .label{font-size:7px;text-transform:uppercase;color:#888;font-weight:700;letter-spacing:.3px}.info .val{font-size:12px;font-weight:800;margin-top:1px}
+.destaque{color:#0891b2;font-size:14px}
 .status-ok{color:#10b981}.status-fail{color:#ef4444}
-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px}
-th{background:#f3f4f6;padding:6px;border:1px solid #ddd;font-size:9px;text-transform:uppercase;letter-spacing:.3px}
-td{padding:5px 6px;border:1px solid #ddd;text-align:center}tr:nth-child(even){background:#f9fafb}
-.footer{margin-top:16px;padding-top:10px;border-top:1px solid #ddd;font-size:9px;color:#888;display:flex;justify-content:space-between}
-.divider{border:none;border-top:3px solid #0891b2;margin:18px 0 14px}
-h3{font-size:13px;margin:12px 0 8px;color:#333;border-bottom:2px solid #eee;padding-bottom:4px}
-.alert{background:#fef3c7;border:1px solid #f59e0b;padding:8px 10px;border-radius:6px;margin-bottom:12px;font-size:11px;color:#92400e}
-.alert-blue{background:#e0f2fe;border:1px solid #0891b2;padding:8px 10px;border-radius:6px;margin-bottom:12px;font-size:11px;color:#0c4a6e}
-@media print{body{padding:12px}}</style></head><body>
+table{width:100%;border-collapse:collapse;font-size:8.5px;margin-bottom:6px}
+th{background:#f3f4f6;padding:3px 4px;border:1px solid #ddd;font-size:7.5px;text-transform:uppercase;letter-spacing:.2px}
+td{padding:3px 4px;border:1px solid #ddd;text-align:center}tr:nth-child(even){background:#f9fafb}
+.footer{margin-top:8px;padding-top:6px;border-top:1px solid #ddd;font-size:7px;color:#888;display:flex;justify-content:space-between}
+.divider{border:none;border-top:2px solid #0891b2;margin:8px 0 6px}
+h3{font-size:10px;margin:6px 0 4px;color:#333;border-bottom:1px solid #eee;padding-bottom:2px}
+h4{font-size:9px;margin:4px 0;color:#0891b2}
+.alert-blue{background:#e0f2fe;border:1px solid #0891b2;padding:4px 6px;border-radius:4px;margin-bottom:6px;font-size:8px;color:#0c4a6e}
+.cli-block{margin-top:6px;padding:6px;border:1.5px solid #0891b2;border-radius:4px}
+@media print{body{padding:8px}}</style></head><body>
 
 <h1>BLEND ${numBlend} — Patrocínio Torrefação de Café</h1>
 <h2>Data: ${dataBlend} | Operador: ${operador} | Cliente: ${cliente}</h2>
