@@ -1076,7 +1076,11 @@ body.tema-fosco *{text-shadow:none!important}
           <option value="">— ou selecione um cliente —</option>
         </select>
         <button class="btn btn-primary" onclick="calcBlendProporcional()" style="font-size:12px;padding:8px 16px">Calcular</button>
+        <button class="btn" onclick="calcBlendTodosClientes()" style="font-size:12px;padding:8px 16px;background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3)">Calcular Todos os Clientes</button>
       </div>
+
+      <!-- RESULTADO MÚLTIPLOS CLIENTES -->
+      <div id="blend-prop-todos" style="display:none"></div>
 
       <!-- RESULTADO -->
       <div id="blend-prop-resultado" style="display:none">
@@ -4949,8 +4953,11 @@ function calcBlendProporcional() {
 }
 
 function imprimirBlendProporcional() {
+  // Checa se tem múltiplos clientes ou individual
+  const todosContainer = document.getElementById('blend-prop-todos');
+  const temTodos = todosContainer && todosContainer.style.display !== 'none' && todosContainer.innerHTML.trim() !== '';
   const propRows = document.querySelectorAll('#blend-prop-body tr');
-  if (!propRows.length) { showToast('Calcule o blend proporcional primeiro.'); return; }
+  if (!propRows.length && !temTodos) { showToast('Calcule o blend proporcional primeiro.'); return; }
 
   const numBlend = document.getElementById('bld-num')?.value || '--';
   const dataBlend = document.getElementById('bld-data')?.value || new Date().toISOString().split('T')[0];
@@ -5003,6 +5010,41 @@ function imprimirBlendProporcional() {
     propHTML += '</tr>';
   });
 
+  // Gerar HTML para múltiplos clientes (se calculados)
+  let multiClientesPrintHTML = '';
+  if (temTodos) {
+    const cliRows = document.querySelectorAll('#blend-clientes-body tr');
+    const blendRows = document.querySelectorAll('#bld-calc-body tr');
+    let tBlend = 0;
+    const lotesP = [];
+    blendRows.forEach((tr, i) => {
+      const m = tr.querySelector('.bc-marca')?.value || 'Lote '+(i+1);
+      const e = tr.querySelector('.bc-embalagem')?.value || '-';
+      const fS = tr.querySelector('.bc-fardo');
+      const f = fS ? (fS.options[fS.selectedIndex]?.text||'-') : '-';
+      const k = parseFloat((tr.querySelector('.bc-kg')?.value||'0').replace(',','.'))||0;
+      const p = parseFloat((tr.querySelector('.bc-pct-blend')?.value||'0').replace('%','').replace(',','.'))||0;
+      const imp = tr.querySelector('.bc-imp')?.value||'';
+      tBlend += k;
+      lotesP.push({m,e,f,k,p,imp});
+    });
+    cliRows.forEach(tr => {
+      const cNome = tr.querySelector('.bpc-cliente')?.value||'';
+      const cQtd = parseFloat(tr.querySelector('.bpc-qtd')?.value)||0;
+      if (!cNome || cQtd <= 0) return;
+      multiClientesPrintHTML += '<div style="margin-top:16px;padding:12px;border:2px solid #0891b2;border-radius:8px"><h4 style="font-size:13px;color:#0891b2;margin-bottom:8px">'+cNome+' — '+cQtd+' kg ('+(cQtd/tBlend*100).toFixed(1)+'% do blend)</h4>';
+      multiClientesPrintHTML += '<table><thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="background:#e0f2fe;color:#0369a1">PEGAR (kg)</th><th style="width:50px">Status</th></tr></thead><tbody>';
+      let soma = 0;
+      lotesP.forEach((l,i) => {
+        const pg = parseFloat((cQtd * (l.k/tBlend)).toFixed(2));
+        soma += pg;
+        multiClientesPrintHTML += '<tr><td>'+(i+1)+'</td><td>'+l.m+'</td><td>'+l.e+'</td><td>'+l.f+'</td><td>'+(l.imp?l.imp+'%':'-')+'</td><td>'+l.p.toFixed(1)+'%</td><td style="font-weight:900;color:#0369a1;background:#e0f2fe">'+pg.toFixed(2)+' kg</td><td style="width:50px;text-align:center"><div style="width:18px;height:18px;border:2px solid #999;border-radius:3px;margin:0 auto"></div></td></tr>';
+      });
+      multiClientesPrintHTML += '<tr style="font-weight:800"><td colspan="5">TOTAL '+cNome+'</td><td>100%</td><td style="color:#0369a1">'+soma.toFixed(2)+' kg</td><td></td></tr>';
+      multiClientesPrintHTML += '</tbody></table></div>';
+    });
+  }
+
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html><head><title>Blend ${numBlend} - Total + Parcial</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;padding:24px;color:#222;font-size:11px}
@@ -5043,20 +5085,67 @@ ${clientesHTML ? '<h3>Clientes deste Blend</h3><table><thead><tr><th>Cliente / M
 <!-- ===== SEÇÃO 2: BLEND PROPORCIONAL ===== -->
 <h3>2. PRODUÇÃO PARCIAL — O que Produzir Agora</h3>
 <div class="alert-blue"><b>ATENÇÃO PRODUÇÃO:</b> Pegar SOMENTE as quantidades da coluna "PEGAR AGORA". A proporção do blend foi mantida exatamente igual ao blend total.</div>
-<div class="info">
-<div><div class="label">Blend Total</div><div class="val">${totalBlendTxt}</div></div>
-<div><div class="label">Produzindo Agora</div><div class="val destaque">${produzindo}</div></div>
-<div><div class="label">Restante p/ Depois</div><div class="val">${restante}</div></div>
-<div><div class="label">% do Total</div><div class="val">${percentual}</div></div>
-</div>
-<table>
-<thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="background:#e0f2fe;color:#0369a1;font-size:10px">PEGAR AGORA (kg)</th><th style="width:50px">Status</th></tr></thead>
-<tbody>${propHTML}</tbody>
-</table>
+${temTodos ? multiClientesPrintHTML : '<div class="info"><div><div class="label">Blend Total</div><div class="val">'+totalBlendTxt+'</div></div><div><div class="label">Produzindo Agora</div><div class="val destaque">'+produzindo+'</div></div><div><div class="label">Restante p/ Depois</div><div class="val">'+restante+'</div></div><div><div class="label">% do Total</div><div class="val">'+percentual+'</div></div></div><table><thead><tr><th>#</th><th>Marca/Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="background:#e0f2fe;color:#0369a1;font-size:10px">PEGAR AGORA (kg)</th><th style="width:50px">Status</th></tr></thead><tbody>'+propHTML+'</tbody></table>'}
 
 <div class="footer"><span>Impresso em: ${new Date().toLocaleString('pt-BR')}</span><span>Patrocínio Torrefação de Café — Goiânia</span></div>
 <script>window.print();<\/script></body></html>`);
   win.document.close();
+}
+
+function calcBlendTodosClientes() {
+  const clientes = [];
+  document.querySelectorAll('#blend-clientes-body tr').forEach(tr => {
+    const nome = tr.querySelector('.bpc-cliente')?.value || '';
+    const qtd = parseFloat(tr.querySelector('.bpc-qtd')?.value) || 0;
+    if (nome && qtd > 0) clientes.push({ nome, qtd });
+  });
+  if (!clientes.length) { showToast('Adicione clientes com nome e quantidade primeiro.'); return; }
+
+  const rows = document.querySelectorAll('#bld-calc-body tr');
+  if (!rows.length) { showToast('Preencha o blend acima primeiro.'); return; }
+
+  let totalBlend = 0;
+  const lotes = [];
+  rows.forEach((tr, i) => {
+    const marca = tr.querySelector('.bc-marca')?.value || 'Lote ' + (i+1);
+    const embalagem = tr.querySelector('.bc-embalagem')?.value || '';
+    const fardoSel = tr.querySelector('.bc-fardo');
+    const fardo = fardoSel ? (fardoSel.options[fardoSel.selectedIndex]?.text || '') : '';
+    const kg = parseFloat((tr.querySelector('.bc-kg')?.value || '0').replace(',','.')) || 0;
+    const pct = parseFloat((tr.querySelector('.bc-pct-blend')?.value || '0').replace('%','').replace(',','.')) || 0;
+    const imp = tr.querySelector('.bc-imp')?.value || '';
+    totalBlend += kg;
+    lotes.push({ marca, embalagem, fardo, kg, pct, imp });
+  });
+
+  if (totalBlend <= 0) { showToast('Blend total está zerado.'); return; }
+
+  const container = document.getElementById('blend-prop-todos');
+  container.innerHTML = '';
+
+  clientes.forEach(cli => {
+    let html = '<div style="margin-bottom:20px;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--bg-card)">';
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:14px;font-weight:800;color:var(--cyan)">' + cli.nome + '</span><span style="font-size:13px;color:var(--text-muted)">— ' + fmt(cli.qtd) + ' kg (' + (cli.qtd/totalBlend*100).toFixed(1) + '% do blend)</span></div>';
+    html += '<div style="overflow-x:auto"><table><thead><tr><th>#</th><th>Marca / Café</th><th>Embalagem</th><th>Fardo/Caixa</th><th>Impureza</th><th>% Blend</th><th style="color:var(--cyan);font-weight:900">Pegar (kg)</th><th style="width:50px">OK</th></tr></thead><tbody>';
+
+    let soma = 0;
+    lotes.forEach((lote, i) => {
+      const prop = lote.kg / totalBlend;
+      const pegar = parseFloat((cli.qtd * prop).toFixed(2));
+      soma += pegar;
+      html += '<tr><td>' + (i+1) + '</td><td style="font-weight:700">' + lote.marca + '</td><td>' + (lote.embalagem||'-') + '</td><td>' + (lote.fardo||'-') + '</td><td>' + (lote.imp ? lote.imp+'%' : '-') + '</td><td style="color:var(--teal);font-weight:700">' + lote.pct.toFixed(1) + '%</td><td style="font-weight:900;font-size:14px;color:var(--cyan)">' + fmt(pegar) + ' kg</td><td style="text-align:center"><button onclick="this.textContent=this.textContent===\'OK\'?\'—\':\'OK\';this.style.background=this.textContent===\'OK\'?\'rgba(16,185,129,.25)\':\'rgba(100,100,100,.1)\';this.style.color=this.textContent===\'OK\'?\'var(--green)\':\'var(--text-muted)\'" style="padding:4px 10px;font-size:11px;font-weight:800;border-radius:6px;border:1px solid var(--border);background:rgba(100,100,100,.1);color:var(--text-muted);cursor:pointer">—</button></td></tr>';
+    });
+
+    html += '<tr style="font-weight:800;color:var(--teal)"><td colspan="5">TOTAL ' + cli.nome + '</td><td>100%</td><td style="color:var(--cyan);font-weight:900">' + fmt(soma) + ' kg</td><td></td></tr>';
+    html += '</tbody></table></div></div>';
+    container.innerHTML += html;
+  });
+
+  container.style.display = 'block';
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // Esconde resultado individual se estava visível
+  document.getElementById('blend-prop-resultado').style.display = 'none';
 }
 
 function imprimirBlendCompleto() {
