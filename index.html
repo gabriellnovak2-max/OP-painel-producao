@@ -1036,9 +1036,57 @@ body.tema-fosco *{text-shadow:none!important}
 
       <!-- ═══════════ DIVISÓRIA ═══════════ -->
       <div style="margin:24px 0 18px;border:none;border-top:3px solid var(--cyan);opacity:.4"></div>
+
+      <!-- ═══════════ REGISTRO DE PRODUÇÃO (abatimento) ═══════════ -->
+      <div style="margin-bottom:20px;padding:16px;background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:12px" id="painel-registro-producao">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px">📋</span>
+            <h3 style="font-size:14px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin:0">REGISTRO DE PRODUÇÃO</h3>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:11px;color:var(--text-muted)">Blend Total: <span style="font-weight:800;color:var(--text-secondary)" id="reg-blend-total">0 kg</span></div>
+            <div style="font-size:11px;color:var(--text-muted)">Produzido: <span style="font-weight:800;color:var(--green)" id="reg-produzido">0 kg</span></div>
+            <div style="font-size:11px;color:var(--text-muted)">Saldo: <span style="font-weight:800;color:var(--cyan)" id="reg-saldo">0 kg</span></div>
+          </div>
+        </div>
+
+        <!-- Barra de progresso -->
+        <div style="height:8px;background:var(--bg-secondary);border-radius:4px;overflow:hidden;margin-bottom:14px;border:1px solid var(--border)">
+          <div id="reg-barra" style="height:100%;width:0%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:4px;transition:width .5s"></div>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table id="tbl-registro-producao">
+            <thead><tr>
+              <th style="width:30px">#</th>
+              <th>Data</th>
+              <th>Cliente / Marca</th>
+              <th>Qtd Produzida (kg)</th>
+              <th>Status</th>
+              <th style="width:50px">X</th>
+            </tr></thead>
+            <tbody id="registro-producao-body"></tbody>
+            <tfoot><tr style="font-weight:800;color:var(--green)">
+              <td colspan="3" style="text-align:right">TOTAL PRODUZIDO:</td>
+              <td id="reg-foot-total">0 kg</td>
+              <td id="reg-foot-status"></td>
+              <td></td>
+            </tr></tfoot>
+          </table>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <button class="btn" style="background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3);font-size:12px" onclick="addRegistroProducao()">+ Registrar Produção</button>
+          <button class="btn" style="background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.2);font-size:11px" onclick="registrarDosClientes()">Registrar dos Clientes Calculados</button>
+        </div>
+      </div>
+
+      <!-- ═══════════ BLEND PROPORCIONAL ═══════════ -->
+      <div style="margin:18px 0;border:none;border-top:3px solid var(--purple);opacity:.3"></div>
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
         <span style="font-size:18px">⚡</span>
         <h3 style="font-size:14px;font-weight:800;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;margin:0">BLEND PROPORCIONAL — Produção Parcial</h3>
+        <span style="font-size:11px;color:var(--text-muted);margin-left:8px">(calcula com base no <b style="color:var(--cyan)">saldo restante</b>)</span>
       </div>
 
       <div class="info-box azul" style="margin-bottom:14px">
@@ -4069,6 +4117,7 @@ function salvarDados(silencioso) {
     blendComp: coletarDadosTabela('tbl-blend-comp'),
     blendCalc: coletarDadosTabela('tbl-blend-calc'),
     blendClientes: coletarDadosTabela('tbl-blend-clientes'),
+    registroProducao: coletarRegistroProducao(),
     blendPropQtd: document.getElementById('blend-prop-qtd')?.value || '',
     blendagem: {
       num: document.getElementById('bld-num').value,
@@ -4171,6 +4220,7 @@ function carregarDados() {
     if (d.blendComp) restaurarDadosTabela('tbl-blend-comp', d.blendComp, addBlendCompRow);
     if (d.blendCalc) { restaurarDadosTabela('tbl-blend-calc', d.blendCalc, addBlendCalcRow); calcBlendSimulacao(); }
     if (d.blendClientes) { restaurarDadosTabela('tbl-blend-clientes', d.blendClientes, addBlendClienteRow); calcBlendClientesTotal(); }
+    if (d.registroProducao) { restaurarRegistroProducao(d.registroProducao); }
     if (d.blendPropQtd) { document.getElementById('blend-prop-qtd').value = d.blendPropQtd; calcBlendProporcional(); }
     if (d.blendagem) {
       document.getElementById('bld-num').value = d.blendagem.num || '';
@@ -5090,6 +5140,144 @@ ${temTodos ? multiClientesPrintHTML : '<div class="info"><div><div class="label"
 <div class="footer"><span>Impresso em: ${new Date().toLocaleString('pt-BR')}</span><span>Patrocínio Torrefação de Café — Goiânia</span></div>
 <script>window.print();<\/script></body></html>`);
   win.document.close();
+}
+
+// ============ REGISTRO DE PRODUÇÃO (abatimento do blend) ============
+function addRegistroProducao(clienteNome, clienteQtd) {
+  const tbody = document.getElementById('registro-producao-body');
+  const tr = document.createElement('tr');
+  const n = tbody.children.length + 1;
+  const hoje = new Date().toISOString().split('T')[0];
+  tr.innerHTML = `
+    <td>${n}</td>
+    <td><input type="date" class="reg-data" value="${hoje}" style="width:120px" onchange="calcRegistroProducao()"></td>
+    <td><input type="text" class="reg-cliente" value="${clienteNome||''}" placeholder="Cliente / Marca" style="width:100%"></td>
+    <td><input type="number" class="reg-qtd" value="${clienteQtd||''}" placeholder="kg" style="width:100px;text-align:center" oninput="calcRegistroProducao()"></td>
+    <td style="text-align:center"><button class="reg-ok-btn" onclick="toggleRegOk(this)" style="padding:4px 12px;font-size:11px;font-weight:800;border-radius:6px;border:1px solid var(--border);background:rgba(245,158,11,.15);color:var(--yellow);cursor:pointer">Pendente</button></td>
+    <td style="text-align:center"><button onclick="this.closest('tr').remove();reindexRegistro();calcRegistroProducao()" style="padding:2px 8px;font-size:10px;color:var(--red);background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:4px;cursor:pointer">X</button></td>`;
+  tbody.appendChild(tr);
+  calcRegistroProducao();
+}
+
+function toggleRegOk(btn) {
+  if (btn.textContent === 'Pendente') {
+    btn.textContent = 'OK ✓';
+    btn.style.background = 'rgba(16,185,129,.25)';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'rgba(16,185,129,.4)';
+  } else {
+    btn.textContent = 'Pendente';
+    btn.style.background = 'rgba(245,158,11,.15)';
+    btn.style.color = 'var(--yellow)';
+    btn.style.borderColor = 'var(--border)';
+  }
+  calcRegistroProducao();
+}
+
+function reindexRegistro() {
+  document.querySelectorAll('#registro-producao-body tr').forEach((tr, i) => {
+    tr.querySelector('td').textContent = i + 1;
+  });
+}
+
+function calcRegistroProducao() {
+  // Pegar blend total do simulador
+  const blendTotalEl = document.getElementById('bld-calc-ft-kg');
+  const blendTotal = parseFloat((blendTotalEl?.textContent || '0').replace(',','.')) || 0;
+
+  // Somar só os que estão OK
+  let produzidoOk = 0;
+  let produzidoTotal = 0;
+  document.querySelectorAll('#registro-producao-body tr').forEach(tr => {
+    const qtd = parseFloat(tr.querySelector('.reg-qtd')?.value) || 0;
+    const btn = tr.querySelector('.reg-ok-btn');
+    const isOk = btn && btn.textContent.includes('OK');
+    produzidoTotal += qtd;
+    if (isOk) produzidoOk += qtd;
+  });
+
+  const saldo = blendTotal - produzidoOk;
+  const pct = blendTotal > 0 ? (produzidoOk / blendTotal * 100) : 0;
+
+  document.getElementById('reg-blend-total').textContent = fmt(blendTotal) + ' kg';
+  document.getElementById('reg-produzido').textContent = fmt(produzidoOk) + ' kg';
+  document.getElementById('reg-saldo').textContent = fmt(saldo) + ' kg';
+  document.getElementById('reg-foot-total').textContent = fmt(produzidoTotal) + ' kg';
+  document.getElementById('reg-barra').style.width = Math.min(pct, 100) + '%';
+
+  // Atualizar contagem de OKs
+  const totalRows = document.querySelectorAll('#registro-producao-body tr').length;
+  const okRows = document.querySelectorAll('#registro-producao-body .reg-ok-btn').length;
+  let okCount = 0;
+  document.querySelectorAll('#registro-producao-body .reg-ok-btn').forEach(b => { if (b.textContent.includes('OK')) okCount++; });
+  document.getElementById('reg-foot-status').textContent = okCount + '/' + totalRows + ' concluídos';
+
+  // Salvar saldo global para o blend proporcional usar
+  window._blendSaldo = saldo;
+  window._blendProduzido = produzidoOk;
+}
+
+function registrarDosClientes() {
+  // Pega clientes calculados no "Calcular Todos" e registra automaticamente
+  const todosDiv = document.getElementById('blend-prop-todos');
+  if (!todosDiv || todosDiv.style.display === 'none' || !todosDiv.innerHTML.trim()) {
+    // Tenta do resultado individual
+    const nome = document.getElementById('blend-prop-cliente');
+    const qtd = document.getElementById('blend-prop-qtd')?.value || '';
+    const nomeCliente = nome?.options[nome.selectedIndex]?.text || '';
+    if (qtd) {
+      addRegistroProducao(nomeCliente.replace(/ — .*/,''), qtd);
+    } else {
+      showToast('Calcule os clientes primeiro.');
+    }
+    return;
+  }
+  // Pegar de todos os clientes cadastrados
+  document.querySelectorAll('#blend-clientes-body tr').forEach(tr => {
+    const cNome = tr.querySelector('.bpc-cliente')?.value || '';
+    const cQtd = tr.querySelector('.bpc-qtd')?.value || '';
+    if (cNome && cQtd) {
+      // Verificar se já não existe registro com mesmo nome e qtd
+      let jaExiste = false;
+      document.querySelectorAll('#registro-producao-body tr').forEach(rtr => {
+        const rNome = rtr.querySelector('.reg-cliente')?.value || '';
+        const rQtd = rtr.querySelector('.reg-qtd')?.value || '';
+        if (rNome === cNome && rQtd === cQtd) jaExiste = true;
+      });
+      if (!jaExiste) addRegistroProducao(cNome, cQtd);
+    }
+  });
+}
+
+function coletarRegistroProducao() {
+  const registros = [];
+  document.querySelectorAll('#registro-producao-body tr').forEach(tr => {
+    const data = tr.querySelector('.reg-data')?.value || '';
+    const cliente = tr.querySelector('.reg-cliente')?.value || '';
+    const qtd = tr.querySelector('.reg-qtd')?.value || '';
+    const btn = tr.querySelector('.reg-ok-btn');
+    const status = btn ? btn.textContent : 'Pendente';
+    registros.push({ data, cliente, qtd, status });
+  });
+  return registros;
+}
+
+function restaurarRegistroProducao(registros) {
+  if (!registros || !registros.length) return;
+  registros.forEach(r => {
+    addRegistroProducao(r.cliente, r.qtd);
+    const tbody = document.getElementById('registro-producao-body');
+    const tr = tbody.lastElementChild;
+    if (tr) {
+      const dataInp = tr.querySelector('.reg-data');
+      if (dataInp && r.data) dataInp.value = r.data;
+      if (r.status && r.status.includes('OK')) {
+        const btn = tr.querySelector('.reg-ok-btn');
+        if (btn) toggleRegOk(btn);
+      }
+    }
+  });
+  calcRegistroProducao();
 }
 
 function calcBlendTodosClientes() {
