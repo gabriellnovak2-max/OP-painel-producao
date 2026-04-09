@@ -314,6 +314,13 @@ body.tema-fosco .silo-bar{background:#252525;border-color:#333}
 body.tema-fosco .gauge-center{color:#8a9aaa;text-shadow:none}
 body.tema-fosco .chart-footer{color:#555}
 body.tema-fosco *{text-shadow:none!important}
+/* ====== SILOS 3D VISUAIS ====== */
+.silo-3d{width:100%;max-width:140px;height:200px;margin:0 auto;position:relative;perspective:500px}
+.silo-3d-body{width:100%;height:100%;border-radius:16px 16px 30px 30px;border:2px solid rgba(0,212,170,.3);position:relative;overflow:hidden;background:rgba(13,17,23,.6);box-shadow:inset 0 0 30px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);transform:rotateX(2deg)}
+.silo-3d-fill{position:absolute;bottom:0;left:0;right:0;border-radius:0 0 28px 28px;transition:height .8s ease,background .5s;background:linear-gradient(180deg,rgba(0,212,170,.6),rgba(0,212,170,.3));box-shadow:inset 0 2px 20px rgba(0,212,170,.2),0 -2px 10px rgba(0,212,170,.15)}
+.silo-3d-fill::after{content:'';position:absolute;top:0;left:10%;right:10%;height:4px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);border-radius:50%}
+.silo-3d-glass{position:absolute;top:0;left:8px;width:30%;height:100%;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border-radius:16px;pointer-events:none}
+.silo-3d-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5);pointer-events:none;z-index:2}
 </style>
 </head>
 <body>
@@ -404,7 +411,13 @@ body.tema-fosco *{text-shadow:none!important}
   <button onclick="abrirAba(1,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span><span class="nav-label">Ordem de Produção</span></button>
   <button onclick="abrirAba(2,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M12 6v6l4 2"/></svg></span><span class="nav-label">Bateladas de Torra</span></button>
   <button onclick="abrirAba(3,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="14" rx="1"/><path d="M9 16l3 6 3-6"/><line x1="12" y1="6" x2="12" y2="12"/><circle cx="12" cy="9" r="1" fill="currentColor"/></svg></span><span class="nav-label">Controle de Silos</span></button>
-  <button onclick="abrirAba(4,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="7" height="10" rx="2"/><rect x="14" y="4" width="7" height="10" rx="2"/><path d="M6.5 14v4c0 1.1.9 2 2 2h7c1.1 0 2-.9 2-2v-4"/><path d="M10 10h4"/></svg></span><span class="nav-label">Blendagem</span></button>
+  <div class="nav-group">
+    <button onclick="toggleSubmenu(this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="7" height="10" rx="2"/><rect x="14" y="4" width="7" height="10" rx="2"/><path d="M6.5 14v4c0 1.1.9 2 2 2h7c1.1 0 2-.9 2-2v-4"/><path d="M10 10h4"/></svg></span><span class="nav-label">Blendagem</span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;opacity:.5;flex-shrink:0"><polyline points="6,9 12,15 18,9"/></svg></button>
+    <div class="nav-submenu">
+      <button onclick="abrirAbaSub(4,this)"><span class="nav-label">Blendagem Pós-Torra</span></button>
+      <button onclick="abrirAbaSub(19,this)"><span class="nav-label">Simulador de Blend (MAPA)</span></button>
+    </div>
+  </div>
   <button onclick="abrirAba(5,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span><span class="nav-label">Moagem e Embalagem</span></button>
   <button onclick="abrirAba(6,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></span><span class="nav-label">Controle de Tempos</span></button>
   <hr style="border:none;border-top:1px solid var(--border);margin:8px 16px">
@@ -949,6 +962,66 @@ body.tema-fosco *{text-shadow:none!important}
       <div class="btn-group"><button class="btn btn-primary" onclick="addBlendCompRow()">+ Adicionar Componente</button></div>
     </div>
   </div>
+
+  <!-- SILOS VISUAIS 3D -->
+  <div class="section hover3d">
+    <div class="section-title">SILOS — VISÃO EM TEMPO REAL</div>
+    <div class="section-body">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+        <div style="text-align:center">
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;border:1px solid rgba(59,130,246,.2);margin-bottom:12px">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">SILO 1</div>
+            <div style="font-size:22px;font-weight:900;color:var(--blue)" id="silo3d-1-kg">0 kg</div>
+            <div style="font-size:10px;color:var(--text-muted)" id="silo3d-1-info">0 / 0 kg (0%)</div>
+            <div style="font-size:10px;margin-top:4px" id="silo3d-1-lote">Blend: -</div>
+          </div>
+          <div class="silo-3d">
+            <div class="silo-3d-body" style="border-color:rgba(59,130,246,.3)">
+              <div class="silo-3d-fill" id="silo3d-1-fill" style="height:0%;background:linear-gradient(180deg,rgba(59,130,246,.6),rgba(59,130,246,.3))"></div>
+              <div class="silo-3d-glass"></div>
+              <div class="silo-3d-label" id="silo3d-1-pct">0%</div>
+            </div>
+          </div>
+          <div style="margin-top:8px"><span class="badge badge-gray" id="silo3d-1-status">Disponível</span></div>
+        </div>
+        <div style="text-align:center">
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;border:1px solid rgba(0,212,170,.2);margin-bottom:12px">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">SILO 2</div>
+            <div style="font-size:22px;font-weight:900;color:var(--teal)" id="silo3d-2-kg">0 kg</div>
+            <div style="font-size:10px;color:var(--text-muted)" id="silo3d-2-info">0 / 0 kg (0%)</div>
+            <div style="font-size:10px;margin-top:4px" id="silo3d-2-lote">Blend: -</div>
+          </div>
+          <div class="silo-3d">
+            <div class="silo-3d-body" style="border-color:rgba(0,212,170,.3)">
+              <div class="silo-3d-fill" id="silo3d-2-fill" style="height:0%"></div>
+              <div class="silo-3d-glass"></div>
+              <div class="silo-3d-label" id="silo3d-2-pct">0%</div>
+            </div>
+          </div>
+          <div style="margin-top:8px"><span class="badge badge-gray" id="silo3d-2-status">Disponível</span></div>
+        </div>
+        <div style="text-align:center">
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;border:1px solid rgba(249,115,22,.2);margin-bottom:12px">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">SILO 3</div>
+            <div style="font-size:22px;font-weight:900;color:var(--orange)" id="silo3d-3-kg">0 kg</div>
+            <div style="font-size:10px;color:var(--text-muted)" id="silo3d-3-info">0 / 0 kg (0%)</div>
+            <div style="font-size:10px;margin-top:4px" id="silo3d-3-lote">Blend: -</div>
+          </div>
+          <div class="silo-3d">
+            <div class="silo-3d-body" style="border-color:rgba(249,115,22,.3)">
+              <div class="silo-3d-fill" id="silo3d-3-fill" style="height:0%;background:linear-gradient(180deg,rgba(249,115,22,.6),rgba(249,115,22,.3))"></div>
+              <div class="silo-3d-glass"></div>
+              <div class="silo-3d-label" id="silo3d-3-pct">0%</div>
+            </div>
+          </div>
+          <div style="margin-top:8px"><span class="badge badge-gray" id="silo3d-3-status">Disponível</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<div class="tab-content" id="tab19">
 
   <!-- CALCULADORA INTERATIVA DE BLEND — SIMULADOR MAPA -->
   <div class="section" style="border-left:4px solid var(--purple);margin-top:6px">
@@ -2793,6 +2866,39 @@ function calcSilos() {
     const pct = cap > 0 ? (est/cap*100) : 0;
     const ocp = document.getElementById(`silo${i}-ocp-input`);
     if (ocp) ocp.value = cap > 0 ? fmt(pct, 1) + '%' : '';
+  }
+  atualizarSilos3D();
+}
+function atualizarSilos3D() {
+  const cores = ['59,130,246', '0,212,170', '249,115,22'];
+  for (let i = 1; i <= 3; i++) {
+    const cap = parseFloat(document.getElementById(`silo${i}-cap-input`)?.value) || 0;
+    const est = parseFloat(document.getElementById(`silo${i}-est-input`)?.value) || 0;
+    const lote = document.getElementById(`silo${i}-lote-input`)?.value || '-';
+    const status = document.getElementById(`silo${i}-st-input`)?.value || 'Disponível';
+    const pct = cap > 0 ? (est / cap * 100) : 0;
+
+    const kgEl = document.getElementById(`silo3d-${i}-kg`);
+    const infoEl = document.getElementById(`silo3d-${i}-info`);
+    const loteEl = document.getElementById(`silo3d-${i}-lote`);
+    const fillEl = document.getElementById(`silo3d-${i}-fill`);
+    const pctEl = document.getElementById(`silo3d-${i}-pct`);
+    const statusEl = document.getElementById(`silo3d-${i}-status`);
+
+    if (kgEl) kgEl.textContent = fmt(est) + ' kg';
+    if (infoEl) infoEl.textContent = fmt(est) + ' / ' + fmt(cap, 0) + ' kg (' + fmt(pct, 1) + '%)';
+    if (loteEl) loteEl.textContent = 'Blend: ' + lote;
+    if (fillEl) {
+      fillEl.style.height = Math.min(pct, 100) + '%';
+      const c = cores[i-1];
+      const opacity = pct > 80 ? '.8' : pct > 50 ? '.6' : pct > 20 ? '.45' : '.3';
+      fillEl.style.background = `linear-gradient(180deg,rgba(${c},${opacity}),rgba(${c},.2))`;
+    }
+    if (pctEl) pctEl.textContent = fmt(pct, 0) + '%';
+    if (statusEl) {
+      statusEl.textContent = status;
+      statusEl.className = 'badge ' + (status === 'Ocupado' ? 'badge-green' : status === 'Manutenção' ? 'badge-red' : 'badge-gray');
+    }
   }
 }
 function addMovSiloRow() {
