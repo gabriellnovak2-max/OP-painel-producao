@@ -1039,15 +1039,28 @@ body.tema-fosco *{text-shadow:none!important}
 
       <!-- ═══════════ REGISTRO DE PRODUÇÃO (abatimento) ═══════════ -->
       <div style="margin-bottom:20px;padding:16px;background:rgba(16,185,129,.04);border:1px solid rgba(16,185,129,.15);border-radius:12px" id="painel-registro-producao">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:18px">📋</span>
-            <h3 style="font-size:14px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin:0">REGISTRO DE PRODUÇÃO</h3>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-size:18px">📋</span>
+          <h3 style="font-size:14px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1px;margin:0">REGISTRO DE PRODUÇÃO</h3>
+        </div>
+
+        <!-- CARDS GRANDES -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px">
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:1px solid rgba(107,114,128,.2)">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">Blend Total Inicial</div>
+            <div style="font-size:24px;font-weight:900;color:var(--text-secondary)" id="reg-blend-total">0 kg</div>
           </div>
-          <div style="display:flex;align-items:center;gap:12px">
-            <div style="font-size:11px;color:var(--text-muted)">Blend Total: <span style="font-weight:800;color:var(--text-secondary)" id="reg-blend-total">0 kg</span></div>
-            <div style="font-size:11px;color:var(--text-muted)">Produzido: <span style="font-weight:800;color:var(--green)" id="reg-produzido">0 kg</span></div>
-            <div style="font-size:11px;color:var(--text-muted)">Saldo: <span style="font-weight:800;color:var(--cyan)" id="reg-saldo">0 kg</span></div>
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:1px solid rgba(16,185,129,.2)">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">Total Produzido (OK)</div>
+            <div style="font-size:24px;font-weight:900;color:var(--green)" id="reg-produzido">0 kg</div>
+          </div>
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:2px solid rgba(245,158,11,.3);background:rgba(245,158,11,.04)">
+            <div style="font-size:10px;color:var(--yellow);text-transform:uppercase;margin-bottom:4px;font-weight:700">⚠ Saldo em Estoque</div>
+            <div style="font-size:24px;font-weight:900;color:var(--yellow)" id="reg-saldo">0 kg</div>
+          </div>
+          <div class="hover3d" style="padding:14px;background:var(--bg-card);border-radius:12px;text-align:center;border:1px solid rgba(34,211,238,.2)">
+            <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;margin-bottom:4px">% Concluído</div>
+            <div style="font-size:24px;font-weight:900;color:var(--cyan)" id="reg-percentual">0%</div>
           </div>
         </div>
 
@@ -5182,9 +5195,12 @@ function reindexRegistro() {
 }
 
 function calcRegistroProducao() {
-  // Pegar blend total do simulador
+  // Pegar blend total do simulador — robusto com replace de vírgula e pontos
   const blendTotalEl = document.getElementById('bld-calc-ft-kg');
-  const blendTotal = parseFloat((blendTotalEl?.textContent || '0').replace(',','.')) || 0;
+  let blendTotalStr = (blendTotalEl?.textContent || '0').trim();
+  // Remove tudo que não é número, vírgula ou ponto
+  blendTotalStr = blendTotalStr.replace(/[^\d.,\-]/g, '').replace(',', '.');
+  const blendTotal = parseFloat(blendTotalStr) || 0;
 
   // Somar só os que estão OK
   let produzidoOk = 0;
@@ -5203,12 +5219,21 @@ function calcRegistroProducao() {
   document.getElementById('reg-blend-total').textContent = fmt(blendTotal) + ' kg';
   document.getElementById('reg-produzido').textContent = fmt(produzidoOk) + ' kg';
   document.getElementById('reg-saldo').textContent = fmt(saldo) + ' kg';
+  document.getElementById('reg-percentual').textContent = pct.toFixed(1) + '%';
   document.getElementById('reg-foot-total').textContent = fmt(produzidoTotal) + ' kg';
   document.getElementById('reg-barra').style.width = Math.min(pct, 100) + '%';
 
+  // Cor do saldo: amarelo se tem, verde se zerou
+  const saldoEl = document.getElementById('reg-saldo');
+  if (saldo <= 0 && blendTotal > 0) {
+    saldoEl.style.color = 'var(--green)';
+    saldoEl.textContent = '0 kg — COMPLETO';
+  } else {
+    saldoEl.style.color = 'var(--yellow)';
+  }
+
   // Atualizar contagem de OKs
   const totalRows = document.querySelectorAll('#registro-producao-body tr').length;
-  const okRows = document.querySelectorAll('#registro-producao-body .reg-ok-btn').length;
   let okCount = 0;
   document.querySelectorAll('#registro-producao-body .reg-ok-btn').forEach(b => { if (b.textContent.includes('OK')) okCount++; });
   document.getElementById('reg-foot-status').textContent = okCount + '/' + totalRows + ' concluídos';
