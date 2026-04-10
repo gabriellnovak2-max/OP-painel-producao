@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel de Controle de Produção - Torrefação de Café</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 /* ====== ANIMAÇÕES GLOBAIS ====== */
@@ -2442,6 +2443,13 @@ body.tema-fosco *{text-shadow:none!important}
         <span style="width:1px;height:20px;background:var(--border);margin:0 4px"></span>
         <button class="btn btn-primary" onclick="adicionarEtapaWorkflow()" style="font-size:11px;padding:6px 14px">+ Nova Etapa</button>
         <button class="btn btn-success" onclick="salvarWorkflow()" style="font-size:11px;padding:6px 14px">Salvar Workflow</button>
+        <div style="position:relative;display:inline-block">
+          <button class="btn" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'" style="font-size:11px;padding:6px 14px;background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3)">Exportar ▼</button>
+          <div style="display:none;position:absolute;top:100%;right:0;margin-top:4px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.4);z-index:50;min-width:180px;overflow:hidden">
+            <button onclick="exportarWorkflowPNG();this.parentElement.style.display='none'" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text-primary);text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='none'">🖼️ Exportar como PNG</button>
+            <button onclick="exportarWorkflowPDF();this.parentElement.style.display='none'" style="width:100%;padding:10px 14px;background:none;border:none;color:var(--text-primary);text-align:left;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background='none'">📄 Exportar como PDF</button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="section-body" style="padding:0;overflow:hidden">
@@ -6243,6 +6251,46 @@ function carregarTemplateVazio() {
   renderizarWorkflow();
   salvarWorkflow();
   showToast('Workflow limpo');
+}
+
+// ---- EXPORT WORKFLOW PNG / PDF ----
+function exportarWorkflowPNG() {
+  const canvas = document.getElementById('wf-canvas-container');
+  if (!canvas) return;
+  showToast('Gerando imagem...');
+  html2canvas(canvas, {backgroundColor:'#0d1117', scale:2, useCORS:true}).then(c => {
+    const link = document.createElement('a');
+    const data = new Date().toISOString().split('T')[0];
+    link.download = 'workflow_torrefacao_' + data + '.png';
+    link.href = c.toDataURL('image/png');
+    link.click();
+    showToast('PNG exportado com sucesso');
+  }).catch(e => { console.error(e); showToast('Erro ao exportar PNG'); });
+}
+
+function exportarWorkflowPDF() {
+  const canvas = document.getElementById('wf-canvas-container');
+  if (!canvas) return;
+  showToast('Gerando PDF...');
+  html2canvas(canvas, {backgroundColor:'#0d1117', scale:2, useCORS:true}).then(c => {
+    const imgData = c.toDataURL('image/png');
+    const data = new Date().toISOString().split('T')[0];
+    const nome = wfData.metadata.nome || 'Workflow';
+    const win = window.open('','_blank');
+    win.document.write(`<!DOCTYPE html><html><head><title>${nome} - ${data}</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',sans-serif;padding:20px;color:#222;background:#fff}
+h1{font-size:18px;margin-bottom:4px}h2{font-size:12px;color:#666;margin-bottom:16px}
+img{max-width:100%;border:1px solid #ddd;border-radius:8px}
+.footer{margin-top:16px;padding-top:10px;border-top:1px solid #ddd;font-size:9px;color:#888;display:flex;justify-content:space-between}
+@media print{body{padding:10px}}</style></head><body>
+<h1>${nome}</h1>
+<h2>Versão: ${wfData.metadata.versao||'1.0'} | Exportado em: ${new Date().toLocaleString('pt-BR')} | Etapas: ${wfData.nodes.length}</h2>
+<img src="${imgData}" alt="Workflow">
+<div class="footer"><span>Patrocínio Torrefação de Café — Goiânia</span><span>${data}</span></div>
+<script>window.print();<\/script></body></html>`);
+    win.document.close();
+    showToast('PDF gerado — use Ctrl+P para salvar');
+  }).catch(e => { console.error(e); showToast('Erro ao exportar PDF'); });
 }
 
 // ====================== MOTOR DE WORKFLOW COMPLETO + ERP CENTRAL ======================
