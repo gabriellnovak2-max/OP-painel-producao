@@ -314,6 +314,42 @@ body.tema-fosco .silo-bar{background:#252525;border-color:#333}
 body.tema-fosco .gauge-center{color:#8a9aaa;text-shadow:none}
 body.tema-fosco .chart-footer{color:#555}
 body.tema-fosco *{text-shadow:none!important}
+/* ====== WORKFLOW VISUAL ====== */
+.wf-node{position:absolute;min-width:160px;padding:12px 16px;border-radius:12px;border:2px solid var(--border);background:var(--bg-card);cursor:grab;z-index:10;transition:box-shadow .2s,border-color .2s;user-select:none}
+.wf-node:hover{box-shadow:0 6px 20px rgba(0,0,0,.4);border-color:var(--teal);z-index:20}
+.wf-node.selected{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.2),0 6px 20px rgba(0,0,0,.4)}
+.wf-node.dragging{opacity:.8;cursor:grabbing;z-index:30}
+.wf-node-title{font-size:13px;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.wf-node-desc{font-size:10px;color:var(--text-muted);line-height:1.3}
+.wf-node-type{font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;opacity:.7}
+.wf-node-badge{position:absolute;top:-8px;right:-8px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;border:2px solid var(--bg-primary)}
+.wf-node-ports{display:flex;justify-content:space-between;margin-top:8px}
+.wf-port{width:12px;height:12px;border-radius:50%;background:var(--border);border:2px solid var(--bg-card);cursor:crosshair;transition:background .2s}
+.wf-port:hover{background:var(--teal);box-shadow:0 0 8px rgba(0,212,170,.5)}
+.wf-port-in{margin-left:auto;margin-right:auto}
+.wf-port-out{margin-left:auto;margin-right:auto}
+.wf-conn-line{stroke:var(--teal);stroke-width:2;fill:none;opacity:.6;transition:opacity .2s}
+.wf-conn-line:hover{opacity:1;stroke-width:3}
+.wf-node[data-type="inicio"] .wf-node-title{color:var(--green)}
+.wf-node[data-type="inicio"]{border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.06)}
+.wf-node[data-type="recebimento"] .wf-node-title{color:var(--blue)}
+.wf-node[data-type="recebimento"]{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.06)}
+.wf-node[data-type="torra"] .wf-node-title{color:var(--orange)}
+.wf-node[data-type="torra"]{border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.06)}
+.wf-node[data-type="silo"] .wf-node-title{color:var(--cyan)}
+.wf-node[data-type="silo"]{border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.06)}
+.wf-node[data-type="blend"] .wf-node-title{color:var(--purple)}
+.wf-node[data-type="blend"]{border-color:rgba(167,139,250,.4);background:rgba(167,139,250,.06)}
+.wf-node[data-type="moagem"] .wf-node-title{color:var(--yellow)}
+.wf-node[data-type="moagem"]{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}
+.wf-node[data-type="embalagem"] .wf-node-title{color:var(--green)}
+.wf-node[data-type="embalagem"]{border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.06)}
+.wf-node[data-type="qualidade"] .wf-node-title{color:var(--pink)}
+.wf-node[data-type="qualidade"]{border-color:rgba(236,72,153,.4);background:rgba(236,72,153,.06)}
+.wf-node[data-type="decisao"] .wf-node-title{color:var(--yellow)}
+.wf-node[data-type="decisao"]{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06);transform:rotate(0deg)}
+.wf-node[data-type="fim"] .wf-node-title{color:var(--red)}
+.wf-node[data-type="fim"]{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}
 /* ====== SILOS 3D VISUAIS ====== */
 .silo-3d{width:100%;max-width:140px;height:200px;margin:0 auto;position:relative;perspective:500px}
 .silo-3d-body{width:100%;height:100%;border-radius:16px 16px 30px 30px;border:2px solid rgba(0,212,170,.3);position:relative;overflow:hidden;background:rgba(13,17,23,.6);box-shadow:inset 0 0 30px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);transform:rotateX(2deg)}
@@ -377,6 +413,22 @@ body.tema-fosco *{text-shadow:none!important}
   <div class="nav-items">
   <div style="padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:6px">PRINCIPAL</div>
   <button class="active" onclick="abrirAba(0,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></span><span class="nav-label">Home</span></button>
+  <div class="nav-group">
+    <div class="nav-group-header" onclick="toggleSubmenu(this)">
+      <span style="display:flex;align-items:center;gap:14px">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/><path d="M8 6h.01M16 6h.01M12 18h.01"/></svg></span>
+        <span class="nav-label">Workflow</span>
+      </span>
+      <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="nav-submenu" id="submenu-workflow">
+      <button onclick="abrirAbaSub(20,this)">Editor Visual</button>
+      <button onclick="abrirAbaSub(21,this)">Etapas</button>
+      <button onclick="abrirAbaSub(22,this)">Templates</button>
+      <button onclick="abrirAbaSub(23,this)">Histórico de Fluxos</button>
+      <button onclick="abrirAbaSub(24,this)">Configurações</button>
+    </div>
+  </div>
   <div class="nav-group">
     <div class="nav-group-header" onclick="toggleSubmenu(this)">
       <span style="display:flex;align-items:center;gap:14px">
@@ -2375,6 +2427,135 @@ body.tema-fosco *{text-shadow:none!important}
         </table>
       </div>
       <div class="btn-group"><button class="btn btn-primary" onclick="addCafePoRow()">+ Adicionar Lote</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 20: WORKFLOW - EDITOR VISUAL ============ -->
+<div class="tab-content" id="tab20">
+  <div class="section">
+    <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span style="display:flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> WORKFLOW — Editor Visual</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="adicionarEtapaWorkflow()" style="font-size:11px;padding:6px 14px">+ Nova Etapa</button>
+        <button class="btn btn-success" onclick="salvarWorkflow()" style="font-size:11px;padding:6px 14px">Salvar Workflow</button>
+      </div>
+    </div>
+    <div class="section-body" style="padding:0;overflow:hidden">
+      <div style="display:grid;grid-template-columns:220px 1fr 260px;height:calc(100vh - 180px);min-height:500px">
+        <!-- COLUNA ESQUERDA: BIBLIOTECA DE ETAPAS -->
+        <div style="border-right:1px solid var(--border);padding:14px;overflow-y:auto;background:var(--bg-secondary)">
+          <h4 style="font-size:11px;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px">Biblioteca de Etapas</h4>
+          <div id="wf-biblioteca" style="display:flex;flex-direction:column;gap:6px">
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'inicio')" style="padding:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:8px"><span style="font-size:16px">🟢</span> Início</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'recebimento')" style="padding:10px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:8px"><span style="font-size:16px">📦</span> Recebimento</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'torra')" style="padding:10px;background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--orange);display:flex;align-items:center;gap:8px"><span style="font-size:16px">🔥</span> Torra</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'silo')" style="padding:10px;background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--cyan);display:flex;align-items:center;gap:8px"><span style="font-size:16px">🏗️</span> Silo</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'blend')" style="padding:10px;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:8px"><span style="font-size:16px">🔄</span> Blend</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'moagem')" style="padding:10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--yellow);display:flex;align-items:center;gap:8px"><span style="font-size:16px">⚙️</span> Moagem</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'embalagem')" style="padding:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:8px"><span style="font-size:16px">📦</span> Embalagem</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'qualidade')" style="padding:10px;background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--pink);display:flex;align-items:center;gap:8px"><span style="font-size:16px">🔬</span> Controle de Qualidade</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'decisao')" style="padding:10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--yellow);display:flex;align-items:center;gap:8px"><span style="font-size:16px">❓</span> Decisão</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'fim')" style="padding:10px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--red);display:flex;align-items:center;gap:8px"><span style="font-size:16px">🔴</span> Fim</div>
+            <div class="wf-lib-item" draggable="true" ondragstart="dragWfItem(event,'personalizada')" style="padding:10px;background:rgba(107,114,128,.1);border:1px solid rgba(107,114,128,.3);border-radius:8px;cursor:grab;font-size:12px;font-weight:700;color:var(--text-secondary);display:flex;align-items:center;gap:8px"><span style="font-size:16px">⚪</span> Personalizada</div>
+          </div>
+        </div>
+
+        <!-- ÁREA CENTRAL: CANVAS DO WORKFLOW -->
+        <div id="wf-canvas-container" style="position:relative;overflow:auto;background:radial-gradient(circle at 20px 20px,rgba(48,54,61,.3) 1px,transparent 1px);background-size:40px 40px;background-color:var(--bg-primary)" ondrop="dropWfItem(event)" ondragover="event.preventDefault()">
+          <svg id="wf-svg-connections" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1"></svg>
+          <div id="wf-canvas" style="position:relative;width:100%;height:100%;min-height:800px;z-index:2"></div>
+        </div>
+
+        <!-- COLUNA DIREITA: PAINEL DE PROPRIEDADES -->
+        <div style="border-left:1px solid var(--border);padding:14px;overflow-y:auto;background:var(--bg-secondary)" id="wf-props-panel">
+          <h4 style="font-size:11px;color:var(--text-muted);text-transform:uppercase;margin-bottom:12px;letter-spacing:.5px">Propriedades</h4>
+          <div id="wf-props-content" style="color:var(--text-muted);font-size:12px;text-align:center;padding:40px 10px">
+            <div style="font-size:30px;opacity:.3;margin-bottom:10px">🎯</div>
+            Selecione uma etapa no canvas para editar suas propriedades
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 21: WORKFLOW - ETAPAS ============ -->
+<div class="tab-content" id="tab21">
+  <div class="section">
+    <div class="section-title">WORKFLOW — Lista de Etapas</div>
+    <div class="section-body">
+      <div class="info-box azul" style="margin-bottom:14px"><b>Etapas do Workflow:</b> Veja todas as etapas cadastradas no fluxo de produção. Edite diretamente ou use o Editor Visual para reorganizar.</div>
+      <div style="overflow-x:auto">
+        <table id="tbl-wf-etapas">
+          <thead><tr>
+            <th style="width:30px">#</th><th>Nome</th><th>Tipo</th><th>Descrição</th><th>Status</th><th>Módulo Vinculado</th><th style="width:80px">Ações</th>
+          </tr></thead>
+          <tbody id="wf-etapas-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 22: WORKFLOW - TEMPLATES ============ -->
+<div class="tab-content" id="tab22">
+  <div class="section">
+    <div class="section-title">WORKFLOW — Templates</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Templates prontos:</b> Selecione um modelo pré-configurado para iniciar seu workflow rapidamente.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px" id="wf-templates-grid">
+        <div class="hover3d" style="padding:20px;background:var(--bg-card);border-radius:12px;border:1px solid rgba(0,212,170,.2);cursor:pointer" onclick="carregarTemplateTorrefacao()">
+          <div style="font-size:24px;margin-bottom:8px">☕</div>
+          <h4 style="color:var(--teal);font-size:14px;margin-bottom:6px">Torrefação Completa</h4>
+          <p style="font-size:11px;color:var(--text-muted)">Fluxo completo: Recebimento → Torra → Silo → Blend → Moagem → Embalagem → Qualidade. Inclui 11 etapas pré-configuradas.</p>
+          <span class="badge badge-green" style="margin-top:8px">Recomendado</span>
+        </div>
+        <div class="hover3d" style="padding:20px;background:var(--bg-card);border-radius:12px;border:1px solid rgba(59,130,246,.2);cursor:pointer" onclick="carregarTemplateSimples()">
+          <div style="font-size:24px;margin-bottom:8px">⚡</div>
+          <h4 style="color:var(--blue);font-size:14px;margin-bottom:6px">Produção Simples</h4>
+          <p style="font-size:11px;color:var(--text-muted)">Fluxo básico: Início → Torra → Embalagem → Fim. Para operações rápidas com 4 etapas.</p>
+          <span class="badge badge-gray" style="margin-top:8px">Básico</span>
+        </div>
+        <div class="hover3d" style="padding:20px;background:var(--bg-card);border-radius:12px;border:1px solid rgba(167,139,250,.2);cursor:pointer" onclick="carregarTemplateVazio()">
+          <div style="font-size:24px;margin-bottom:8px">📋</div>
+          <h4 style="color:var(--purple);font-size:14px;margin-bottom:6px">Em Branco</h4>
+          <p style="font-size:11px;color:var(--text-muted)">Comece do zero. Monte seu fluxo personalizado arrastando etapas da biblioteca.</p>
+          <span class="badge badge-gray" style="margin-top:8px">Personalizado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 23: WORKFLOW - HISTÓRICO ============ -->
+<div class="tab-content" id="tab23">
+  <div class="section">
+    <div class="section-title">WORKFLOW — Histórico de Fluxos</div>
+    <div class="section-body">
+      <div id="wf-historico-lista" style="color:var(--text-muted);font-size:12px;text-align:center;padding:40px">
+        <div style="font-size:40px;opacity:.3;margin-bottom:10px">📋</div>
+        Nenhum fluxo salvo no histórico ainda.<br>Salve seu workflow para criar uma versão no histórico.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 24: WORKFLOW - CONFIGURAÇÕES ============ -->
+<div class="tab-content" id="tab24">
+  <div class="section">
+    <div class="section-title">WORKFLOW — Configurações</div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Nome do Workflow</label><input type="text" id="wf-config-nome" value="Fluxo de Produção — Torrefação" placeholder="Nome do workflow"></div>
+        <div class="form-group"><label>Versão</label><input type="text" id="wf-config-versao" value="1.0" placeholder="Versão"></div>
+        <div class="form-group"><label>Autor</label><input type="text" id="wf-config-autor" placeholder="Nome do responsável"></div>
+        <div class="form-group"><label>Última Atualização</label><input type="text" id="wf-config-atualizado" readonly class="calc"></div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-success" onclick="salvarWorkflow()">Salvar Configurações</button>
+        <button class="btn" style="background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)" onclick="if(confirm('Tem certeza? Isso apaga todo o workflow!')){localStorage.removeItem('workflow_definition');location.reload()}">Resetar Workflow</button>
+      </div>
     </div>
   </div>
 </div>
@@ -5619,8 +5800,378 @@ function init() {
   verificarLogin();
   initCalendario();
   atualizarHome();
+  carregarWorkflow();
 }
 init();
+
+// ====================== WORKFLOW VISUAL — CONSTRUTOR DE ETAPAS ======================
+const WF_TIPOS = {
+  inicio:      {emoji:'🟢',label:'Início',cor:'var(--green)'},
+  recebimento: {emoji:'📦',label:'Recebimento',cor:'var(--blue)'},
+  torra:       {emoji:'🔥',label:'Torra',cor:'var(--orange)'},
+  silo:        {emoji:'🏗️',label:'Silo',cor:'var(--cyan)'},
+  blend:       {emoji:'🔄',label:'Blend',cor:'var(--purple)'},
+  moagem:      {emoji:'⚙️',label:'Moagem',cor:'var(--yellow)'},
+  embalagem:   {emoji:'📦',label:'Embalagem',cor:'var(--green)'},
+  qualidade:   {emoji:'🔬',label:'Controle de Qualidade',cor:'var(--pink)'},
+  decisao:     {emoji:'❓',label:'Decisão',cor:'var(--yellow)'},
+  fim:         {emoji:'🔴',label:'Fim',cor:'var(--red)'},
+  personalizada:{emoji:'⚪',label:'Personalizada',cor:'var(--text-secondary)'}
+};
+
+let wfData = {nodes:[], edges:[], metadata:{nome:'Fluxo de Produção',versao:'1.0',autor:'',criadoEm:null,atualizadoEm:null}};
+let wfSelectedNode = null;
+let wfDragOffset = {x:0,y:0};
+let wfConnecting = null;
+let wfNodeIdCounter = 0;
+
+function gerarWfId() { return 'wf_' + (++wfNodeIdCounter) + '_' + Date.now().toString(36); }
+
+function adicionarEtapaWorkflow(tipo, x, y) {
+  tipo = tipo || 'personalizada';
+  const info = WF_TIPOS[tipo] || WF_TIPOS.personalizada;
+  const node = {
+    id: gerarWfId(),
+    nome: info.label,
+    tipo: tipo,
+    descricao: '',
+    x: x || 80 + Math.random()*400,
+    y: y || 80 + wfData.nodes.length * 100,
+    status: 'ativo',
+    moduloVinculado: '',
+    entradas: [],
+    saidas: []
+  };
+  wfData.nodes.push(node);
+  renderizarWorkflow();
+  selecionarWfNode(node.id);
+  showToast('Etapa "' + node.nome + '" adicionada');
+}
+
+function removerEtapaWorkflow(id) {
+  wfData.nodes = wfData.nodes.filter(n => n.id !== id);
+  wfData.edges = wfData.edges.filter(e => e.from !== id && e.to !== id);
+  if (wfSelectedNode === id) { wfSelectedNode = null; renderWfProps(); }
+  renderizarWorkflow();
+  showToast('Etapa removida');
+}
+
+function atualizarEtapaWorkflow(id, campo, valor) {
+  const node = wfData.nodes.find(n => n.id === id);
+  if (node) { node[campo] = valor; renderizarWorkflow(); }
+}
+
+function renderizarWorkflow() {
+  const canvas = document.getElementById('wf-canvas');
+  if (!canvas) return;
+  canvas.innerHTML = '';
+
+  wfData.nodes.forEach(node => {
+    const info = WF_TIPOS[node.tipo] || WF_TIPOS.personalizada;
+    const div = document.createElement('div');
+    div.className = 'wf-node' + (wfSelectedNode === node.id ? ' selected' : '');
+    div.setAttribute('data-type', node.tipo);
+    div.setAttribute('data-id', node.id);
+    div.style.left = node.x + 'px';
+    div.style.top = node.y + 'px';
+    div.innerHTML = `
+      <div class="wf-node-type">${info.emoji} ${node.tipo}</div>
+      <div class="wf-node-title">${node.nome}</div>
+      ${node.descricao ? '<div class="wf-node-desc">' + node.descricao + '</div>' : ''}
+      <div class="wf-node-ports">
+        <div class="wf-port wf-port-in" data-port="in" data-node="${node.id}" title="Entrada" onmousedown="iniciarConexao(event,'in','${node.id}')" onmouseup="finalizarConexao(event,'${node.id}')"></div>
+        <div class="wf-port wf-port-out" data-port="out" data-node="${node.id}" title="Saída" onmousedown="iniciarConexao(event,'out','${node.id}')" onmouseup="finalizarConexao(event,'${node.id}')"></div>
+      </div>
+      <div class="wf-node-badge" style="background:${node.status==='ativo'?'var(--green)':node.status==='pausado'?'var(--yellow)':'var(--red)'}" title="${node.status}"></div>`;
+
+    // Drag do node
+    div.addEventListener('mousedown', function(e) {
+      if (e.target.classList.contains('wf-port')) return;
+      e.preventDefault();
+      wfDragOffset.x = e.clientX - node.x;
+      wfDragOffset.y = e.clientY - node.y;
+      div.classList.add('dragging');
+      const moveHandler = function(ev) {
+        const container = document.getElementById('wf-canvas-container');
+        const rect = container.getBoundingClientRect();
+        node.x = Math.max(0, ev.clientX - rect.left + container.scrollLeft - (wfDragOffset.x - rect.left - container.scrollLeft + node.x));
+        node.y = Math.max(0, ev.clientY - rect.top + container.scrollTop - (wfDragOffset.y - rect.top - container.scrollTop + node.y));
+        node.x = ev.clientX - wfDragOffset.x;
+        node.y = ev.clientY - wfDragOffset.y;
+        div.style.left = node.x + 'px';
+        div.style.top = node.y + 'px';
+        renderWfConnections();
+      };
+      const upHandler = function() {
+        div.classList.remove('dragging');
+        document.removeEventListener('mousemove', moveHandler);
+        document.removeEventListener('mouseup', upHandler);
+      };
+      document.addEventListener('mousemove', moveHandler);
+      document.addEventListener('mouseup', upHandler);
+    });
+
+    div.addEventListener('click', function(e) {
+      if (e.target.classList.contains('wf-port')) return;
+      selecionarWfNode(node.id);
+    });
+
+    canvas.appendChild(div);
+  });
+
+  renderWfConnections();
+  renderWfEtapasTabela();
+}
+
+function renderWfConnections() {
+  const svg = document.getElementById('wf-svg-connections');
+  if (!svg) return;
+  svg.innerHTML = '';
+  const container = document.getElementById('wf-canvas-container');
+  if (!container) return;
+
+  wfData.edges.forEach(edge => {
+    const fromNode = wfData.nodes.find(n => n.id === edge.from);
+    const toNode = wfData.nodes.find(n => n.id === edge.to);
+    if (!fromNode || !toNode) return;
+
+    const x1 = fromNode.x + 80;
+    const y1 = fromNode.y + 70;
+    const x2 = toNode.x + 80;
+    const y2 = toNode.y + 10;
+    const mx = (x1+x2)/2;
+    const my = (y1+y2)/2;
+    const cy1 = y1 + Math.abs(y2-y1)*0.4;
+    const cy2 = y2 - Math.abs(y2-y1)*0.4;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d', `M${x1},${y1} C${x1},${cy1} ${x2},${cy2} ${x2},${y2}`);
+    path.setAttribute('class','wf-conn-line');
+    path.setAttribute('marker-end','url(#arrowhead)');
+    svg.appendChild(path);
+
+    // Seta
+    const arrow = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    const angle = Math.atan2(y2 - cy2, x2 - x2);
+    arrow.setAttribute('points', (x2-4)+','+(y2-8)+' '+(x2+4)+','+(y2-8)+' '+x2+','+y2);
+    arrow.setAttribute('fill','var(--teal)');
+    arrow.setAttribute('opacity','0.6');
+    svg.appendChild(arrow);
+  });
+}
+
+function selecionarWfNode(id) {
+  wfSelectedNode = id;
+  document.querySelectorAll('.wf-node').forEach(n => n.classList.remove('selected'));
+  const el = document.querySelector('.wf-node[data-id="'+id+'"]');
+  if (el) el.classList.add('selected');
+  renderWfProps();
+}
+
+function renderWfProps() {
+  const container = document.getElementById('wf-props-content');
+  if (!container) return;
+  if (!wfSelectedNode) {
+    container.innerHTML = '<div style="font-size:30px;opacity:.3;margin-bottom:10px">🎯</div>Selecione uma etapa no canvas para editar suas propriedades';
+    return;
+  }
+  const node = wfData.nodes.find(n => n.id === wfSelectedNode);
+  if (!node) return;
+  const info = WF_TIPOS[node.tipo] || WF_TIPOS.personalizada;
+
+  container.innerHTML = `
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:30px;margin-bottom:6px">${info.emoji}</div>
+      <div style="font-size:14px;font-weight:800;color:${info.cor}">${node.nome}</div>
+      <div style="font-size:10px;color:var(--text-muted)">${node.tipo} | ID: ${node.id.substring(0,8)}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div><label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px">Nome</label>
+        <input type="text" value="${node.nome}" onchange="atualizarEtapaWorkflow('${node.id}','nome',this.value)" style="width:100%"></div>
+      <div><label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px">Tipo</label>
+        <select onchange="atualizarEtapaWorkflow('${node.id}','tipo',this.value)" style="width:100%">
+          ${Object.keys(WF_TIPOS).map(t => '<option value="'+t+'"'+(t===node.tipo?' selected':'')+'>'+WF_TIPOS[t].emoji+' '+WF_TIPOS[t].label+'</option>').join('')}
+        </select></div>
+      <div><label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px">Descrição</label>
+        <textarea rows="3" onchange="atualizarEtapaWorkflow('${node.id}','descricao',this.value)" style="width:100%;resize:vertical">${node.descricao||''}</textarea></div>
+      <div><label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px">Status</label>
+        <select onchange="atualizarEtapaWorkflow('${node.id}','status',this.value)" style="width:100%">
+          <option value="ativo"${node.status==='ativo'?' selected':''}>Ativo</option>
+          <option value="pausado"${node.status==='pausado'?' selected':''}>Pausado</option>
+          <option value="inativo"${node.status==='inativo'?' selected':''}>Inativo</option>
+        </select></div>
+      <div><label style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px">Módulo Vinculado</label>
+        <input type="text" value="${node.moduloVinculado||''}" onchange="atualizarEtapaWorkflow('${node.id}','moduloVinculado',this.value)" placeholder="Ex: tab2 (Bateladas)" style="width:100%"></div>
+      <div style="margin-top:8px;display:flex;gap:6px">
+        <button class="btn" style="flex:1;font-size:11px;background:rgba(34,211,238,.1);color:var(--cyan);border:1px solid rgba(34,211,238,.2)" onclick="conectarWfNode('${node.id}')">Conectar →</button>
+        <button class="btn" style="font-size:11px;background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)" onclick="removerEtapaWorkflow('${node.id}')">Excluir</button>
+      </div>
+    </div>`;
+}
+
+// Conexões entre nodes
+let wfConnectFrom = null;
+function conectarWfNode(fromId) {
+  if (wfConnectFrom === fromId) { wfConnectFrom = null; showToast('Conexão cancelada'); return; }
+  if (!wfConnectFrom) {
+    wfConnectFrom = fromId;
+    showToast('Agora clique na etapa de DESTINO');
+  } else {
+    if (wfConnectFrom !== fromId) {
+      const existe = wfData.edges.some(e => e.from === wfConnectFrom && e.to === fromId);
+      if (!existe) {
+        wfData.edges.push({from: wfConnectFrom, to: fromId});
+        renderWfConnections();
+        showToast('Conexão criada');
+      }
+    }
+    wfConnectFrom = null;
+  }
+}
+function iniciarConexao(e, tipo, nodeId) { e.stopPropagation(); wfConnectFrom = nodeId; }
+function finalizarConexao(e, nodeId) {
+  e.stopPropagation();
+  if (wfConnectFrom && wfConnectFrom !== nodeId) {
+    const existe = wfData.edges.some(e => e.from === wfConnectFrom && e.to === nodeId);
+    if (!existe) { wfData.edges.push({from: wfConnectFrom, to: nodeId}); renderWfConnections(); }
+  }
+  wfConnectFrom = null;
+}
+
+// Drop da biblioteca
+function dragWfItem(e, tipo) { e.dataTransfer.setData('wf-tipo', tipo); }
+function dropWfItem(e) {
+  e.preventDefault();
+  const tipo = e.dataTransfer.getData('wf-tipo');
+  if (!tipo) return;
+  const container = document.getElementById('wf-canvas-container');
+  const rect = container.getBoundingClientRect();
+  const x = e.clientX - rect.left + container.scrollLeft - 80;
+  const y = e.clientY - rect.top + container.scrollTop - 30;
+  adicionarEtapaWorkflow(tipo, Math.max(10,x), Math.max(10,y));
+}
+
+// Tabela de etapas (tab21)
+function renderWfEtapasTabela() {
+  const tbody = document.getElementById('wf-etapas-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  wfData.nodes.forEach((node, i) => {
+    const info = WF_TIPOS[node.tipo] || WF_TIPOS.personalizada;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i+1}</td>
+      <td style="font-weight:700">${info.emoji} ${node.nome}</td>
+      <td><span style="color:${info.cor};font-weight:600">${node.tipo}</span></td>
+      <td style="font-size:11px;color:var(--text-muted)">${node.descricao||'-'}</td>
+      <td><span class="badge ${node.status==='ativo'?'badge-green':node.status==='pausado'?'badge-yellow':'badge-red'}">${node.status}</span></td>
+      <td style="font-size:11px">${node.moduloVinculado||'-'}</td>
+      <td>
+        <button class="btn" style="padding:2px 8px;font-size:10px;background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2);border-radius:4px" onclick="removerEtapaWorkflow('${node.id}')">X</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// Persistência
+function salvarWorkflow() {
+  wfData.metadata.atualizadoEm = new Date().toISOString();
+  if (!wfData.metadata.criadoEm) wfData.metadata.criadoEm = wfData.metadata.atualizadoEm;
+  wfData.metadata.nome = document.getElementById('wf-config-nome')?.value || wfData.metadata.nome;
+  wfData.metadata.versao = document.getElementById('wf-config-versao')?.value || wfData.metadata.versao;
+  wfData.metadata.autor = document.getElementById('wf-config-autor')?.value || wfData.metadata.autor;
+  localStorage.setItem('workflow_definition', JSON.stringify(wfData));
+  const confAtualizado = document.getElementById('wf-config-atualizado');
+  if (confAtualizado) confAtualizado.value = new Date().toLocaleString('pt-BR');
+  showToast('Workflow salvo com sucesso');
+}
+
+function carregarWorkflow() {
+  const raw = localStorage.getItem('workflow_definition');
+  if (!raw) return;
+  try {
+    const d = JSON.parse(raw);
+    if (d.nodes) wfData.nodes = d.nodes;
+    if (d.edges) wfData.edges = d.edges;
+    if (d.metadata) wfData.metadata = {...wfData.metadata, ...d.metadata};
+    // Restaurar counter
+    wfData.nodes.forEach(n => {
+      const num = parseInt(n.id.split('_')[1]) || 0;
+      if (num > wfNodeIdCounter) wfNodeIdCounter = num;
+    });
+    renderizarWorkflow();
+    // Restaurar configs
+    const nomeEl = document.getElementById('wf-config-nome');
+    if (nomeEl) nomeEl.value = wfData.metadata.nome || '';
+    const verEl = document.getElementById('wf-config-versao');
+    if (verEl) verEl.value = wfData.metadata.versao || '';
+    const autEl = document.getElementById('wf-config-autor');
+    if (autEl) autEl.value = wfData.metadata.autor || '';
+    const atEl = document.getElementById('wf-config-atualizado');
+    if (atEl && wfData.metadata.atualizadoEm) atEl.value = new Date(wfData.metadata.atualizadoEm).toLocaleString('pt-BR');
+  } catch(e) { console.error('Erro ao carregar workflow:', e); }
+}
+
+// Templates
+function carregarTemplateTorrefacao() {
+  if (wfData.nodes.length > 0 && !confirm('Isso vai substituir o workflow atual. Continuar?')) return;
+  wfData.nodes = [
+    {id:gerarWfId(),nome:'Início',tipo:'inicio',descricao:'Abertura da OP',x:350,y:20,status:'ativo',moduloVinculado:'tab1',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Recebimento Café Verde',tipo:'recebimento',descricao:'Receber café cru, pesar, conferir NF',x:100,y:130,status:'ativo',moduloVinculado:'tab16',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'AGB Maquinação',tipo:'recebimento',descricao:'Enviar para AGB, receber peneiras',x:550,y:130,status:'ativo',moduloVinculado:'tab14',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Torra',tipo:'torra',descricao:'Bateladas de torra (60kg cada)',x:100,y:260,status:'ativo',moduloVinculado:'tab2',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Controle de Qualidade',tipo:'qualidade',descricao:'Verificar quebra, umidade, cor',x:550,y:260,status:'ativo',moduloVinculado:'tab7',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Silo',tipo:'silo',descricao:'Armazenar café torrado nos silos',x:100,y:390,status:'ativo',moduloVinculado:'tab3',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Blend',tipo:'blend',descricao:'Blendagem pós-torra (200kg/vez)',x:350,y:390,status:'ativo',moduloVinculado:'tab4',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Simulador MAPA',tipo:'decisao',descricao:'Simular impureza MAPA < 1%',x:550,y:390,status:'ativo',moduloVinculado:'tab19',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Moagem',tipo:'moagem',descricao:'Moer café blendado',x:200,y:520,status:'ativo',moduloVinculado:'tab5',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Embalagem',tipo:'embalagem',descricao:'Embalar produto final',x:450,y:520,status:'ativo',moduloVinculado:'tab5',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Selo Puro Lote',tipo:'fim',descricao:'Laudo SENAI, selo de qualidade',x:350,y:650,status:'ativo',moduloVinculado:'tab13',entradas:[],saidas:[]}
+  ];
+  // Conexões do fluxo
+  wfData.edges = [];
+  const ids = wfData.nodes.map(n=>n.id);
+  wfData.edges.push({from:ids[0],to:ids[1]});
+  wfData.edges.push({from:ids[0],to:ids[2]});
+  wfData.edges.push({from:ids[1],to:ids[3]});
+  wfData.edges.push({from:ids[2],to:ids[3]});
+  wfData.edges.push({from:ids[3],to:ids[4]});
+  wfData.edges.push({from:ids[3],to:ids[5]});
+  wfData.edges.push({from:ids[5],to:ids[6]});
+  wfData.edges.push({from:ids[6],to:ids[7]});
+  wfData.edges.push({from:ids[4],to:ids[7]});
+  wfData.edges.push({from:ids[7],to:ids[8]});
+  wfData.edges.push({from:ids[8],to:ids[9]});
+  wfData.edges.push({from:ids[9],to:ids[10]});
+  renderizarWorkflow();
+  salvarWorkflow();
+  showToast('Template Torrefação Completa carregado com 11 etapas');
+}
+
+function carregarTemplateSimples() {
+  if (wfData.nodes.length > 0 && !confirm('Isso vai substituir o workflow atual. Continuar?')) return;
+  wfData.nodes = [
+    {id:gerarWfId(),nome:'Início',tipo:'inicio',descricao:'',x:300,y:40,status:'ativo',moduloVinculado:'',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Torra',tipo:'torra',descricao:'Bateladas',x:300,y:170,status:'ativo',moduloVinculado:'tab2',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Embalagem',tipo:'embalagem',descricao:'',x:300,y:300,status:'ativo',moduloVinculado:'tab5',entradas:[],saidas:[]},
+    {id:gerarWfId(),nome:'Fim',tipo:'fim',descricao:'',x:300,y:430,status:'ativo',moduloVinculado:'',entradas:[],saidas:[]}
+  ];
+  wfData.edges = [];
+  const ids = wfData.nodes.map(n=>n.id);
+  wfData.edges.push({from:ids[0],to:ids[1]},{from:ids[1],to:ids[2]},{from:ids[2],to:ids[3]});
+  renderizarWorkflow();
+  salvarWorkflow();
+  showToast('Template Simples carregado com 4 etapas');
+}
+
+function carregarTemplateVazio() {
+  if (wfData.nodes.length > 0 && !confirm('Limpar workflow atual?')) return;
+  wfData.nodes = [];
+  wfData.edges = [];
+  renderizarWorkflow();
+  salvarWorkflow();
+  showToast('Workflow limpo');
+}
 
 // ====================== MOTOR DE WORKFLOW COMPLETO + ERP CENTRAL ======================
 const workflowEngine = {
