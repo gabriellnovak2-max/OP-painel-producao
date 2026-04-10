@@ -2436,7 +2436,10 @@ body.tema-fosco *{text-shadow:none!important}
   <div class="section">
     <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
       <span style="display:flex;align-items:center;gap:8px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> WORKFLOW — Editor Visual</span>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" id="wf-btn-undo" onclick="wfUndo()" disabled title="Desfazer (Ctrl+Z)" style="font-size:13px;padding:6px 10px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;opacity:.4">↩</button>
+        <button class="btn" id="wf-btn-redo" onclick="wfRedo()" disabled title="Refazer (Ctrl+Y)" style="font-size:13px;padding:6px 10px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:8px;opacity:.4">↪</button>
+        <span style="width:1px;height:20px;background:var(--border);margin:0 4px"></span>
         <button class="btn btn-primary" onclick="adicionarEtapaWorkflow()" style="font-size:11px;padding:6px 14px">+ Nova Etapa</button>
         <button class="btn btn-success" onclick="salvarWorkflow()" style="font-size:11px;padding:6px 14px">Salvar Workflow</button>
       </div>
@@ -5825,9 +5828,71 @@ let wfDragOffset = {x:0,y:0};
 let wfConnecting = null;
 let wfNodeIdCounter = 0;
 
+// ---- UNDO / REDO ----
+const WF_HISTORY_LIMIT = 30;
+let wfUndoStack = [];
+let wfRedoStack = [];
+
+function wfSaveSnapshot() {
+  const snapshot = JSON.stringify({nodes: wfData.nodes, edges: wfData.edges});
+  if (wfUndoStack.length > 0 && wfUndoStack[wfUndoStack.length-1] === snapshot) return;
+  wfUndoStack.push(snapshot);
+  if (wfUndoStack.length > WF_HISTORY_LIMIT) wfUndoStack.shift();
+  wfRedoStack = [];
+  wfUpdateUndoButtons();
+}
+
+function wfUndo() {
+  if (wfUndoStack.length === 0) return;
+  const current = JSON.stringify({nodes: wfData.nodes, edges: wfData.edges});
+  wfRedoStack.push(current);
+  const prev = JSON.parse(wfUndoStack.pop());
+  wfData.nodes = prev.nodes;
+  wfData.edges = prev.edges;
+  renderizarWorkflow();
+  wfUpdateUndoButtons();
+}
+
+function wfRedo() {
+  if (wfRedoStack.length === 0) return;
+  const current = JSON.stringify({nodes: wfData.nodes, edges: wfData.edges});
+  wfUndoStack.push(current);
+  const next = JSON.parse(wfRedoStack.pop());
+  wfData.nodes = next.nodes;
+  wfData.edges = next.edges;
+  renderizarWorkflow();
+  wfUpdateUndoButtons();
+}
+
+function wfUpdateUndoButtons() {
+  const btnUndo = document.getElementById('wf-btn-undo');
+  const btnRedo = document.getElementById('wf-btn-redo');
+  if (btnUndo) { btnUndo.disabled = wfUndoStack.length === 0; btnUndo.style.opacity = wfUndoStack.length > 0 ? '1' : '.4'; }
+  if (btnRedo) { btnRedo.disabled = wfRedoStack.length === 0; btnRedo.style.opacity = wfRedoStack.length > 0 ? '1' : '.4'; }
+}
+
+function wfClearHistory() {
+  wfUndoStack = [];
+  wfRedoStack = [];
+  wfUpdateUndoButtons();
+}
+
+// Atalhos Ctrl+Z / Ctrl+Y
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+    const activeTab = document.getElementById('tab20');
+    if (activeTab && activeTab.style.display !== 'none') { e.preventDefault(); wfUndo(); }
+  }
+  if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+    const activeTab = document.getElementById('tab20');
+    if (activeTab && activeTab.style.display !== 'none') { e.preventDefault(); wfRedo(); }
+  }
+});
+
 function gerarWfId() { return 'wf_' + (++wfNodeIdCounter) + '_' + Date.now().toString(36); }
 
 function adicionarEtapaWorkflow(tipo, x, y) {
+  wfSaveSnapshot();
   tipo = tipo || 'personalizada';
   const info = WF_TIPOS[tipo] || WF_TIPOS.personalizada;
   const node = {
@@ -5849,6 +5914,7 @@ function adicionarEtapaWorkflow(tipo, x, y) {
 }
 
 function removerEtapaWorkflow(id) {
+  wfSaveSnapshot();
   wfData.nodes = wfData.nodes.filter(n => n.id !== id);
   wfData.edges = wfData.edges.filter(e => e.from !== id && e.to !== id);
   if (wfSelectedNode === id) { wfSelectedNode = null; renderWfProps(); }
@@ -5857,6 +5923,7 @@ function removerEtapaWorkflow(id) {
 }
 
 function atualizarEtapaWorkflow(id, campo, valor) {
+  wfSaveSnapshot();
   const node = wfData.nodes.find(n => n.id === id);
   if (node) { node[campo] = valor; renderizarWorkflow(); }
 }
@@ -5888,6 +5955,7 @@ function renderizarWorkflow() {
     div.addEventListener('mousedown', function(e) {
       if (e.target.classList.contains('wf-port')) return;
       e.preventDefault();
+      wfSaveSnapshot();
       wfDragOffset.x = e.clientX - node.x;
       wfDragOffset.y = e.clientY - node.y;
       div.classList.add('dragging');
@@ -6020,6 +6088,7 @@ function conectarWfNode(fromId) {
     if (wfConnectFrom !== fromId) {
       const existe = wfData.edges.some(e => e.from === wfConnectFrom && e.to === fromId);
       if (!existe) {
+        wfSaveSnapshot();
         wfData.edges.push({from: wfConnectFrom, to: fromId});
         renderWfConnections();
         showToast('Conexão criada');
@@ -6033,7 +6102,7 @@ function finalizarConexao(e, nodeId) {
   e.stopPropagation();
   if (wfConnectFrom && wfConnectFrom !== nodeId) {
     const existe = wfData.edges.some(e => e.from === wfConnectFrom && e.to === nodeId);
-    if (!existe) { wfData.edges.push({from: wfConnectFrom, to: nodeId}); renderWfConnections(); }
+    if (!existe) { wfSaveSnapshot(); wfData.edges.push({from: wfConnectFrom, to: nodeId}); renderWfConnections(); }
   }
   wfConnectFrom = null;
 }
@@ -6115,6 +6184,7 @@ function carregarWorkflow() {
 // Templates
 function carregarTemplateTorrefacao() {
   if (wfData.nodes.length > 0 && !confirm('Isso vai substituir o workflow atual. Continuar?')) return;
+  wfClearHistory();
   wfData.nodes = [
     {id:gerarWfId(),nome:'Início',tipo:'inicio',descricao:'Abertura da OP',x:350,y:20,status:'ativo',moduloVinculado:'tab1',entradas:[],saidas:[]},
     {id:gerarWfId(),nome:'Recebimento Café Verde',tipo:'recebimento',descricao:'Receber café cru, pesar, conferir NF',x:100,y:130,status:'ativo',moduloVinculado:'tab16',entradas:[],saidas:[]},
@@ -6150,6 +6220,7 @@ function carregarTemplateTorrefacao() {
 
 function carregarTemplateSimples() {
   if (wfData.nodes.length > 0 && !confirm('Isso vai substituir o workflow atual. Continuar?')) return;
+  wfClearHistory();
   wfData.nodes = [
     {id:gerarWfId(),nome:'Início',tipo:'inicio',descricao:'',x:300,y:40,status:'ativo',moduloVinculado:'',entradas:[],saidas:[]},
     {id:gerarWfId(),nome:'Torra',tipo:'torra',descricao:'Bateladas',x:300,y:170,status:'ativo',moduloVinculado:'tab2',entradas:[],saidas:[]},
@@ -6166,6 +6237,7 @@ function carregarTemplateSimples() {
 
 function carregarTemplateVazio() {
   if (wfData.nodes.length > 0 && !confirm('Limpar workflow atual?')) return;
+  wfClearHistory();
   wfData.nodes = [];
   wfData.edges = [];
   renderizarWorkflow();
