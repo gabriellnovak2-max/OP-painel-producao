@@ -5621,6 +5621,66 @@ function init() {
   atualizarHome();
 }
 init();
+
+// ====================== MOTOR DE WORKFLOW COMPLETO + ERP CENTRAL ======================
+const workflowEngine = {
+  triggers: [],
+  registerTrigger(name, conditionFn, actionFn) {
+    this.triggers.push({ name, conditionFn, actionFn, active: true });
+    console.log('✅ Gatilho registrado: ' + name);
+  },
+  run(eventType, data = {}) {
+    console.log('🚀 Evento: ' + eventType, data);
+    this.triggers.forEach(trigger => {
+      if (!trigger.active) return;
+      try {
+        if (trigger.conditionFn(eventType, data)) {
+          trigger.actionFn(data);
+          console.log('✅ Gatilho executado: ' + trigger.name);
+        }
+      } catch (e) {
+        console.error('Erro no gatilho ' + trigger.name + ':', e);
+      }
+    });
+  }
+};
+
+// Função de alertas para o workflow
+function adicionarAlertaProducao(msg, tipo) {
+  const container = document.getElementById('home-alertas');
+  if (!container) return;
+  const cls = tipo === 'danger' ? 'vermelho' : tipo === 'warning' ? 'amarelo' : tipo === 'success' ? 'verde' : 'azul';
+  const div = document.createElement('div');
+  div.className = 'info-box ' + cls;
+  div.innerHTML = '<b>Workflow:</b> ' + msg;
+  container.prepend(div);
+  showToast(msg);
+}
+
+// 7 GATILHOS AVANÇADOS
+workflowEngine.registerTrigger('OP_STATUS_CHANGED', (e,d) => e==='op_status_changed' && d.status==='liberada', d => { adicionarAlertaProducao('OP ' + (d.opId||'--') + ' liberada', 'success'); });
+workflowEngine.registerTrigger('CRONOMETRO_EXPIRADO', (e,d) => e==='cronometro_expired' && d.tempo>15, d => { adicionarAlertaProducao('Ociosidade em ' + d.secao, 'warning'); });
+workflowEngine.registerTrigger('ESTOQUE_CRITICO', (e,d) => e==='estoque_atualizado' && d.diasRestantes<35, d => { adicionarAlertaProducao('Estoque crítico: ' + d.tipo, 'danger'); });
+workflowEngine.registerTrigger('FOTO_OBRIGATORIA', (e,d) => e==='salvar_op' && (!d.fotos || d.fotos.length===0), d => { d.status='bloqueada_foto'; adicionarAlertaProducao('OP bloqueada: foto obrigatória pendente', 'danger'); });
+workflowEngine.registerTrigger('VENCIMENTO_DOCUMENTO', (e,d) => e==='check_vencimentos' && d.dias<30, d => { adicionarAlertaProducao('Documento vencendo em ' + d.dias + ' dias', 'danger'); });
+workflowEngine.registerTrigger('QUALIDADE_FORA_PADRAO', (e,d) => e==='finalizar_torra' && (d.quebra>22 || d.umidade>5), d => { d.status='bloqueada_qualidade'; adicionarAlertaProducao('Qualidade fora do padrão — Quebra: ' + (d.quebra||0) + '% / Umidade: ' + (d.umidade||0) + '%', 'danger'); });
+workflowEngine.registerTrigger('EVENTO_EXTERNO', (e) => e==='evento_externo', d => { console.log('🔌 ERP Central:', d); });
+
+window.workflowEngine = workflowEngine;
+
+// Disparar workflow em qualquer parte do sistema
+function dispararWorkflow(evento, dados) {
+  if (window.workflowEngine) window.workflowEngine.run(evento, dados);
+}
+
+// ERP Central — enviar dados para sistema externo (futuro)
+window.enviarParaCentral = function(dados) {
+  dispararWorkflow('evento_externo', { erp: 'Central', payload: dados });
+  console.log('📤 Enviado para ERP Central');
+};
+
+console.log('🚀 Motor de Workflow + ERP Central carregado com sucesso');
+// ====================== FIM MOTOR DE WORKFLOW ======================
 </script>
 </body>
 </html>
