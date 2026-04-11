@@ -363,7 +363,7 @@ body.tema-fosco *{text-shadow:none!important}
 <body>
 
 <!-- TELA DE LOGIN -->
-<div class="login-overlay" id="loginOverlay">
+<div class="login-overlay hidden" id="loginOverlay" style="display:none!important">
   <div class="login-box">
     <h2>PAINEL DE PRODUÇÃO</h2>
     <div class="login-sub">Indústria de Torrefação de Café</div>
@@ -2629,16 +2629,13 @@ function fazerLogout() {
 }
 
 function verificarLogin() {
-  const raw = sessionStorage.getItem('usuario_logado');
-  if (raw) {
-    try {
-      const u = JSON.parse(raw);
-      usuarioLogado = u;
-      document.getElementById('loginOverlay').classList.add('hidden');
-      document.getElementById('header-user').textContent = u.nome;
-      document.getElementById('header-role').textContent = u.perfil.toUpperCase();
-    } catch(e) { /* login expirou */ }
-  }
+  // Login DESATIVADO temporariamente — acesso direto
+  document.getElementById('loginOverlay').classList.add('hidden');
+  usuarioLogado = { user: 'admin', perfil: 'dono', nome: 'Gabriell (Dono)' };
+  const headerUser = document.getElementById('header-user');
+  const headerRole = document.getElementById('header-role');
+  if (headerUser) headerUser.textContent = usuarioLogado.nome;
+  if (headerRole) headerRole.textContent = 'DONO';
 }
 
 // Enter para fazer login
