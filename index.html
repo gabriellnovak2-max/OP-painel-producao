@@ -455,6 +455,7 @@ body.tema-fosco *{text-shadow:none!important}
       <button onclick="abrirAbaSub(9,this)">Café Verde Cru</button>
       <button onclick="abrirAbaSub(17,this)">Café Grão Torrado</button>
       <button onclick="abrirAbaSub(18,this)">Café Torrado em Pó</button>
+      <button onclick="abrirAbaSub(25,this)">Produto Acabado</button>
       <button onclick="abrirAbaSub(10,this)">Estoque Embalagens</button>
       <button onclick="abrirAbaSub(11,this)">Estoque Lenha</button>
     </div>
@@ -1661,9 +1662,14 @@ body.tema-fosco *{text-shadow:none!important}
           <thead><tr>
             <th>#</th><th>Peneira</th><th>Fornecedor</th><th>Lote Interno</th>
             <th>Peso Disponível (kg)</th><th>Umidade (%)</th><th>Defeitos (%)</th>
-            <th>Data Entrada</th><th>Local Armazém</th><th>Obs</th>
+            <th>Data Entrada</th><th>Local Armazém</th><th>Obs</th><th></th>
           </tr></thead>
           <tbody></tbody>
+          <tfoot><tr style="font-weight:700;background:rgba(0,212,170,.08)">
+            <td colspan="4" style="text-align:right">TOTAL:</td>
+            <td id="cv-total-kg">0,00 kg</td>
+            <td colspan="6"></td>
+          </tr></tfoot>
         </table>
       </div>
       <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueCafeVerdeRow()">+ Adicionar Lote</button></div>
@@ -2412,9 +2418,14 @@ body.tema-fosco *{text-shadow:none!important}
           <thead><tr>
             <th>#</th><th>Lote / Blend</th><th>Peneira</th><th>Tipo (Puro/Blend)</th>
             <th>Peso Disponível (kg)</th><th>Data Torra</th><th>Agtron</th>
-            <th>Silo Origem</th><th>Destino</th><th>Obs</th>
+            <th>Silo Origem</th><th>Destino</th><th>Obs</th><th></th>
           </tr></thead>
           <tbody></tbody>
+          <tfoot><tr style="font-weight:700;background:rgba(249,115,22,.08)">
+            <td colspan="4" style="text-align:right">TOTAL:</td>
+            <td id="cgt-total-kg">0,00 kg</td>
+            <td colspan="6"></td>
+          </tr></tfoot>
         </table>
       </div>
       <div class="btn-group"><button class="btn btn-primary" onclick="addCafeGraoTorradoRow()">+ Adicionar Lote</button></div>
@@ -2433,12 +2444,64 @@ body.tema-fosco *{text-shadow:none!important}
           <thead><tr>
             <th>#</th><th>Marca / Produto</th><th>Tipo Embalagem</th><th>Gramatura</th>
             <th>Fardo/Caixa</th><th>Qtd (fardos/cx)</th><th>Peso Total (kg)</th>
-            <th>Lote Origem</th><th>Data Moagem</th><th>Granulometria</th><th>Obs</th>
+            <th>Lote Origem</th><th>Data Moagem</th><th>Granulometria</th><th>Obs</th><th></th>
           </tr></thead>
           <tbody></tbody>
+          <tfoot><tr style="font-weight:700;background:rgba(139,92,246,.08)">
+            <td colspan="6" style="text-align:right">TOTAL:</td>
+            <td id="cpo-total-kg">0,00 kg</td>
+            <td colspan="5"></td>
+          </tr></tfoot>
         </table>
       </div>
       <div class="btn-group"><button class="btn btn-primary" onclick="addCafePoRow()">+ Adicionar Lote</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 25: PRODUTO ACABADO ============ -->
+<div class="tab-content" id="tab25">
+  <div class="section">
+    <div class="section-title">ESTOQUE — PRODUTO ACABADO</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Produto acabado pronto para expedição.</b> Registre aqui todo produto final embalado, lacrado e pronto para venda ou envio ao cliente.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px" id="pa-resumo-cards">
+        <div class="pen-card hover3d" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3)"><div class="pen-label" style="color:var(--green)">Disponível</div><div class="pen-value" style="color:var(--green)" id="pa-total-disponivel">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)"><div class="pen-label" style="color:var(--yellow)">Reservado</div><div class="pen-value" style="color:var(--yellow)" id="pa-total-reservado">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)"><div class="pen-label" style="color:var(--blue)">Expedido</div><div class="pen-value" style="color:var(--blue)" id="pa-total-expedido">0 kg</div></div>
+        <div class="pen-card hover3d" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.3)"><div class="pen-label" style="color:var(--purple)">Total Geral</div><div class="pen-value" style="color:var(--purple)" id="pa-total-geral">0 kg</div></div>
+      </div>
+      <div style="overflow-x:auto;margin-top:14px">
+        <table id="tbl-produto-acabado">
+          <thead><tr>
+            <th>#</th>
+            <th>Produto / Marca</th>
+            <th>Cliente</th>
+            <th>Tipo</th>
+            <th>Embalagem</th>
+            <th>Gramatura</th>
+            <th>Fardo/Caixa</th>
+            <th>Qtd (un)</th>
+            <th>Peso Total (kg)</th>
+            <th>Lote/Blend Origem</th>
+            <th>Data Produção</th>
+            <th>Validade</th>
+            <th>Selo Puro Lote</th>
+            <th>NF Saída</th>
+            <th>Status</th>
+            <th>Obs</th>
+            <th></th>
+          </tr></thead>
+          <tbody></tbody>
+          <tfoot><tr style="font-weight:700;background:rgba(16,185,129,.08)">
+            <td colspan="7" style="text-align:right">TOTAL:</td>
+            <td id="pa-ft-qtd">0</td>
+            <td id="pa-ft-kg">0,00 kg</td>
+            <td colspan="8"></td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addProdutoAcabadoRow()">+ Adicionar Produto</button></div>
     </div>
   </div>
 </div>
@@ -4486,6 +4549,7 @@ function salvarDados(silencioso) {
     estoqueCafeVerde: coletarDadosTabela('tbl-estoque-cafe-verde'),
     cafeGraoTorrado: coletarDadosTabela('tbl-cafe-grao-torrado'),
     cafePo: coletarDadosTabela('tbl-cafe-po'),
+    produtoAcabado: coletarDadosTabela('tbl-produto-acabado'),
     estoqueEmb: coletarDadosTabela('tbl-estoque-emb'),
     estoqueLenha: coletarDadosTabela('tbl-estoque-lenha'),
     cafeVerde: {
@@ -4660,9 +4724,10 @@ function carregarDados() {
       }
       calcAGB();
     }
-    if (d.estoqueCafeVerde) restaurarDadosTabela('tbl-estoque-cafe-verde', d.estoqueCafeVerde, addEstoqueCafeVerdeRow);
-    if (d.cafeGraoTorrado) restaurarDadosTabela('tbl-cafe-grao-torrado', d.cafeGraoTorrado, addCafeGraoTorradoRow);
-    if (d.cafePo) restaurarDadosTabela('tbl-cafe-po', d.cafePo, addCafePoRow);
+    if (d.estoqueCafeVerde) { restaurarDadosTabela('tbl-estoque-cafe-verde', d.estoqueCafeVerde, addEstoqueCafeVerdeRow); calcTotalEstoqueCafeVerde(); }
+    if (d.cafeGraoTorrado) { restaurarDadosTabela('tbl-cafe-grao-torrado', d.cafeGraoTorrado, addCafeGraoTorradoRow); calcTotalEstoqueGraoTorrado(); }
+    if (d.cafePo) { restaurarDadosTabela('tbl-cafe-po', d.cafePo, addCafePoRow); calcTotalEstoquePo(); }
+    if (d.produtoAcabado) { restaurarDadosTabela('tbl-produto-acabado', d.produtoAcabado, addProdutoAcabadoRow); calcTotalProdutoAcabado(); }
     if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
     if (d.estoqueLenha) {
       restaurarDadosTabela('tbl-estoque-lenha', d.estoqueLenha, addEstoqueLenhaRow);
@@ -4956,30 +5021,283 @@ function fecharDetalheHist() {
 }
 
 // ============ ESTOQUE CAFÉ VERDE CRU (tab9) ============
-function addEstoqueCafeVerdeRow() {
+function addEstoqueCafeVerdeRow(dados) {
   const tbody = document.querySelector('#tbl-estoque-cafe-verde tbody');
   const n = tbody.querySelectorAll('tr').length + 1;
   const tr = document.createElement('tr');
-  tr.innerHTML = '<td>'+n+'</td><td><select style="min-width:80px"><option value="">Selecione</option><option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option><option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option></select></td><td><input type="text" placeholder="Fornecedor"></td><td><input type="text" placeholder="Lote"></td><td><input type="number" step="0.01" placeholder="kg"></td><td><input type="number" step="0.01" placeholder="%"></td><td><input type="number" step="0.01" placeholder="%"></td><td><input type="date"></td><td><input type="text" placeholder="Local"></td><td><input type="text" placeholder="Obs"></td>';
+  tr.innerHTML = '<td>'+n+'</td><td><select style="min-width:80px" class="ecv-peneira" onchange="calcTotalEstoqueCafeVerde()"><option value="">Selecione</option><option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option><option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option><option>Resíduo PVA</option><option>14 Acima</option></select></td><td><input type="text" placeholder="Fornecedor"></td><td><input type="text" placeholder="Lote"></td><td><input type="number" step="0.01" placeholder="kg" class="ecv-kg" oninput="calcTotalEstoqueCafeVerde()"></td><td><input type="number" step="0.01" placeholder="%"></td><td><input type="number" step="0.01" placeholder="%"></td><td><input type="date"></td><td><input type="text" placeholder="Local"></td><td><input type="text" placeholder="Obs"></td><td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaEstoque(this,\'tbl-estoque-cafe-verde\',calcTotalEstoqueCafeVerde)">X</button></td>';
+  if (dados) {
+    const els = tr.querySelectorAll('select, input');
+    if (dados.peneira) els[0].value = dados.peneira;
+    if (dados.fornecedor) els[1].value = dados.fornecedor;
+    if (dados.lote) els[2].value = dados.lote;
+    if (dados.kg) els[3].value = dados.kg;
+    if (dados.umidade) els[4].value = dados.umidade;
+    if (dados.defeitos) els[5].value = dados.defeitos;
+    if (dados.data) els[6].value = dados.data;
+    if (dados.local) els[7].value = dados.local;
+    if (dados.obs) els[8].value = dados.obs;
+  }
   tbody.appendChild(tr);
+  return tr;
+}
+
+function calcTotalEstoqueCafeVerde() {
+  const rows = document.querySelectorAll('#tbl-estoque-cafe-verde tbody tr');
+  let total = 0;
+  const penKg = {'P17/18':0,'P15/16':0,'P13/14':0,'P10/12':0,'FP10':0,'FP8':0,'FP5':0,'PVA':0};
+  rows.forEach(tr => {
+    const kg = parseFloat(tr.querySelector('.ecv-kg')?.value) || 0;
+    const pen = tr.querySelector('.ecv-peneira')?.value || '';
+    total += kg;
+    if (penKg.hasOwnProperty(pen)) penKg[pen] += kg;
+    else if (pen === 'Resíduo PVA') penKg['PVA'] += kg;
+    else if (pen === '14 Acima') { penKg['P13/14'] += kg; }
+  });
+  const fmt = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  const el = document.getElementById('cv-total-kg');
+  if (el) el.textContent = fmt(total) + ' kg';
+  // Atualiza cards de peneira
+  Object.keys(penKg).forEach(p => {
+    const id = 'cv-pen-' + p.toLowerCase().replace('/','');
+    const card = document.getElementById(id + '-est');
+    if (card) card.textContent = fmt(penKg[p]) + ' kg';
+  });
+}
+
+function removerLinhaEstoque(btn, tblId, calcFn) {
+  if (!confirm('Remover esta linha do estoque?')) return;
+  const tr = btn.closest('tr');
+  tr.remove();
+  // Reindexa
+  const rows = document.querySelectorAll('#' + tblId + ' tbody tr');
+  rows.forEach((r, i) => r.cells[0].textContent = i + 1);
+  if (calcFn) calcFn();
+  salvarDados(true);
 }
 
 // ============ ESTOQUE CAFÉ GRÃO TORRADO (tab17) ============
-function addCafeGraoTorradoRow() {
+function addCafeGraoTorradoRow(dados) {
   const tbody = document.querySelector('#tbl-cafe-grao-torrado tbody');
   const n = tbody.querySelectorAll('tr').length + 1;
   const tr = document.createElement('tr');
-  tr.innerHTML = '<td>'+n+'</td><td><input type="text" placeholder="Lote/Blend"></td><td><select style="min-width:80px"><option value="">Selecione</option><option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option><option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option><option>Blend Mix</option></select></td><td><select><option>Puro</option><option>Blend</option></select></td><td><input type="number" step="0.01" placeholder="kg"></td><td><input type="date"></td><td><input type="text" placeholder="Agtron"></td><td><select><option>Silo 1</option><option>Silo 2</option><option>Silo 3</option></select></td><td><input type="text" placeholder="Destino"></td><td><input type="text" placeholder="Obs"></td>';
+  tr.innerHTML = '<td>'+n+'</td><td><input type="text" placeholder="Lote/Blend" class="cgt-lote"></td><td><select style="min-width:80px" class="cgt-peneira"><option value="">Selecione</option><option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option><option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option><option>Blend Mix</option></select></td><td><select class="cgt-tipo"><option>Puro</option><option>Blend</option></select></td><td><input type="number" step="0.01" placeholder="kg" class="cgt-kg" oninput="calcTotalEstoqueGraoTorrado()"></td><td><input type="date" class="cgt-data"></td><td><input type="text" placeholder="Agtron" class="cgt-agtron"></td><td><select class="cgt-silo"><option value="">Selecione</option><option>Silo 1</option><option>Silo 2</option><option>Silo 3</option></select></td><td><input type="text" placeholder="Destino" class="cgt-destino"></td><td><input type="text" placeholder="Obs" class="cgt-obs"></td><td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaEstoque(this,\'tbl-cafe-grao-torrado\',calcTotalEstoqueGraoTorrado)">X</button></td>';
+  if (dados) {
+    const els = tr.querySelectorAll('input, select');
+    if (dados.lote) els[0].value = dados.lote;
+    if (dados.peneira) els[1].value = dados.peneira;
+    if (dados.tipo) els[2].value = dados.tipo;
+    if (dados.kg) els[3].value = dados.kg;
+    if (dados.data) els[4].value = dados.data;
+    if (dados.agtron) els[5].value = dados.agtron;
+    if (dados.silo) els[6].value = dados.silo;
+    if (dados.destino) els[7].value = dados.destino;
+    if (dados.obs) els[8].value = dados.obs;
+  }
   tbody.appendChild(tr);
+  return tr;
+}
+
+function calcTotalEstoqueGraoTorrado() {
+  const rows = document.querySelectorAll('#tbl-cafe-grao-torrado tbody tr');
+  let total = 0;
+  rows.forEach(tr => { total += parseFloat(tr.querySelector('.cgt-kg')?.value) || 0; });
+  const el = document.getElementById('cgt-total-kg');
+  if (el) el.textContent = total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + ' kg';
 }
 
 // ============ ESTOQUE CAFÉ TORRADO EM PÓ (tab18) ============
-function addCafePoRow() {
+function addCafePoRow(dados) {
   const tbody = document.querySelector('#tbl-cafe-po tbody');
   const n = tbody.querySelectorAll('tr').length + 1;
   const tr = document.createElement('tr');
-  tr.innerHTML = '<td>'+n+'</td><td><input type="text" placeholder="Marca/Produto"></td><td><select><option value="">Selecione</option><option>Almofada</option><option>Vácuo</option><option>Drip</option></select></td><td><select><option value="">Selecione</option><option>250g</option><option>500g</option><option>1kg</option></select></td><td><select><option value="">Avulso</option><option>Fardo 5kg</option><option>Caixa 10kg</option></select></td><td><input type="number" step="1" placeholder="Qtd"></td><td><input type="number" step="0.01" placeholder="kg"></td><td><input type="text" placeholder="Lote"></td><td><input type="date"></td><td><select><option>Grossa (1.2-1.4)</option><option>Média (0.8-1.0)</option><option>Fina (0.4-0.6)</option></select></td><td><input type="text" placeholder="Obs"></td>';
+  tr.innerHTML = '<td>'+n+'</td><td><input type="text" placeholder="Marca/Produto" class="cpo-marca"></td><td><select class="cpo-emb"><option value="">Selecione</option><option>Almofada</option><option>Vácuo</option><option>Drip</option></select></td><td><select class="cpo-gram"><option value="">Selecione</option><option>250g</option><option>500g</option><option>1kg</option></select></td><td><select class="cpo-fardo"><option value="">Avulso</option><option>Fardo 5kg</option><option>Caixa 10kg</option></select></td><td><input type="number" step="1" placeholder="Qtd" class="cpo-qtd"></td><td><input type="number" step="0.01" placeholder="kg" class="cpo-kg" oninput="calcTotalEstoquePo()"></td><td><input type="text" placeholder="Lote" class="cpo-lote"></td><td><input type="date" class="cpo-data"></td><td><select class="cpo-granul"><option>Grossa (1.2-1.4)</option><option>Média (0.8-1.0)</option><option>Fina (0.4-0.6)</option></select></td><td><input type="text" placeholder="Obs" class="cpo-obs"></td><td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaEstoque(this,\'tbl-cafe-po\',calcTotalEstoquePo)">X</button></td>';
+  if (dados) {
+    const els = tr.querySelectorAll('input, select');
+    if (dados.marca) els[0].value = dados.marca;
+    if (dados.embalagem) els[1].value = dados.embalagem;
+    if (dados.gramatura) els[2].value = dados.gramatura;
+    if (dados.fardo) els[3].value = dados.fardo;
+    if (dados.qtd) els[4].value = dados.qtd;
+    if (dados.kg) els[5].value = dados.kg;
+    if (dados.lote) els[6].value = dados.lote;
+    if (dados.data) els[7].value = dados.data;
+    if (dados.granulometria) els[8].value = dados.granulometria;
+    if (dados.obs) els[9].value = dados.obs;
+  }
   tbody.appendChild(tr);
+  return tr;
+}
+
+function calcTotalEstoquePo() {
+  const rows = document.querySelectorAll('#tbl-cafe-po tbody tr');
+  let total = 0;
+  rows.forEach(tr => { total += parseFloat(tr.querySelector('.cpo-kg')?.value) || 0; });
+  const el = document.getElementById('cpo-total-kg');
+  if (el) el.textContent = total.toLocaleString('pt-BR',{minimumFractionDigits:2}) + ' kg';
+}
+
+// ============ PRODUTO ACABADO (tab25) ============
+function addProdutoAcabadoRow(dados) {
+  const tbody = document.querySelector('#tbl-produto-acabado tbody');
+  const n = tbody.querySelectorAll('tr').length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td>'+n+'</td>'
+    +'<td><input type="text" placeholder="Produto/Marca" class="pa-produto"></td>'
+    +'<td><input type="text" placeholder="Cliente" class="pa-cliente"></td>'
+    +'<td><select class="pa-tipo"><option>Torrado Grão</option><option>Torrado Moído</option><option>Blend Grão</option><option>Blend Moído</option></select></td>'
+    +'<td><select class="pa-emb"><option value="">Selecione</option><option>Almofada</option><option>Vácuo</option><option>Stand-up Pouch</option><option>Drip</option><option>Grãos</option></select></td>'
+    +'<td><select class="pa-gram"><option value="">Selecione</option><option>250g</option><option>500g</option><option>1kg</option><option>5kg</option></select></td>'
+    +'<td><select class="pa-fardo"><option value="">Avulso</option><option>Fardo 5kg</option><option>Caixa 10un</option><option>Caixa 20un</option><option>Saca 30kg</option></select></td>'
+    +'<td><input type="number" step="1" placeholder="Qtd" class="pa-qtd" oninput="calcTotalProdutoAcabado()"></td>'
+    +'<td><input type="number" step="0.01" placeholder="kg" class="pa-kg" oninput="calcTotalProdutoAcabado()"></td>'
+    +'<td><input type="text" placeholder="Lote/Blend" class="pa-lote"></td>'
+    +'<td><input type="date" class="pa-dataprod"></td>'
+    +'<td><input type="date" class="pa-validade"></td>'
+    +'<td><input type="text" placeholder="Selo" class="pa-selo" style="min-width:80px"></td>'
+    +'<td><input type="text" placeholder="NF" class="pa-nf"></td>'
+    +'<td><select class="pa-status" onchange="calcTotalProdutoAcabado();this.style.color=this.value===\'Disponível\'?\'var(--green)\':this.value===\'Reservado\'?\'var(--yellow)\':\'var(--blue)\'"><option>Disponível</option><option>Reservado</option><option>Expedido</option></select></td>'
+    +'<td><input type="text" placeholder="Obs" class="pa-obs"></td>'
+    +'<td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaEstoque(this,\'tbl-produto-acabado\',calcTotalProdutoAcabado)">X</button></td>';
+  if (dados) {
+    const els = tr.querySelectorAll('input, select');
+    if (dados.produto) els[0].value = dados.produto;
+    if (dados.cliente) els[1].value = dados.cliente;
+    if (dados.tipo) els[2].value = dados.tipo;
+    if (dados.embalagem) els[3].value = dados.embalagem;
+    if (dados.gramatura) els[4].value = dados.gramatura;
+    if (dados.fardo) els[5].value = dados.fardo;
+    if (dados.qtd) els[6].value = dados.qtd;
+    if (dados.kg) els[7].value = dados.kg;
+    if (dados.lote) els[8].value = dados.lote;
+    if (dados.dataProd) els[9].value = dados.dataProd;
+    if (dados.validade) els[10].value = dados.validade;
+    if (dados.selo) els[11].value = dados.selo;
+    if (dados.nf) els[12].value = dados.nf;
+    if (dados.status) { els[13].value = dados.status; els[13].style.color = dados.status==='Disponível'?'var(--green)':dados.status==='Reservado'?'var(--yellow)':'var(--blue)'; }
+    if (dados.obs) els[14].value = dados.obs;
+  }
+  tbody.appendChild(tr);
+  return tr;
+}
+
+function calcTotalProdutoAcabado() {
+  const rows = document.querySelectorAll('#tbl-produto-acabado tbody tr');
+  let totalQtd = 0, totalKg = 0, disponivel = 0, reservado = 0, expedido = 0;
+  const fmt = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  rows.forEach(tr => {
+    const kg = parseFloat(tr.querySelector('.pa-kg')?.value) || 0;
+    const qtd = parseInt(tr.querySelector('.pa-qtd')?.value) || 0;
+    const st = tr.querySelector('.pa-status')?.value || '';
+    totalKg += kg; totalQtd += qtd;
+    if (st === 'Disponível') disponivel += kg;
+    else if (st === 'Reservado') reservado += kg;
+    else if (st === 'Expedido') expedido += kg;
+  });
+  const ftQtd = document.getElementById('pa-ft-qtd');
+  const ftKg = document.getElementById('pa-ft-kg');
+  if (ftQtd) ftQtd.textContent = totalQtd;
+  if (ftKg) ftKg.textContent = fmt(totalKg) + ' kg';
+  const elD = document.getElementById('pa-total-disponivel');
+  const elR = document.getElementById('pa-total-reservado');
+  const elE = document.getElementById('pa-total-expedido');
+  const elG = document.getElementById('pa-total-geral');
+  if (elD) elD.textContent = fmt(disponivel) + ' kg';
+  if (elR) elR.textContent = fmt(reservado) + ' kg';
+  if (elE) elE.textContent = fmt(expedido) + ' kg';
+  if (elG) elG.textContent = fmt(totalKg) + ' kg';
+}
+
+// ============ PRÉ-CARREGAR ESTOQUE INICIAL (22/12/2025) ============
+function preCarregarEstoqueInicial() {
+  // Só carrega se não tiver dados salvos
+  const cvTbody = document.querySelector('#tbl-estoque-cafe-verde tbody');
+  const cgtTbody = document.querySelector('#tbl-cafe-grao-torrado tbody');
+  const cpoTbody = document.querySelector('#tbl-cafe-po tbody');
+  if (cvTbody.children.length > 0 || cgtTbody.children.length > 0 || cpoTbody.children.length > 0) return;
+
+  // TABELA 1 — CRU (Café Verde / Cru) — Data: 22/12/2025
+  addEstoqueCafeVerdeRow({peneira:'Resíduo PVA', fornecedor:'Sr. Carlos', lote:'Lote Sr. Carlos', kg:'495.65', data:'2025-12-22', obs:'90 sacas, 10½ vol'});
+  addEstoqueCafeVerdeRow({peneira:'14 Acima', fornecedor:'Sr. Carlos', lote:'Lote Sr. Carlos', kg:'1817.60', data:'2025-12-22', obs:'90 sacas, 30½ vol, desc 3.10kg'});
+  addEstoqueCafeVerdeRow({peneira:'P17/18', fornecedor:'', lote:'Cru 17/18', kg:'2779.60', data:'2025-12-22', obs:'69 vol, desc 6.90kg'});
+  addEstoqueCafeVerdeRow({peneira:'P15/16', fornecedor:'', lote:'Cru 15/16', kg:'324.10', data:'2025-12-22', obs:'8 vol, desc 0.80kg'});
+
+  // TABELA 2 — TORRADO — Data: 22/12/2025
+  addCafeGraoTorradoRow({lote:'15/16 Peneirado Torrado Ze Maria — Parte Boa', peneira:'P15/16', tipo:'Puro', kg:'117.30', obs:'6 vol, desc 0.60kg'});
+  addCafeGraoTorradoRow({lote:'15/16 Peneirado Torrado Ze Maria — Parte Ruim', peneira:'P15/16', tipo:'Puro', kg:'86.10', obs:'5 vol, desc 0.50kg'});
+  addCafeGraoTorradoRow({lote:'Torrado Carlos', tipo:'Puro', kg:'137.80', obs:'6 vol, desc 0.60kg'});
+  addCafeGraoTorradoRow({lote:'Perdeu Essencia', tipo:'Puro', kg:'1611.70', obs:'57 vol, desc 5.70kg'});
+  addCafeGraoTorradoRow({lote:'Torrado Voltou Renata Inhumas', tipo:'Puro', kg:'496.40', obs:'29 vol, desc 2.90kg'});
+  addCafeGraoTorradoRow({lote:'Torrado Recente 15/16', peneira:'P15/16', tipo:'Puro', kg:'574.80', obs:'28 vol, desc 2.80kg'});
+
+  // TABELA 3 — MOÍDO — Data: 22/12/2025
+  addCafePoRow({marca:'Modao Moido', kg:'827.30', obs:'28 vol, desc 2.80kg'});
+  addCafePoRow({marca:'Kremon', kg:'268.60', obs:'8 vol, desc 0.80kg'});
+
+  calcTotalEstoqueCafeVerde();
+  calcTotalEstoqueGraoTorrado();
+  calcTotalEstoquePo();
+  salvarDados(true);
+}
+
+// ============ SISTEMA DE BAIXA AUTOMÁTICA NO ESTOQUE ============
+function darBaixaEstoque(tblId, classeLote, classeKg, loteNome, kgBaixa, motivo) {
+  const rows = document.querySelectorAll('#' + tblId + ' tbody tr');
+  let restante = kgBaixa;
+  for (const tr of rows) {
+    if (restante <= 0) break;
+    const loteEl = tr.querySelector('.' + classeLote);
+    const kgEl = tr.querySelector('.' + classeKg);
+    if (!loteEl || !kgEl) continue;
+    const loteVal = loteEl.value || loteEl.textContent || '';
+    if (loteNome && !loteVal.toLowerCase().includes(loteNome.toLowerCase())) continue;
+    let kgAtual = parseFloat(kgEl.value) || 0;
+    if (kgAtual <= 0) continue;
+    const deducao = Math.min(kgAtual, restante);
+    kgEl.value = (kgAtual - deducao).toFixed(2);
+    restante -= deducao;
+  }
+  if (restante > 0) {
+    console.warn('[ESTOQUE] Baixa parcial: faltaram ' + restante.toFixed(2) + 'kg de ' + loteNome);
+  }
+  salvarDados(true);
+  return restante;
+}
+
+function darBaixaCafeVerde(loteOuPeneira, kg) {
+  const rest = darBaixaEstoque('tbl-estoque-cafe-verde','ecv-peneira','ecv-kg', loteOuPeneira, kg, 'Baixa café verde');
+  calcTotalEstoqueCafeVerde();
+  return rest;
+}
+
+function darBaixaGraoTorrado(lote, kg) {
+  const rest = darBaixaEstoque('tbl-cafe-grao-torrado','cgt-lote','cgt-kg', lote, kg, 'Baixa grão torrado');
+  calcTotalEstoqueGraoTorrado();
+  return rest;
+}
+
+function darBaixaCafePo(marca, kg) {
+  const rest = darBaixaEstoque('tbl-cafe-po','cpo-marca','cpo-kg', marca, kg, 'Baixa café pó');
+  calcTotalEstoquePo();
+  return rest;
+}
+
+function adicionarAoEstoqueGraoTorrado(lote, peneira, kg, dataTorra, obs) {
+  addCafeGraoTorradoRow({lote, peneira, tipo:'Puro', kg: kg.toFixed(2), data: dataTorra, obs});
+  calcTotalEstoqueGraoTorrado();
+  salvarDados(true);
+}
+
+function adicionarAoEstoquePo(marca, kg, lote, dataMoagem, obs) {
+  addCafePoRow({marca, kg: kg.toFixed(2), lote, data: dataMoagem, obs});
+  calcTotalEstoquePo();
+  salvarDados(true);
+}
+
+function adicionarProdutoAcabado(dados) {
+  addProdutoAcabadoRow(dados);
+  calcTotalProdutoAcabado();
+  salvarDados(true);
 }
 
 // ============ SIMULADOR DE BLEND — ABA BLENDAGEM ============
@@ -5822,6 +6140,7 @@ function init() {
   initAGBLotes();
   for (let i = 0; i < 3; i++) addBlendCalcRow();
   carregarDados();
+  preCarregarEstoqueInicial();
   inicializarGraficos();
   atualizarDashboard();
   iniciarAutoSave();
