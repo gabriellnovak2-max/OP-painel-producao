@@ -478,7 +478,22 @@ body.tema-fosco *{text-shadow:none!important}
   <div style="padding:6px 16px 4px;font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px">GESTÃO</div>
   <button onclick="abrirAba(12,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M9 4v16"/><path d="M4 9h16"/><path d="M4 14h5"/></svg></span><span class="nav-label">Fichas Clientes/Produtos</span></button>
   <button onclick="abrirAba(7,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="nav-label">Quebra e Fiscal</span></button>
-  <button onclick="abrirAba(8,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span class="nav-label">Cadastros</span></button>
+  <div class="nav-group">
+    <div class="nav-group-header" onclick="toggleSubmenu(this)">
+      <span style="display:flex;align-items:center;gap:14px">
+        <span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        <span class="nav-label">Cadastros</span>
+      </span>
+      <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="nav-submenu" id="submenu-cadastros">
+      <button onclick="abrirAbaSub(8,this)">Clientes</button>
+      <button onclick="abrirAbaSub(26,this)">Fornecedores</button>
+      <button onclick="abrirAbaSub(27,this)">Operadores / Funcionários</button>
+      <button onclick="abrirAbaSub(28,this)">Produtos</button>
+      <button onclick="abrirAbaSub(29,this)">Prestadores de Serviço</button>
+    </div>
+  </div>
   <button onclick="abrirAba(13,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L3 7v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V7l-9-5z"/><path d="M9 12l2 2 4-4"/></svg></span><span class="nav-label">Selos e Certificados</span></button>
   <button onclick="abrirAba(15,this);renderizarHistorico()"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/><path d="M3.05 11a9 9 0 0117.9 0"/></svg></span><span class="nav-label">Histórico de OPs</span></button>
   </div>
@@ -1544,101 +1559,193 @@ body.tema-fosco *{text-shadow:none!important}
 </div>
 
 <!-- ============ ABA 8: CADASTROS ============ -->
+<!-- ============ ABA 8: CADASTRO DE CLIENTES ============ -->
 <div class="tab-content" id="tab8">
-
-  <!-- OPERADORES -->
-  <div class="acc-section">
-    <div class="acc-header open" onclick="toggleAcc(this)">
-      <h3>CADASTRO DE OPERADORES / FUNCIONÁRIOS</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body open">
-      <div class="acc-body-inner">
-        <div class="info-box azul"><b>Custo/hora:</b> (Salário + 55% encargos) / 220 horas mensais = custo por hora do funcionário.</div>
-        <div style="overflow-x:auto;margin-top:14px">
-          <table id="tbl-operadores">
-            <thead><tr>
-              <th>#</th><th>Nome Completo</th><th>Função</th><th>Turno</th>
-              <th>Salário (R$)</th><th>Encargos 55% (R$)</th><th>Custo Total (R$)</th>
-              <th>Custo/Hora (R$)</th><th>Data Admissão</th><th>Status</th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="addOperadorRow()">+ Adicionar Operador</button></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FORNECEDORES -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>CADASTRO DE FORNECEDORES</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="acc-body-inner">
-        <div style="overflow-x:auto">
-          <table id="tbl-fornecedores">
-            <thead><tr>
-              <th>#</th><th>Razão Social</th><th>CNPJ</th><th>Tipo</th>
-              <th>Cidade/UF</th><th>Telefone</th><th>E-mail</th><th>Contato</th><th>Obs</th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="addFornecedorRow()">+ Adicionar Fornecedor</button></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CLIENTES -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>CADASTRO DE CLIENTES</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="acc-body-inner">
-        <div style="overflow-x:auto">
-          <table id="tbl-clientes">
-            <thead><tr>
-              <th>#</th><th>Razão Social / Nome</th><th>CNPJ/CPF</th><th>Tipo</th>
-              <th>Cidade/UF</th><th>Telefone</th><th>E-mail</th><th>Marca Própria?</th><th>Obs</th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="btn-group"><button class="btn btn-primary" onclick="addClienteRow()">+ Adicionar Cliente</button></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- PARÂMETROS DE REFERÊNCIA -->
-  <div class="acc-section">
-    <div class="acc-header" onclick="toggleAcc(this)">
-      <h3>PARÂMETROS DE REFERÊNCIA DA PRODUÇÃO</h3>
-      <svg class="acc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
-    </div>
-    <div class="acc-body">
-      <div class="acc-body-inner">
-        <table class="param-table">
-          <tr><td>Quebra de Torra Esperada</td><td>15% a 20% (depende do ponto de torra)</td></tr>
-          <tr><td>Temperatura Fornalha Padrão</td><td>400°C a 600°C</td></tr>
-          <tr><td>Temperatura Cilindro Padrão</td><td>180°C a 240°C</td></tr>
-          <tr><td>Água de Resfriamento</td><td>10 litros a cada 60 kg de café torrado</td></tr>
-          <tr><td>Tempo de Torra Padrão</td><td>10 a 15 minutos por batelada</td></tr>
-          <tr><td>Capacidade por Batelada</td><td>60 kg de café verde</td></tr>
-          <tr><td>Umidade Café Verde</td><td>10% a 12%</td></tr>
-          <tr><td>Umidade Café Torrado</td><td>Máx. 5% (regulação MAPA)</td></tr>
-          <tr><td>Blend Padrão</td><td>3 tipos de café verde / 3 silos</td></tr>
-          <tr><td>Perda na Moagem</td><td>0,5% a 1%</td></tr>
-          <tr><td>Taxa de Rejeição Embalagem</td><td>Meta: inferior a 2%</td></tr>
+  <div class="section">
+    <div class="section-title">CADASTRO DE CLIENTES</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Clientes da torrefação.</b> Marcas próprias, revendas, atacado e consumidor final. Mantenha atualizado para uso em OPs, blends e expedição.</div>
+      <div style="overflow-x:auto">
+        <table id="tbl-clientes">
+          <thead><tr>
+            <th>#</th>
+            <th>Razão Social / Nome</th>
+            <th>Nome Fantasia</th>
+            <th>CNPJ / CPF</th>
+            <th>IE</th>
+            <th>Tipo</th>
+            <th>Endereço</th>
+            <th>Cidade / UF</th>
+            <th>Telefone / WhatsApp</th>
+            <th>E-mail</th>
+            <th>Contato</th>
+            <th>Cond. Pagamento</th>
+            <th>Dia Entrega</th>
+            <th>Frequência</th>
+            <th>Status</th>
+            <th>Obs</th>
+            <th></th>
+          </tr></thead>
+          <tbody></tbody>
         </table>
       </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addClienteRow()">+ Adicionar Cliente</button></div>
     </div>
   </div>
+</div>
 
+<!-- ============ ABA 26: CADASTRO DE FORNECEDORES ============ -->
+<div class="tab-content" id="tab26">
+  <div class="section">
+    <div class="section-title">CADASTRO DE FORNECEDORES</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Fornecedores de café verde, embalagens, lenha, insumos e manutenção.</b> Registre origem, qualidade e condições comerciais.</div>
+      <div style="overflow-x:auto">
+        <table id="tbl-fornecedores">
+          <thead><tr>
+            <th>#</th>
+            <th>Razão Social</th>
+            <th>Nome Fantasia</th>
+            <th>CNPJ</th>
+            <th>IE</th>
+            <th>Tipo Fornecimento</th>
+            <th>Região / Origem Café</th>
+            <th>Cidade / UF</th>
+            <th>Telefone / WhatsApp</th>
+            <th>E-mail</th>
+            <th>Contato</th>
+            <th>Cond. Pagamento</th>
+            <th>Prazo Entrega</th>
+            <th>Status</th>
+            <th>Obs</th>
+            <th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addFornecedorRow()">+ Adicionar Fornecedor</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 27: CADASTRO DE OPERADORES / FUNCIONÁRIOS ============ -->
+<div class="tab-content" id="tab27">
+  <div class="section">
+    <div class="section-title">CADASTRO DE OPERADORES / FUNCIONÁRIOS</div>
+    <div class="section-body">
+      <div class="info-box azul" style="margin-bottom:14px"><b>Custo/hora:</b> (Salário + 55% encargos) / 220 horas mensais = custo por hora do funcionário.</div>
+      <div style="overflow-x:auto">
+        <table id="tbl-operadores">
+          <thead><tr>
+            <th>#</th>
+            <th>Nome Completo</th>
+            <th>CPF</th>
+            <th>Função</th>
+            <th>Setor</th>
+            <th>Turno</th>
+            <th>Salário (R$)</th>
+            <th>Encargos 55% (R$)</th>
+            <th>Custo Total (R$)</th>
+            <th>Custo/Hora (R$)</th>
+            <th>Data Admissão</th>
+            <th>Telefone</th>
+            <th>Status</th>
+            <th>Obs</th>
+            <th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addOperadorRow()">+ Adicionar Operador</button></div>
+    </div>
+  </div>
+  <div class="section" style="margin-top:20px">
+    <div class="section-title">PARÂMETROS DE REFERÊNCIA DA PRODUÇÃO</div>
+    <div class="section-body">
+      <table class="param-table">
+        <tr><td>Quebra de Torra Esperada</td><td>15% a 20% (depende do ponto de torra)</td></tr>
+        <tr><td>Temperatura Fornalha Padrão</td><td>400°C a 600°C</td></tr>
+        <tr><td>Temperatura Cilindro Padrão</td><td>180°C a 240°C</td></tr>
+        <tr><td>Água de Resfriamento</td><td>10 litros a cada 60 kg de café torrado</td></tr>
+        <tr><td>Tempo de Torra Padrão</td><td>10 a 15 minutos por batelada</td></tr>
+        <tr><td>Capacidade por Batelada</td><td>60 kg de café verde</td></tr>
+        <tr><td>Umidade Café Verde</td><td>10% a 12%</td></tr>
+        <tr><td>Umidade Café Torrado</td><td>Máx. 5% (regulação MAPA)</td></tr>
+        <tr><td>Blend Padrão</td><td>3 tipos de café verde / 3 silos</td></tr>
+        <tr><td>Perda na Moagem</td><td>0,5% a 1%</td></tr>
+        <tr><td>Taxa de Rejeição Embalagem</td><td>Meta: inferior a 2%</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 28: CADASTRO DE PRODUTOS ============ -->
+<div class="tab-content" id="tab28">
+  <div class="section">
+    <div class="section-title">CADASTRO DE PRODUTOS</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Produtos fabricados pela torrefação.</b> Café torrado grão, moído, blends, drip e cápsulas. Registre código, tipo, embalagem, preço e selo.</div>
+      <div style="overflow-x:auto">
+        <table id="tbl-cadastro-produtos">
+          <thead><tr>
+            <th>#</th>
+            <th>Código / SKU</th>
+            <th>Descrição</th>
+            <th>Tipo</th>
+            <th>Marca</th>
+            <th>Embalagem</th>
+            <th>Gramatura</th>
+            <th>Peso Embal. (g)</th>
+            <th>EAN / GTIN</th>
+            <th>NCM</th>
+            <th>Preço Custo (R$)</th>
+            <th>Preço Venda (R$)</th>
+            <th>Margem (%)</th>
+            <th>Selo Puro Lote?</th>
+            <th>Validade (meses)</th>
+            <th>Status</th>
+            <th>Obs</th>
+            <th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addCadastroProdutoRow()">+ Adicionar Produto</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 29: CADASTRO DE PRESTADORES DE SERVIÇO ============ -->
+<div class="tab-content" id="tab29">
+  <div class="section">
+    <div class="section-title">CADASTRO DE PRESTADORES DE SERVIÇO</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Prestadores de serviço terceirizados.</b> Manutenção, transporte, dedetização, calibração, análise laboratorial, contabilidade e outros.</div>
+      <div style="overflow-x:auto">
+        <table id="tbl-prestadores">
+          <thead><tr>
+            <th>#</th>
+            <th>Razão Social / Nome</th>
+            <th>CNPJ / CPF</th>
+            <th>Tipo Serviço</th>
+            <th>Especialidade</th>
+            <th>Cidade / UF</th>
+            <th>Telefone / WhatsApp</th>
+            <th>E-mail</th>
+            <th>Contato</th>
+            <th>Valor Mensal (R$)</th>
+            <th>Forma Contrato</th>
+            <th>Vigência</th>
+            <th>Status</th>
+            <th>Obs</th>
+            <th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addPrestadorRow()">+ Adicionar Prestador</button></div>
+    </div>
+  </div>
 </div>
 
 <!-- ============ ABA 9: CAFÉ VERDE CRU ============ -->
@@ -3379,6 +3486,7 @@ function calcQuebraRow(el) {
 }
 
 // ============ CADASTROS (OPERADORES, FORNECEDORES, CLIENTES) ============
+// ============ CADASTRO DE OPERADORES / FUNCIONÁRIOS (tab27) ============
 let opCount = 0;
 function addOperadorRow() {
   opCount++;
@@ -3387,14 +3495,19 @@ function addOperadorRow() {
   tr.innerHTML = `
     <td><b>${opCount}</b></td>
     <td><input type="text" class="cad-op-nome" placeholder="Nome completo"></td>
-    <td><select class="cad-op-func"><option>Operador</option><option>Torrador</option><option>Moageiro</option><option>Embalador</option><option>Supervisor</option><option>Auxiliar</option></select></td>
+    <td><input type="text" placeholder="000.000.000-00"></td>
+    <td><select class="cad-op-func"><option>Operador</option><option>Torrador</option><option>Moageiro</option><option>Embalador</option><option>Supervisor</option><option>Auxiliar</option><option>Motorista</option><option>Administrativo</option></select></td>
+    <td><select><option>Torra</option><option>Moagem</option><option>Embalagem</option><option>Expedição</option><option>Administrativo</option><option>Manutenção</option><option>Geral</option></select></td>
     <td><select><option>Manhã</option><option>Tarde</option><option>Noite</option></select></td>
     <td><input type="number" step="0.01" class="cad-op-sal" oninput="calcOperador(this)" placeholder="R$"></td>
     <td><input class="calc cad-op-enc" readonly></td>
     <td><input class="calc cad-op-total" readonly></td>
     <td><input class="calc cad-op-hora" readonly></td>
     <td><input type="date"></td>
-    <td><select><option>Ativo</option><option>Férias</option><option>Afastado</option><option>Desligado</option></select></td>`;
+    <td><input type="text" placeholder="(00) 00000-0000"></td>
+    <td><select><option>Ativo</option><option>Férias</option><option>Afastado</option><option>Desligado</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>
+    <td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaCadastro(this,'tbl-operadores')">X</button></td>`;
   tbody.appendChild(tr);
 }
 function calcOperador(el) {
@@ -3408,6 +3521,7 @@ function calcOperador(el) {
   tr.querySelector('.cad-op-hora').value = sal > 0 ? fmtBRL(hora) : '';
 }
 
+// ============ CADASTRO DE FORNECEDORES (tab26) ============
 let fornCount = 0;
 function addFornecedorRow() {
   fornCount++;
@@ -3416,16 +3530,24 @@ function addFornecedorRow() {
   tr.innerHTML = `
     <td><b>${fornCount}</b></td>
     <td><input type="text" placeholder="Razão Social"></td>
+    <td><input type="text" placeholder="Nome Fantasia"></td>
     <td><input type="text" placeholder="00.000.000/0000-00"></td>
-    <td><select><option>Café Verde</option><option>Embalagens</option><option>Lenha</option><option>Insumos</option><option>Manutenção</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="IE"></td>
+    <td><select><option>Café Verde</option><option>Embalagens</option><option>Lenha</option><option>Insumos</option><option>Manutenção</option><option>Transporte</option><option>Outro</option></select></td>
+    <td><select><option value="">Selecione</option><option>Cerrado Mineiro</option><option>Sul de Minas</option><option>Mogiana (SP)</option><option>Espírito Santo</option><option>Bahia</option><option>Goiás</option><option>Paraná</option><option>Rondônia</option><option>Outro</option><option>N/A</option></select></td>
     <td><input type="text" placeholder="Cidade/UF"></td>
     <td><input type="text" placeholder="(00) 00000-0000"></td>
     <td><input type="text" placeholder="email@email.com"></td>
     <td><input type="text" placeholder="Nome contato"></td>
-    <td><input type="text" placeholder="Obs"></td>`;
+    <td><select><option>À Vista</option><option>7 dias</option><option>14 dias</option><option>21 dias</option><option>30 dias</option><option>30/60</option><option>30/60/90</option></select></td>
+    <td><select><option>Imediato</option><option>3 dias</option><option>7 dias</option><option>15 dias</option><option>30 dias</option></select></td>
+    <td><select><option>Ativo</option><option>Inativo</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>
+    <td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaCadastro(this,'tbl-fornecedores')">X</button></td>`;
   tbody.appendChild(tr);
 }
 
+// ============ CADASTRO DE CLIENTES (tab8) ============
 let cliCount = 0;
 function addClienteRow() {
   cliCount++;
@@ -3434,14 +3556,91 @@ function addClienteRow() {
   tr.innerHTML = `
     <td><b>${cliCount}</b></td>
     <td><input type="text" placeholder="Razão Social / Nome"></td>
+    <td><input type="text" placeholder="Nome Fantasia"></td>
     <td><input type="text" placeholder="CNPJ ou CPF"></td>
-    <td><select><option>Marca Própria</option><option>Revenda</option><option>Consumidor Final</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="IE"></td>
+    <td><select><option>Marca Própria</option><option>Revenda</option><option>Atacado</option><option>Varejo</option><option>Consumidor Final</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="Endereço completo"></td>
     <td><input type="text" placeholder="Cidade/UF"></td>
     <td><input type="text" placeholder="(00) 00000-0000"></td>
     <td><input type="text" placeholder="email@email.com"></td>
-    <td><select><option>Não</option><option>Sim</option></select></td>
-    <td><input type="text" placeholder="Obs"></td>`;
+    <td><input type="text" placeholder="Nome contato"></td>
+    <td><select><option>À Vista</option><option>7 dias</option><option>14 dias</option><option>21 dias</option><option>30 dias</option><option>30/60</option><option>30/60/90</option></select></td>
+    <td><select><option value="">Selecione</option><option>Segunda</option><option>Terça</option><option>Quarta</option><option>Quinta</option><option>Sexta</option><option>Sábado</option><option>Sob demanda</option></select></td>
+    <td><select><option>Semanal</option><option>Quinzenal</option><option>Mensal</option><option>Sob demanda</option></select></td>
+    <td><select><option>Ativo</option><option>Inativo</option><option>Suspenso</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>
+    <td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaCadastro(this,'tbl-clientes')">X</button></td>`;
   tbody.appendChild(tr);
+}
+
+// ============ CADASTRO DE PRODUTOS (tab28) ============
+let cadProdCount = 0;
+function addCadastroProdutoRow() {
+  cadProdCount++;
+  const tbody = document.querySelector('#tbl-cadastro-produtos tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${cadProdCount}</b></td>
+    <td><input type="text" placeholder="SKU-001" style="min-width:70px"></td>
+    <td><input type="text" placeholder="Descrição do produto"></td>
+    <td><select><option>Café Torrado Grão</option><option>Café Torrado Moído</option><option>Blend Grão</option><option>Blend Moído</option><option>Drip Coffee</option><option>Cápsula</option></select></td>
+    <td><input type="text" placeholder="Marca"></td>
+    <td><select><option>Almofada</option><option>Vácuo</option><option>Stand-up Pouch</option><option>Drip</option><option>Grãos</option><option>Cápsula</option></select></td>
+    <td><select><option>250g</option><option>500g</option><option>1kg</option><option>5kg</option></select></td>
+    <td><input type="number" step="0.1" placeholder="g" class="cp-peso-emb"></td>
+    <td><input type="text" placeholder="7891234567890" style="min-width:100px"></td>
+    <td><input type="text" placeholder="0901.21.00" style="min-width:80px"></td>
+    <td><input type="number" step="0.01" placeholder="R$" class="cp-custo" oninput="calcMargemProduto(this)"></td>
+    <td><input type="number" step="0.01" placeholder="R$" class="cp-venda" oninput="calcMargemProduto(this)"></td>
+    <td><input class="calc cp-margem" readonly style="min-width:55px"></td>
+    <td><select><option>Sim</option><option>Não</option></select></td>
+    <td><select><option>6 meses</option><option>9 meses</option><option>12 meses</option><option>18 meses</option></select></td>
+    <td><select><option>Ativo</option><option>Descontinuado</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>
+    <td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaCadastro(this,'tbl-cadastro-produtos')">X</button></td>`;
+  tbody.appendChild(tr);
+}
+function calcMargemProduto(el) {
+  const tr = el.closest('tr');
+  const custo = parseFloat(tr.querySelector('.cp-custo').value) || 0;
+  const venda = parseFloat(tr.querySelector('.cp-venda').value) || 0;
+  const margem = custo > 0 && venda > 0 ? ((venda - custo) / custo * 100).toFixed(1) + '%' : '';
+  tr.querySelector('.cp-margem').value = margem;
+}
+
+// ============ CADASTRO DE PRESTADORES DE SERVIÇO (tab29) ============
+let prestCount = 0;
+function addPrestadorRow() {
+  prestCount++;
+  const tbody = document.querySelector('#tbl-prestadores tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><b>${prestCount}</b></td>
+    <td><input type="text" placeholder="Razão Social / Nome"></td>
+    <td><input type="text" placeholder="CNPJ ou CPF"></td>
+    <td><select><option>Manutenção</option><option>Transporte / Frete</option><option>Limpeza</option><option>Dedetização</option><option>Calibração</option><option>Análise Laboratorial</option><option>Contabilidade</option><option>TI / Sistemas</option><option>Jurídico</option><option>Outro</option></select></td>
+    <td><input type="text" placeholder="Ex: Caldeira, Moinho..."></td>
+    <td><input type="text" placeholder="Cidade/UF"></td>
+    <td><input type="text" placeholder="(00) 00000-0000"></td>
+    <td><input type="text" placeholder="email@email.com"></td>
+    <td><input type="text" placeholder="Nome contato"></td>
+    <td><input type="number" step="0.01" placeholder="R$"></td>
+    <td><select><option>PJ</option><option>MEI</option><option>Avulso</option><option>Contrato Fixo</option></select></td>
+    <td><input type="date"></td>
+    <td><select><option>Ativo</option><option>Inativo</option></select></td>
+    <td><input type="text" placeholder="Obs"></td>
+    <td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaCadastro(this,'tbl-prestadores')">X</button></td>`;
+  tbody.appendChild(tr);
+}
+
+// Função genérica para remover linha de cadastro
+function removerLinhaCadastro(btn, tblId) {
+  if (!confirm('Remover este cadastro?')) return;
+  btn.closest('tr').remove();
+  const rows = document.querySelectorAll('#' + tblId + ' tbody tr');
+  rows.forEach((r, i) => r.cells[0].innerHTML = '<b>' + (i + 1) + '</b>');
+  salvarDados(true);
 }
 
 // ============ FICHAS DE CLIENTES E PRODUTOS ============
@@ -4526,6 +4725,8 @@ function salvarDados(silencioso) {
     operadores: coletarDadosTabela('tbl-operadores'),
     fornecedores: coletarDadosTabela('tbl-fornecedores'),
     clientes: coletarDadosTabela('tbl-clientes'),
+    cadastroProdutos: coletarDadosTabela('tbl-cadastro-produtos'),
+    prestadores: coletarDadosTabela('tbl-prestadores'),
     fichasProduto: coletarDadosTabela('tbl-fichas-produto'),
     perfilTorra: coletarDadosTabela('tbl-perfil-torra'),
     produtosFinais: coletarDadosTabela('tbl-produtos-finais'),
@@ -4666,6 +4867,8 @@ function carregarDados() {
     if (d.operadores) restaurarDadosTabela('tbl-operadores', d.operadores, addOperadorRow);
     if (d.fornecedores) restaurarDadosTabela('tbl-fornecedores', d.fornecedores, addFornecedorRow);
     if (d.clientes) restaurarDadosTabela('tbl-clientes', d.clientes, addClienteRow);
+    if (d.cadastroProdutos) restaurarDadosTabela('tbl-cadastro-produtos', d.cadastroProdutos, addCadastroProdutoRow);
+    if (d.prestadores) restaurarDadosTabela('tbl-prestadores', d.prestadores, addPrestadorRow);
     if (d.fichasProduto) restaurarDadosTabela('tbl-fichas-produto', d.fichasProduto, addFichaProdutoRow);
     if (d.perfilTorra) restaurarDadosTabela('tbl-perfil-torra', d.perfilTorra, addPerfilTorraRow);
     if (d.produtosFinais) restaurarDadosTabela('tbl-produtos-finais', d.produtosFinais, addProdutoFinalRow);
