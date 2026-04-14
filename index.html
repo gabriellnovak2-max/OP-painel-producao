@@ -5231,49 +5231,47 @@ function fecharDetalheHist() {
   document.getElementById('hist-detalhe-section').style.display = 'none';
 }
 
-// ============ EXPORTAR TABELA PARA EXCEL (.xls) ============
+// ============ EXPORTAR TABELA PARA EXCEL (.csv) ============
 function exportarTabelaExcel(tblId, nomeArquivo) {
   const tbl = document.getElementById(tblId);
   if (!tbl) return;
+  const sep = ';';
+  const linhas = [];
+  // Cabeçalho
   const headers = [];
   tbl.querySelectorAll('thead th').forEach(th => {
     const txt = th.textContent.trim();
     if (txt) headers.push(txt);
   });
-  const rows = [];
+  linhas.push(headers.join(sep));
+  // Dados
   tbl.querySelectorAll('tbody tr').forEach(tr => {
     const row = [];
     tr.querySelectorAll('td').forEach((td, i) => {
       if (i >= headers.length) return;
       const inp = td.querySelector('input, select');
-      if (inp) {
-        row.push(inp.value || '');
-      } else {
-        row.push(td.textContent.trim());
-      }
+      let val = inp ? (inp.value || '') : td.textContent.trim();
+      val = val.replace(/;/g, ',').replace(/\n/g, ' ');
+      row.push(val);
     });
-    rows.push(row);
+    linhas.push(row.join(sep));
   });
-  // Monta HTML table para Excel
-  let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:spreadsheet"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>'+nomeArquivo+'</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
-  html += '<table border="1" style="border-collapse:collapse">';
-  html += '<tr>' + headers.map(h => '<th style="background:#2d6a4f;color:#fff;font-weight:bold;padding:6px 10px">'+h+'</th>').join('') + '</tr>';
-  rows.forEach(row => {
-    html += '<tr>' + row.map(c => '<td style="padding:4px 8px">'+c+'</td>').join('') + '</tr>';
-  });
-  // Totais do tfoot
+  // Totais
   const tfoot = tbl.querySelector('tfoot tr');
   if (tfoot) {
-    const ftCells = [];
-    tfoot.querySelectorAll('td').forEach(td => ftCells.push(td.textContent.trim()));
-    html += '<tr>' + ftCells.map(c => '<td style="font-weight:bold;background:#e8f5e9;padding:4px 8px">'+c+'</td>').join('') + '</tr>';
+    const ftRow = [];
+    tfoot.querySelectorAll('td').forEach(td => {
+      let v = td.textContent.trim().replace(/;/g, ',');
+      ftRow.push(v);
+    });
+    linhas.push(ftRow.join(sep));
   }
-  html += '</table></body></html>';
-  const blob = new Blob(['\uFEFF' + html], {type:'application/vnd.ms-excel;charset=utf-8'});
+  const csv = linhas.join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = nomeArquivo + '_' + new Date().toISOString().slice(0,10) + '.xls';
+  a.download = nomeArquivo + '_' + new Date().toISOString().slice(0,10) + '.csv';
   a.click();
   URL.revokeObjectURL(url);
 }
