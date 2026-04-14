@@ -1782,7 +1782,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueCafeVerdeRow()">+ Adicionar Lote</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueCafeVerdeRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-estoque-cafe-verde','Estoque_Cafe_Verde_Cru')">Exportar Excel</button></div>
     </div>
   </div>
 </div>
@@ -2540,7 +2540,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addCafeGraoTorradoRow()">+ Adicionar Lote</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addCafeGraoTorradoRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-cafe-grao-torrado','Estoque_Grao_Torrado')">Exportar Excel</button></div>
     </div>
   </div>
 </div>
@@ -2569,7 +2569,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addCafePoRow()">+ Adicionar Lote</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addCafePoRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-cafe-po','Estoque_Cafe_Po')">Exportar Excel</button></div>
     </div>
   </div>
 </div>
@@ -2616,7 +2616,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addProdutoAcabadoRow()">+ Adicionar Produto</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addProdutoAcabadoRow()">+ Adicionar Produto</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-produto-acabado','Produto_Acabado')">Exportar Excel</button></div>
     </div>
   </div>
 </div>
@@ -5229,6 +5229,53 @@ function detalheItem(label, valor) {
 
 function fecharDetalheHist() {
   document.getElementById('hist-detalhe-section').style.display = 'none';
+}
+
+// ============ EXPORTAR TABELA PARA EXCEL (.xls) ============
+function exportarTabelaExcel(tblId, nomeArquivo) {
+  const tbl = document.getElementById(tblId);
+  if (!tbl) return;
+  const headers = [];
+  tbl.querySelectorAll('thead th').forEach(th => {
+    const txt = th.textContent.trim();
+    if (txt) headers.push(txt);
+  });
+  const rows = [];
+  tbl.querySelectorAll('tbody tr').forEach(tr => {
+    const row = [];
+    tr.querySelectorAll('td').forEach((td, i) => {
+      if (i >= headers.length) return;
+      const inp = td.querySelector('input, select');
+      if (inp) {
+        row.push(inp.value || '');
+      } else {
+        row.push(td.textContent.trim());
+      }
+    });
+    rows.push(row);
+  });
+  // Monta HTML table para Excel
+  let html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:spreadsheet"><head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>'+nomeArquivo+'</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body>';
+  html += '<table border="1" style="border-collapse:collapse">';
+  html += '<tr>' + headers.map(h => '<th style="background:#2d6a4f;color:#fff;font-weight:bold;padding:6px 10px">'+h+'</th>').join('') + '</tr>';
+  rows.forEach(row => {
+    html += '<tr>' + row.map(c => '<td style="padding:4px 8px">'+c+'</td>').join('') + '</tr>';
+  });
+  // Totais do tfoot
+  const tfoot = tbl.querySelector('tfoot tr');
+  if (tfoot) {
+    const ftCells = [];
+    tfoot.querySelectorAll('td').forEach(td => ftCells.push(td.textContent.trim()));
+    html += '<tr>' + ftCells.map(c => '<td style="font-weight:bold;background:#e8f5e9;padding:4px 8px">'+c+'</td>').join('') + '</tr>';
+  }
+  html += '</table></body></html>';
+  const blob = new Blob(['\uFEFF' + html], {type:'application/vnd.ms-excel;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = nomeArquivo + '_' + new Date().toISOString().slice(0,10) + '.xls';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ============ ESTOQUE CAFÉ VERDE CRU (tab9) ============
