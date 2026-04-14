@@ -430,6 +430,7 @@ body.tema-fosco *{text-shadow:none!important}
       <button onclick="abrirAbaSub(24,this)">Configurações</button>
     </div>
   </div>
+  <button onclick="abrirAba(30,this)"><span class="nav-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></span><span class="nav-label">Compra de Café Cru</span></button>
   <div class="nav-group">
     <div class="nav-group-header" onclick="toggleSubmenu(this)">
       <span style="display:flex;align-items:center;gap:14px">
@@ -1744,6 +1745,56 @@ body.tema-fosco *{text-shadow:none!important}
         </table>
       </div>
       <div class="btn-group"><button class="btn btn-primary" onclick="addPrestadorRow()">+ Adicionar Prestador</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABA 30: COMPRA DE CAFÉ CRU ============ -->
+<div class="tab-content" id="tab30">
+  <div class="section">
+    <div class="section-title">COMPRA DE CAFÉ CRU</div>
+    <div class="section-body">
+      <div class="info-box verde" style="margin-bottom:14px"><b>Início de tudo.</b> Registre aqui todas as compras de café verde cru. Após o recebimento, o café segue para <b>AGB Recebimento > Descarregamento</b> e depois para o <b>Estoque Café Verde Cru</b>.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px" id="compra-resumo-cards">
+        <div class="pen-card hover3d" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.3)"><div class="pen-label" style="color:var(--yellow)">Pedidos</div><div class="pen-value" style="color:var(--yellow)" id="compra-total-pedidos">0</div></div>
+        <div class="pen-card hover3d" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)"><div class="pen-label" style="color:var(--blue)">Em Trânsito</div><div class="pen-value" style="color:var(--blue)" id="compra-total-transito">0</div></div>
+        <div class="pen-card hover3d" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3)"><div class="pen-label" style="color:var(--green)">Recebidos</div><div class="pen-value" style="color:var(--green)" id="compra-total-recebidos">0</div></div>
+        <div class="pen-card hover3d" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.3)"><div class="pen-label" style="color:var(--purple)">Total Comprado (kg)</div><div class="pen-value" style="color:var(--purple)" id="compra-total-kg">0 kg</div></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table id="tbl-compra-cafe">
+          <thead><tr>
+            <th>#</th>
+            <th>Data Compra</th>
+            <th>Fornecedor</th>
+            <th>Origem / Região</th>
+            <th>Peneira</th>
+            <th>Sacas</th>
+            <th>Peso (kg)</th>
+            <th>Preço/Saca (R$)</th>
+            <th>Preço Total (R$)</th>
+            <th>NF Entrada</th>
+            <th>Prev. Entrega</th>
+            <th>Status</th>
+            <th>Obs</th>
+            <th></th>
+          </tr></thead>
+          <tbody></tbody>
+          <tfoot><tr style="font-weight:700;background:rgba(16,185,129,.08)">
+            <td colspan="5" style="text-align:right">TOTAL:</td>
+            <td id="compra-ft-sacas">0</td>
+            <td id="compra-ft-kg">0 kg</td>
+            <td></td>
+            <td id="compra-ft-valor">R$ 0,00</td>
+            <td colspan="5"></td>
+          </tr></tfoot>
+        </table>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="addCompraCafeRow()">+ Nova Compra</button>
+        <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-compra-cafe','Compras_Cafe_Cru')">Excel</button>
+        <button class="btn" style="background:var(--red);color:#fff" onclick="exportarTabelaPDF('tbl-compra-cafe','COMPRA DE CAFÉ CRU')">PDF</button>
+      </div>
     </div>
   </div>
 </div>
@@ -4759,6 +4810,7 @@ function salvarDados(silencioso) {
     cafeGraoTorrado: coletarDadosTabela('tbl-cafe-grao-torrado'),
     cafePo: coletarDadosTabela('tbl-cafe-po'),
     produtoAcabado: coletarDadosTabela('tbl-produto-acabado'),
+    compraCafe: coletarDadosTabela('tbl-compra-cafe'),
     estoqueEmb: coletarDadosTabela('tbl-estoque-emb'),
     estoqueLenha: coletarDadosTabela('tbl-estoque-lenha'),
     cafeVerde: {
@@ -4939,6 +4991,7 @@ function carregarDados() {
     if (d.cafeGraoTorrado) { restaurarDadosTabela('tbl-cafe-grao-torrado', d.cafeGraoTorrado, addCafeGraoTorradoRow); calcTotalEstoqueGraoTorrado(); }
     if (d.cafePo) { restaurarDadosTabela('tbl-cafe-po', d.cafePo, addCafePoRow); calcTotalEstoquePo(); }
     if (d.produtoAcabado) { restaurarDadosTabela('tbl-produto-acabado', d.produtoAcabado, addProdutoAcabadoRow); calcTotalProdutoAcabado(); }
+    if (d.compraCafe) { restaurarDadosTabela('tbl-compra-cafe', d.compraCafe, addCompraCafeRow); calcCompraCafe(); }
     if (d.estoqueEmb) restaurarDadosTabela('tbl-estoque-emb', d.estoqueEmb, addEstoqueEmbRow);
     if (d.estoqueLenha) {
       restaurarDadosTabela('tbl-estoque-lenha', d.estoqueLenha, addEstoqueLenhaRow);
@@ -5229,6 +5282,77 @@ function detalheItem(label, valor) {
 
 function fecharDetalheHist() {
   document.getElementById('hist-detalhe-section').style.display = 'none';
+}
+
+// ============ COMPRA DE CAFÉ CRU (tab30) ============
+let compraCafeCount = 0;
+function addCompraCafeRow(dados) {
+  compraCafeCount++;
+  const tbody = document.querySelector('#tbl-compra-cafe tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<td><b>'+compraCafeCount+'</b></td>'
+    +'<td><input type="date" class="cc-data"></td>'
+    +'<td><input type="text" placeholder="Fornecedor" class="cc-forn"></td>'
+    +'<td><select class="cc-origem"><option value="">Selecione</option><option>Cerrado Mineiro</option><option>Sul de Minas</option><option>Mogiana (SP)</option><option>Espírito Santo</option><option>Bahia</option><option>Goiás</option><option>Paraná</option><option>Rondônia</option><option>Outro</option></select></td>'
+    +'<td><select class="cc-peneira"><option value="">Selecione</option><option>P17/18</option><option>P15/16</option><option>P13/14</option><option>P10/12</option><option>FP10</option><option>FP8</option><option>FP5</option><option>PVA</option><option>Misto</option></select></td>'
+    +'<td><input type="number" step="1" placeholder="Sacas" class="cc-sacas" oninput="calcCompraCafe()"></td>'
+    +'<td><input type="number" step="0.01" placeholder="kg" class="cc-kg" oninput="calcCompraCafe()"></td>'
+    +'<td><input type="number" step="0.01" placeholder="R$" class="cc-preco-saca" oninput="calcPrecoTotalCompra(this);calcCompraCafe()"></td>'
+    +'<td><input type="number" step="0.01" placeholder="R$" class="cc-preco-total calc" readonly></td>'
+    +'<td><input type="text" placeholder="NF" class="cc-nf"></td>'
+    +'<td><input type="date" class="cc-prev"></td>'
+    +'<td><select class="cc-status" onchange="calcCompraCafe();this.style.color=this.value===\'Pedido\'?\'var(--yellow)\':this.value===\'Em Trânsito\'?\'var(--blue)\':this.value===\'Recebido\'?\'var(--green)\':\'var(--red)\'"><option>Pedido</option><option>Em Trânsito</option><option>Recebido</option><option>Cancelado</option></select></td>'
+    +'<td><input type="text" placeholder="Obs" class="cc-obs"></td>'
+    +'<td><button class="btn" style="background:var(--red);color:#fff;padding:4px 10px;font-size:11px" onclick="removerLinhaCadastro(this,\'tbl-compra-cafe\');calcCompraCafe()">X</button></td>';
+  if (dados) {
+    const els = tr.querySelectorAll('input, select');
+    if (dados.data) els[0].value = dados.data;
+    if (dados.fornecedor) els[1].value = dados.fornecedor;
+    if (dados.origem) els[2].value = dados.origem;
+    if (dados.peneira) els[3].value = dados.peneira;
+    if (dados.sacas) els[4].value = dados.sacas;
+    if (dados.kg) els[5].value = dados.kg;
+    if (dados.precoSaca) els[6].value = dados.precoSaca;
+    if (dados.precoTotal) els[7].value = dados.precoTotal;
+    if (dados.nf) els[8].value = dados.nf;
+    if (dados.prevEntrega) els[9].value = dados.prevEntrega;
+    if (dados.status) { els[10].value = dados.status; els[10].style.color = dados.status==='Pedido'?'var(--yellow)':dados.status==='Em Trânsito'?'var(--blue)':dados.status==='Recebido'?'var(--green)':'var(--red)'; }
+    if (dados.obs) els[11].value = dados.obs;
+  }
+  tbody.appendChild(tr);
+  return tr;
+}
+
+function calcPrecoTotalCompra(el) {
+  const tr = el.closest('tr');
+  const sacas = parseFloat(tr.querySelector('.cc-sacas')?.value) || 0;
+  const preco = parseFloat(tr.querySelector('.cc-preco-saca')?.value) || 0;
+  const total = sacas * preco;
+  tr.querySelector('.cc-preco-total').value = total > 0 ? total.toFixed(2) : '';
+}
+
+function calcCompraCafe() {
+  const rows = document.querySelectorAll('#tbl-compra-cafe tbody tr');
+  let totalSacas=0, totalKg=0, totalValor=0, pedidos=0, transito=0, recebidos=0;
+  const fmt = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2});
+  rows.forEach(tr => {
+    const st = tr.querySelector('.cc-status')?.value || '';
+    const sacas = parseFloat(tr.querySelector('.cc-sacas')?.value) || 0;
+    const kg = parseFloat(tr.querySelector('.cc-kg')?.value) || 0;
+    const valor = parseFloat(tr.querySelector('.cc-preco-total')?.value) || 0;
+    if (st !== 'Cancelado') { totalSacas += sacas; totalKg += kg; totalValor += valor; }
+    if (st === 'Pedido') pedidos++;
+    else if (st === 'Em Trânsito') transito++;
+    else if (st === 'Recebido') recebidos++;
+  });
+  const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+  set('compra-ft-sacas', totalSacas || '0');
+  set('compra-ft-kg', fmt(totalKg) + ' kg');
+  set('compra-ft-valor', 'R$ ' + fmt(totalValor));
+  set('compra-total-pedidos', pedidos);
+  set('compra-total-transito', transito);
+  set('compra-total-recebidos', recebidos);
+  set('compra-total-kg', fmt(totalKg) + ' kg');
 }
 
 // ============ EXPORTAR TABELA ============
