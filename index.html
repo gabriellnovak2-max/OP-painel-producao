@@ -1782,7 +1782,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueCafeVerdeRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-estoque-cafe-verde','Estoque_Cafe_Verde_Cru')">Exportar Excel</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addEstoqueCafeVerdeRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-estoque-cafe-verde','Estoque_Cafe_Verde_Cru')">Excel</button> <button class="btn" style="background:var(--red);color:#fff" onclick="exportarTabelaPDF('tbl-estoque-cafe-verde','ESTOQUE — CAFÉ VERDE CRU')">PDF</button></div>
     </div>
   </div>
 </div>
@@ -2540,7 +2540,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addCafeGraoTorradoRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-cafe-grao-torrado','Estoque_Grao_Torrado')">Exportar Excel</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addCafeGraoTorradoRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-cafe-grao-torrado','Estoque_Grao_Torrado')">Excel</button> <button class="btn" style="background:var(--red);color:#fff" onclick="exportarTabelaPDF('tbl-cafe-grao-torrado','ESTOQUE — CAFÉ GRÃO TORRADO')">PDF</button></div>
     </div>
   </div>
 </div>
@@ -2569,7 +2569,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addCafePoRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-cafe-po','Estoque_Cafe_Po')">Exportar Excel</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addCafePoRow()">+ Adicionar Lote</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-cafe-po','Estoque_Cafe_Po')">Excel</button> <button class="btn" style="background:var(--red);color:#fff" onclick="exportarTabelaPDF('tbl-cafe-po','ESTOQUE — CAFÉ TORRADO EM PÓ')">PDF</button></div>
     </div>
   </div>
 </div>
@@ -2616,7 +2616,7 @@ body.tema-fosco *{text-shadow:none!important}
           </tr></tfoot>
         </table>
       </div>
-      <div class="btn-group"><button class="btn btn-primary" onclick="addProdutoAcabadoRow()">+ Adicionar Produto</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-produto-acabado','Produto_Acabado')">Exportar Excel</button></div>
+      <div class="btn-group"><button class="btn btn-primary" onclick="addProdutoAcabadoRow()">+ Adicionar Produto</button> <button class="btn" style="background:var(--green);color:#fff" onclick="exportarTabelaExcel('tbl-produto-acabado','Produto_Acabado')">Excel</button> <button class="btn" style="background:var(--red);color:#fff" onclick="exportarTabelaPDF('tbl-produto-acabado','ESTOQUE — PRODUTO ACABADO')">PDF</button></div>
     </div>
   </div>
 </div>
@@ -5231,49 +5231,82 @@ function fecharDetalheHist() {
   document.getElementById('hist-detalhe-section').style.display = 'none';
 }
 
-// ============ EXPORTAR TABELA PARA EXCEL (.csv) ============
-function exportarTabelaExcel(tblId, nomeArquivo) {
+// ============ EXPORTAR TABELA ============
+function _coletarDadosTabExport(tblId) {
   const tbl = document.getElementById(tblId);
-  if (!tbl) return;
-  const sep = ';';
-  const linhas = [];
-  // Cabeçalho
+  if (!tbl) return null;
   const headers = [];
   tbl.querySelectorAll('thead th').forEach(th => {
     const txt = th.textContent.trim();
     if (txt) headers.push(txt);
   });
-  linhas.push(headers.join(sep));
-  // Dados
+  const rows = [];
   tbl.querySelectorAll('tbody tr').forEach(tr => {
     const row = [];
     tr.querySelectorAll('td').forEach((td, i) => {
       if (i >= headers.length) return;
       const inp = td.querySelector('input, select');
-      let val = inp ? (inp.value || '') : td.textContent.trim();
-      val = val.replace(/;/g, ',').replace(/\n/g, ' ');
-      row.push(val);
+      row.push(inp ? (inp.value || '') : td.textContent.trim());
     });
-    linhas.push(row.join(sep));
+    rows.push(row);
   });
-  // Totais
+  const totais = [];
   const tfoot = tbl.querySelector('tfoot tr');
-  if (tfoot) {
-    const ftRow = [];
-    tfoot.querySelectorAll('td').forEach(td => {
-      let v = td.textContent.trim().replace(/;/g, ',');
-      ftRow.push(v);
-    });
-    linhas.push(ftRow.join(sep));
-  }
+  if (tfoot) tfoot.querySelectorAll('td').forEach(td => totais.push(td.textContent.trim()));
+  return {headers, rows, totais};
+}
+
+async function exportarTabelaExcel(tblId, nomeArquivo) {
+  const d = _coletarDadosTabExport(tblId);
+  if (!d) return;
+  const sep = ';';
+  const linhas = [d.headers.join(sep)];
+  d.rows.forEach(row => linhas.push(row.map(c => c.replace(/;/g,',').replace(/\n/g,' ')).join(sep)));
+  if (d.totais.length) linhas.push(d.totais.join(sep));
   const csv = linhas.join('\r\n');
   const blob = new Blob(['\uFEFF' + csv], {type:'text/csv;charset=utf-8'});
+  const nome = nomeArquivo + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  // Tenta "Salvar como" nativo (Chrome/Edge)
+  if (window.showSaveFilePicker) {
+    try {
+      const handle = await window.showSaveFilePicker({suggestedName: nome, types:[{description:'Excel CSV', accept:{'text/csv':['.csv']}}]});
+      const w = await handle.createWritable();
+      await w.write(blob);
+      await w.close();
+      alert('Arquivo salvo! Abra pelo Explorador de Arquivos e clique 2x para abrir no Excel.');
+      return;
+    } catch(e) { if (e.name === 'AbortError') return; }
+  }
+  // Fallback: download normal
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = nomeArquivo + '_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
+  const a = document.createElement('a'); a.href = url; a.download = nome; a.click();
   URL.revokeObjectURL(url);
+}
+
+function exportarTabelaPDF(tblId, titulo) {
+  const d = _coletarDadosTabExport(tblId);
+  if (!d) return;
+  const win = window.open('','_blank');
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+titulo+'</title><style>'
+    +'body{font-family:Arial,sans-serif;padding:20px;color:#222}'
+    +'h1{font-size:18px;text-align:center;margin-bottom:4px}'
+    +'h2{font-size:12px;text-align:center;color:#666;margin-bottom:16px}'
+    +'table{width:100%;border-collapse:collapse;font-size:11px}'
+    +'th{background:#2d6a4f;color:#fff;padding:6px 8px;text-align:left;border:1px solid #1b4332}'
+    +'td{padding:5px 8px;border:1px solid #ccc}'
+    +'tr:nth-child(even){background:#f0f0f0}'
+    +'.total{font-weight:bold;background:#d4edda!important}'
+    +'@media print{body{padding:0}}'
+    +'</style></head><body>';
+  html += '<h1>'+titulo+'</h1>';
+  html += '<h2>Patrocínio Torrefação de Café — Exportado em '+new Date().toLocaleDateString('pt-BR')+'</h2>';
+  html += '<table><thead><tr>'+d.headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>';
+  d.rows.forEach(row => { html += '<tr>'+row.map(c=>'<td>'+c+'</td>').join('')+'</tr>'; });
+  if (d.totais.length) html += '<tr class="total">'+d.totais.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
+  html += '</tbody></table></body></html>';
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => win.print(), 500);
 }
 
 // ============ ESTOQUE CAFÉ VERDE CRU (tab9) ============
