@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório de Estoque — Patrocínio Café</title>
+<style>
+body{font-family:Arial,sans-serif;padding:30px;color:#222;max-width:900px;margin:0 auto}
+h1{text-align:center;font-size:22px;margin-bottom:4px;color:#1b4332}
+h2{text-align:center;font-size:12px;color:#666;margin-bottom:30px}
+h3{background:#1b4332;color:#fff;padding:8px 14px;margin:24px 0 0;font-size:14px;border-radius:4px 4px 0 0}
+table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px}
+th{background:#2d6a4f;color:#fff;padding:6px 8px;text-align:left;border:1px solid #1b4332}
+td{padding:5px 8px;border:1px solid #ccc}
+tr:nth-child(even){background:#f0f7f0}
+.total{font-weight:bold;background:#d4edda!important;font-size:12px}
+.subtotal td{font-weight:bold;background:#e8f5e9;border-top:2px solid #2d6a4f}
+.resumo{margin-top:30px;background:#f8f9fa;padding:16px;border-radius:8px;border:2px solid #2d6a4f}
+.resumo table{margin:0}
+.resumo th{background:#1b4332}
+@media print{body{padding:10px}h1{font-size:18px}h3{font-size:12px}table{font-size:10px}}
+</style>
+</head>
+<body>
+<h1>RELATÓRIO DE ESTOQUE COMPLETO</h1>
+<h2>Patrocínio Café Indústria e Comércio de Café LTDA — CNPJ: 36.236.772/0001-30<br>
+Auditoria física — Abril/2026</h2>
+
+<h3>1. CAFÉ VERDE CRU (2 lotes)</h3>
+<table>
+<thead><tr><th>#</th><th>Lote</th><th>Peneira</th><th>Fornecedor</th><th>Volumes</th><th>Peso Líquido (kg)</th><th>Conf.</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Lote Sr. Carlos</td><td>Resíduo PVA</td><td>Sr. Carlos</td><td>10,5</td><td>495,50</td><td>✓</td></tr>
+<tr><td>2</td><td>Estrelinha Pedro</td><td>P17/18</td><td>—</td><td>77</td><td>3.103,10</td><td>✓</td></tr>
+<tr class="subtotal"><td colspan="5" style="text-align:right">SUBTOTAL CAFÉ VERDE CRU:</td><td>3.598,60 kg</td><td></td></tr>
+</tbody>
+</table>
+
+<h3>2. CAFÉ GRÃO TORRADO (7 lotes)</h3>
+<table>
+<thead><tr><th>#</th><th>Lote / Blend</th><th>Peneira</th><th>Tipo</th><th>Volumes</th><th>Peso Líquido (kg)</th><th>Conf.</th><th>Obs</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>15/16 Peneirado Zé Maria — Bom</td><td>P15/16</td><td>Puro</td><td>6</td><td>117,30</td><td>✓</td><td></td></tr>
+<tr><td>2</td><td>15/16 Peneirado Zé Maria — Ruim</td><td>P15/16</td><td>Puro</td><td>5</td><td>86,10</td><td>✓</td><td></td></tr>
+<tr><td>3</td><td>Devolução Renata Inhumas</td><td>—</td><td>Puro</td><td>29</td><td>496,40</td><td>✓</td><td></td></tr>
+<tr><td>4</td><td>Grão Torrado Recente 15/16</td><td>P15/16</td><td>Puro</td><td>28</td><td>560,00</td><td>✓</td><td></td></tr>
+<tr><td>5</td><td>Grão Torrado (Carlos)</td><td>—</td><td>Puro</td><td>6</td><td>137,80</td><td>✓</td><td></td></tr>
+<tr><td>6</td><td>Café Torrado Grão 15/16</td><td>P15/16</td><td>Puro</td><td>97</td><td>591,00</td><td>✓</td><td>Torra 18/12/2025</td></tr>
+<tr class="subtotal"><td colspan="5" style="text-align:right">SUBTOTAL CAFÉ GRÃO TORRADO:</td><td>1.988,60 kg</td><td></td><td></td></tr>
+</tbody>
+</table>
+
+<h3>3. CAFÉ TORRADO EM PÓ (3 lotes)</h3>
+<table>
+<thead><tr><th>#</th><th>Marca / Produto</th><th>Volumes</th><th>Peso Líquido (kg)</th><th>Conf.</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Perdeu Essência</td><td>32</td><td>860,00</td><td>✓</td></tr>
+<tr><td>2</td><td>Devolução Prefeitura Alto Horizonte</td><td>6</td><td>185,00</td><td>✓</td></tr>
+<tr><td>3</td><td>Café Moído Modão</td><td>27</td><td>137,80</td><td>✓</td></tr>
+<tr class="subtotal"><td colspan="3" style="text-align:right">SUBTOTAL CAFÉ EM PÓ:</td><td>1.182,80 kg</td><td></td></tr>
+</tbody>
+</table>
+
+<h3>4. PRODUTO ACABADO (7 itens)</h3>
+<table>
+<thead><tr><th>#</th><th>Produto</th><th>Gramatura</th><th>Peso (kg)</th><th>Status</th><th>Obs</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Café Vida</td><td>500g</td><td>395,00</td><td>Disponível</td><td></td></tr>
+<tr><td>2</td><td>Café Jireh</td><td>500g</td><td>395,00</td><td>Disponível</td><td>Litografia Nova</td></tr>
+<tr><td>3</td><td>Café Jireh</td><td>250g</td><td>90,00</td><td>Disponível</td><td></td></tr>
+<tr><td>4</td><td>Café Della</td><td>500g</td><td>330,00</td><td>Disponível</td><td></td></tr>
+<tr><td>5</td><td>Café Della</td><td>250g</td><td>200,00</td><td>Disponível</td><td></td></tr>
+<tr><td>6</td><td>Café Empacotado Transparente</td><td>500g</td><td>35,00</td><td>Disponível</td><td></td></tr>
+<tr><td>7</td><td>Café Kremon a Vácuo</td><td>500g</td><td>6.879,00</td><td>Disponível</td><td>Devolução MT</td></tr>
+<tr class="subtotal"><td colspan="3" style="text-align:right">SUBTOTAL PRODUTO ACABADO:</td><td>8.324,00 kg</td><td></td><td></td></tr>
+</tbody>
+</table>
+
+<div class="resumo">
+<h3 style="margin-top:0">RESUMO GERAL</h3>
+<table>
+<thead><tr><th>Categoria</th><th>Itens</th><th>Peso Total (kg)</th></tr></thead>
+<tbody>
+<tr><td>Café Verde Cru</td><td>2</td><td>3.598,60</td></tr>
+<tr><td>Café Grão Torrado</td><td>7</td><td>1.988,60</td></tr>
+<tr><td>Café Torrado em Pó</td><td>3</td><td>1.182,80</td></tr>
+<tr><td>Produto Acabado</td><td>7</td><td>8.324,00</td></tr>
+<tr class="total"><td><b>TOTAL GERAL</b></td><td><b>19</b></td><td><b>15.094,00 kg</b></td></tr>
+</tbody>
+</table>
+</div>
+
+<script>window.onload = function(){ window.print(); }</script>
+</body>
+</html>
