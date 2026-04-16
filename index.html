@@ -5412,20 +5412,22 @@ function exportarTabelaPDF(tblId, titulo) {
   if (!d) return;
   const win = window.open('','_blank');
   let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+titulo+'</title><style>'
-    +'body{font-family:Arial,sans-serif;padding:20px;color:#222}'
-    +'h1{font-size:18px;text-align:center;margin-bottom:4px}'
-    +'h2{font-size:12px;text-align:center;color:#666;margin-bottom:16px}'
+    +'*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}'
+    +'body{font-family:Arial,sans-serif;padding:30px;color:#222;max-width:900px;margin:0 auto}'
+    +'h1{text-align:center;font-size:22px;margin-bottom:4px;color:#1b4332}'
+    +'h2{text-align:center;font-size:12px;color:#666;margin-bottom:20px}'
+    +'h3{background:#1b4332;color:#fff;padding:8px 14px;margin:0 0 0;font-size:14px;border-radius:4px 4px 0 0}'
     +'table{width:100%;border-collapse:collapse;font-size:11px}'
-    +'th{background:#2d6a4f;color:#fff;padding:6px 8px;text-align:left;border:1px solid #1b4332}'
-    +'td{padding:5px 8px;border:1px solid #ccc}'
-    +'tr:nth-child(even){background:#f0f0f0}'
-    +'.total{font-weight:bold;background:#d4edda!important}'
-    +'@media print{body{padding:0}}'
+    +'th{background:#2d6a4f!important;color:#fff!important;padding:6px 8px;text-align:left;border:1px solid #1b4332;font-weight:bold}'
+    +'td{padding:5px 8px;border:1px solid #ccc;color:#222}'
+    +'tr:nth-child(even){background:#f0f7f0!important}'
+    +'.total td{font-weight:bold;background:#d4edda!important;border-top:2px solid #2d6a4f;font-size:12px}'
+    +'@media print{body{padding:10px}h1{font-size:18px}table{font-size:10px}}'
     +'</style></head><body>';
-  html += '<h1>'+titulo+'</h1>';
-  html += '<h2>Patrocínio Torrefação de Café — Exportado em '+new Date().toLocaleDateString('pt-BR')+'</h2>';
+  html += '<h3>'+titulo+'</h3>';
+  html += '<p style="text-align:center;font-size:11px;color:#666;margin:6px 0 16px">Patrocínio Café Ind. e Com. de Café LTDA — CNPJ: 36.236.772/0001-30 — Emitido em '+new Date().toLocaleDateString('pt-BR')+'</p>';
   html += '<table><thead><tr>'+d.headers.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>';
-  d.rows.forEach(row => { html += '<tr>'+row.map(c=>'<td>'+c+'</td>').join('')+'</tr>'; });
+  d.rows.forEach((row,i) => { html += '<tr>'+row.map(c=>'<td>'+c+'</td>').join('')+'</tr>'; });
   if (d.totais.length) html += '<tr class="total">'+d.totais.map(c=>'<td>'+c+'</td>').join('')+'</tr>';
   html += '</tbody></table></body></html>';
   win.document.write(html);
