@@ -286,3 +286,162 @@ PASSO 6 → Agentes IA nos tablets dos funcionários (cada setor com IA guiando 
 - **Passo 4**: Vercel já funciona (op-painel-producao.vercel.app). Falta só comprar domínio (ex: patrociniocafe.com.br) e apontar
 - **Passo 5**: n8n conecta tudo — pedido no WhatsApp → sistema → estoque → alerta
 - **Passo 6**: Cada setor (torra, moagem, embalagem) com IA no tablet guiando o funcionário
+
+## Base de Conhecimento — Funcionalidades de ERP (Pesquisa Profunda)
+
+Pesquisa realizada em abril/2026 nos principais ERPs do Brasil e do mundo. Esta base serve de referência para construir as funcionalidades do sistema de Ordem de Produção da Patrocínio Café.
+
+### Sistemas pesquisados
+SIGE Cloud, TOTVS Protheus/Datasul, SAP PP/PP-PI, Oracle NetSuite, Bling, Nomus, Maxiprod, MES (Compact MES, SYNECO, FMS)
+
+### 1. Ordem de Produção — Como funciona em TODOS os sistemas
+
+**Criação da OP:**
+- Campos obrigatórios: número OP, produto, quantidade, data início, data entrega, armazém destino
+- Pode ser criada manualmente OU automaticamente via MRP (quando estoque mínimo é atingido ou pedido de venda entra)
+- Subordens de produção: quando matéria-prima também precisa ser fabricada (ex: blend é sub-OP da embalagem)
+
+**Status da OP (ciclo de vida):**
+- Planejada → Firme → Liberada → Em Produção → Concluída → Encerrada
+- Também: Cancelada (inativa, apontamentos anteriores ficam registrados)
+- Cada mudança de status gera log com data/hora/usuário
+
+**Apontamento por etapa:**
+- Cada operação/etapa tem hora início, hora fim, operador responsável
+- Apontamento parcial: pode informar 50% feito e continuar depois
+- Apontamento via tablet/celular com código de barras ou toque na tela
+- Compara tempo planejado vs tempo real (indicador de eficiência)
+
+**Empenho de materiais:**
+- Ao liberar OP, sistema RESERVA os materiais no estoque (empenho)
+- Material empenhado não fica disponível pra outra OP
+- Requisição: quando material sai fisicamente do almoxarifado pra produção
+
+### 2. Estoque — Baixa Automática (como funciona de verdade)
+
+**Ao INICIAR a OP (Liberação):**
+- Sistema faz EMPENHO: reserva os materiais no estoque
+- Estoque mostra: "500kg disponível, 200kg empenhado, 300kg livre"
+
+**Durante a produção (Apontamento):**
+- A cada etapa concluída, o consumo de material é registrado
+- Baixa pode ser automática (proporcional ao que foi produzido) ou manual
+
+**Ao CONCLUIR a OP:**
+- Baixa definitiva de TODA matéria-prima usada
+- Entrada automática do produto acabado no estoque
+- Registra perdas/quebras como diferença entre previsto e real
+- Gera lote automático com número, data fabricação, validade
+
+**Devoluções:**
+- Material não usado volta pro estoque com registro do motivo
+- Produto devolvido pelo cliente entra como "devolução" com lote separado
+
+**Perdas e quebras de produção:**
+- Sistema calcula: quantidade prevista vs quantidade real
+- Diferença = perda (ex: torra 15%, moagem 3%)
+- Perda registrada por tipo: quebra de torra, quebra de moagem, refugo de embalagem
+- Relatório de perdas por período, por produto, por operador
+
+### 3. Rastreabilidade e Controle de Lotes
+
+**Lote de matéria-prima:**
+- Cada entrada de café verde ganha número de lote
+- Registra: fornecedor, safra, origem, peneira, peso, data entrada, umidade, defeitos
+
+**Lote de produção:**
+- Cada OP gera um lote de produção vinculado aos lotes de matéria-prima
+- Rastreabilidade bidirecional: do produto final volta até o café verde, e do café verde até os produtos que usaram ele
+
+**Controle de validade:**
+- FIFO (First In, First Out) ou FEFO (First Expired, First Out)
+- Alerta quando lote próximo da validade
+- Bloqueio automático de lote vencido
+
+**Laudos de qualidade:**
+- Vinculados ao lote de produção
+- Resultados de análise: umidade, impureza, granulometria, defeitos
+- Selo Puro Lote vinculado ao laudo
+
+### 4. Custos de Produção
+
+**Custo da OP:**
+- Matéria-prima: soma do custo de cada insumo consumido (café verde por kg)
+- Mão de obra: horas trabalhadas × custo/hora do operador
+- Energia: consumo medido ou rateado por hora de produção
+- Embalagem: custo unitário × quantidade usada
+- Lenha: kg consumidos × custo/kg
+- Depreciação de máquinas: rateio por hora de uso
+
+**Custo por kg produzido:**
+- Custo total da OP ÷ quantidade produzida
+- Comparação: custo previsto vs custo real
+
+**Margem de lucro:**
+- Preço de venda − custo de produção = margem
+- Relatório por cliente, por produto, por marca
+
+### 5. Relatórios Essenciais
+
+- OPs emitidas por período (abertas, em andamento, concluídas)
+- Consumo de materiais (previsto vs real)
+- Perdas e quebras por etapa
+- Eficiência de produção (OEE: disponibilidade × performance × qualidade)
+- Custos de produção por OP, por produto, por período
+- Estoque atual por categoria (cru, torrado, pó, acabado)
+- Simulador de produção (quanto precisa de matéria-prima para X pedidos)
+- Rastreabilidade por lote (do grão ao pacote final)
+- Paradas de máquina (motivo, duração, frequência)
+- Produtividade por operador
+
+### 6. Sistema MES (chão de fábrica com tablet)
+
+**O que é:**
+- Software que roda no TABLET do funcionário no chão de fábrica
+- Conecta diretamente com o ERP
+
+**Funcionalidades:**
+- Apontamento de produção por toque na tela ou código de barras
+- Registra início/fim de cada operação em tempo real
+- Registra paradas de máquina com motivo (setup, manutenção, falta material)
+- Registra refugo e retrabalho com motivo e quantidade
+- Mostra instruções da OP na tela (o que fazer, quanto produzir)
+- Calcula OEE em tempo real
+- Elimina papel no chão de fábrica
+
+### 7. Funcionalidades Específicas para Torrefação de Café
+
+**Controle de torra:**
+- Perfil de torra (temperatura × tempo) por tipo de café
+- Registro de cada batelada: peneira, peso cru, peso torrado, % quebra
+- Agtron (cor da torra) como parâmetro de qualidade
+
+**Blendagem:**
+- Receita do blend (quais peneiras, quanto de cada)
+- Simulador de impureza MAPA (< 1%)
+- Cálculo proporcional para produção parcial
+
+**Moagem:**
+- Granulometria por tipo de embalagem (almofada 1,4mm, vácuo 1,6mm)
+- Registro de temperatura do moinho
+- % de quebra de moagem
+
+**Embalagem:**
+- Conferência de peso INMETRO (média e individual)
+- Contagem de fardos/caixas
+- Taxa de rejeição de embalagem
+
+**Expedição:**
+- Conferência 100% vs OP antes de despachar
+- Assinatura digital: operador + supervisor + PCP
+
+### Fontes da pesquisa
+- SIGE Cloud: sigecloud.com.br/controle-de-producao
+- TOTVS: produtos.totvs.com/ficha-tecnica/tudo-sobre-o-totvs-manufatura-linha-protheus
+- SAP PP-PI: help.sap.com/docs/SAP_ERP (Production Planning Process Industries)
+- NetSuite: netsuite.com/portal/products/erp/production-management
+- Nomus: nomus.com.br/erpindustrial/como-funciona/producao
+- Maxiprod: maxiprod.com.br/funcionalidade/producao
+- Bling: bling.com.br/funcionalidades/ordem-producao
+- ADV Tecnologia (ERP café): advtecnologia.com.br/erp-industria-cafe
+- Café Orfeu + TOTVS MES: ppi-multitask.com.br (caso real torrefação)
