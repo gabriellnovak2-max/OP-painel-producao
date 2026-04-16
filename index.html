@@ -5722,31 +5722,43 @@ function calcTotalProdutoAcabado() {
   if (elG) elG.textContent = fmt(totalKg) + ' kg';
 }
 
-// ============ PRÉ-CARREGAR ESTOQUE INICIAL — INVENTÁRIO FÍSICO 02/12/2025 ============
-// Fonte: planilha manuscrita transcrita e auditada pelo Cloud Call Worker
+// ============ PRÉ-CARREGAR ESTOQUE INICIAL — AUDITORIA ATUALIZADA ABRIL/2026 ============
+// Fonte: auditoria física feita pelo Gabriell, conferida campo a campo
 function preCarregarEstoqueInicial() {
   const cvTbody = document.querySelector('#tbl-estoque-cafe-verde tbody');
   const cgtTbody = document.querySelector('#tbl-cafe-grao-torrado tbody');
   const cpoTbody = document.querySelector('#tbl-cafe-po tbody');
+  const paTbody = document.querySelector('#tbl-produto-acabado tbody');
   if (cvTbody.children.length > 0 || cgtTbody.children.length > 0 || cpoTbody.children.length > 0) return;
 
-  // === CAFÉ VERDE CRU === Subtotal: 5.416,85 kg
-  addEstoqueCafeVerdeRow({peneira:'Resíduo PVA', fornecedor:'Sr. Carlos', lote:'Lote Sr. Carlos', sacas:'90', volumes:'10.5', kg:'495.55', data:'2025-12-02', conf:'⚠️', obs:'Peso bruto e tara ILEGÍVEIS na folha. Conferir fisicamente.'});
-  addEstoqueCafeVerdeRow({peneira:'14 Acima', fornecedor:'Sr. Carlos', lote:'Lote Sr. Carlos', sacas:'90', volumes:'30.5', bruto:'1820.70', tara:'3.10', kg:'1817.60', data:'2025-12-02', conf:'✓', obs:'Peneira 14 Acima'});
-  addEstoqueCafeVerdeRow({peneira:'P17/18', lote:'Cru 17/18', volumes:'69', bruto:'2786.50', tara:'6.90', kg:'2779.60', data:'2025-12-02', conf:'✓'});
-  addEstoqueCafeVerdeRow({peneira:'P15/16', lote:'Cru 15/16', volumes:'8', bruto:'324.90', tara:'0.80', kg:'324.10', data:'2025-12-02', conf:'✓'});
+  // === CAFÉ VERDE CRU (2 lotes) === Subtotal: 3.598,60 kg
+  addEstoqueCafeVerdeRow({peneira:'Resíduo PVA', fornecedor:'Sr. Carlos', lote:'Lote Sr. Carlos', volumes:'10.5', kg:'495.50', conf:'✓'});
+  addEstoqueCafeVerdeRow({peneira:'P17/18', lote:'Estrelinha Pedro', volumes:'77', kg:'3103.10', conf:'✓'});
 
-  // === CAFÉ GRÃO TORRADO === Subtotal: 3.283,70 kg
-  addCafeGraoTorradoRow({lote:'15/16 Peneirado Torrado Zé Maria — Parte Boa', peneira:'P15/16', tipo:'Puro', volumes:'6', bruto:'117.90', tara:'0.60', kg:'117.30', conf:'✓'});
-  addCafeGraoTorradoRow({lote:'15/16 Peneirado Torrado Zé Maria — Parte Ruim', peneira:'P15/16', tipo:'Puro', volumes:'5', bruto:'86.60', tara:'0.50', kg:'86.10', conf:'✓'});
-  addCafeGraoTorradoRow({lote:'Kremon', tipo:'Puro', volumes:'8', bruto:'269.40', tara:'9.80', kg:'259.60', conf:'⚠️', obs:'Manuscrito dizia 268,60. Cálculo correto: 269,40-9,80=259,60. Diferença 9kg.'});
-  addCafeGraoTorradoRow({lote:'Torrado Carlos', tipo:'Puro', volumes:'6', bruto:'138.40', tara:'0.60', kg:'137.80', conf:'✓'});
-  addCafeGraoTorradoRow({lote:'Pedro Essentia', tipo:'Puro', volumes:'57', bruto:'1617.40', tara:'5.70', kg:'1611.70', conf:'✓'});
-  addCafeGraoTorradoRow({lote:'Torrado Voltou Renata', tipo:'Puro', volumes:'29', bruto:'499.30', tara:'2.90', kg:'496.40', conf:'✓', obs:'Inhumas'});
-  addCafeGraoTorradoRow({lote:'Torrado Recente 15/16', peneira:'P15/16', tipo:'Puro', volumes:'28', bruto:'577.60', tara:'2.80', kg:'574.80', conf:'⚠️', obs:'Manuscrito "57480" sem vírgula. Interpretado 574,80.'});
+  // === CAFÉ GRÃO TORRADO (7 lotes) === Subtotal: 2.988,60 kg
+  addCafeGraoTorradoRow({lote:'15/16 Peneirado Zé Maria — Bom', peneira:'P15/16', tipo:'Puro', volumes:'6', kg:'117.30', conf:'✓'});
+  addCafeGraoTorradoRow({lote:'15/16 Peneirado Zé Maria — Ruim', peneira:'P15/16', tipo:'Puro', volumes:'5', kg:'86.10', conf:'✓'});
+  addCafeGraoTorradoRow({lote:'Devolução Renata Inhumas', tipo:'Puro', volumes:'29', kg:'496.40', conf:'✓'});
+  addCafeGraoTorradoRow({lote:'Grão Torrado Recente 15/16', peneira:'P15/16', tipo:'Puro', volumes:'28', kg:'560.00', conf:'✓'});
+  addCafeGraoTorradoRow({lote:'Grão Torrado (Carlos)', tipo:'Puro', volumes:'6', kg:'137.80', conf:'✓'});
+  addCafeGraoTorradoRow({lote:'Café Torrado Grão 15/16', peneira:'P15/16', tipo:'Puro', volumes:'97', kg:'591.00', data:'2025-12-18', conf:'✓', obs:'Data torra: 18/12/2025'});
 
-  // === CAFÉ TORRADO EM PÓ === Subtotal: 827,30 kg
-  addCafePoRow({marca:'Moção Moído', volumes:'28', bruto:'830.10', tara:'2.80', kg:'827.30', conf:'✓'});
+  // === CAFÉ TORRADO EM PÓ (3 lotes) === Subtotal: 1.182,80 kg
+  addCafePoRow({marca:'Perdeu Essência', volumes:'32', kg:'860.00', conf:'✓'});
+  addCafePoRow({marca:'Devolução Prefeitura Alto Horizonte', volumes:'6', kg:'185.00', conf:'✓'});
+  addCafePoRow({marca:'Café Moído Modão', volumes:'27', kg:'137.80', conf:'✓'});
+
+  // === PRODUTO ACABADO (7 itens) === Subtotal: 8.324,00 kg
+  if (paTbody && paTbody.children.length === 0) {
+    addProdutoAcabadoRow({produto:'Café Vida', tipo:'Torrado Moído', gramatura:'500g', kg:'395.00', status:'Disponível'});
+    addProdutoAcabadoRow({produto:'Café Jireh', tipo:'Torrado Moído', gramatura:'500g', kg:'395.00', status:'Disponível', obs:'Litografia Nova'});
+    addProdutoAcabadoRow({produto:'Café Jireh', tipo:'Torrado Moído', gramatura:'250g', kg:'90.00', status:'Disponível'});
+    addProdutoAcabadoRow({produto:'Café Della', tipo:'Torrado Moído', gramatura:'500g', kg:'330.00', status:'Disponível'});
+    addProdutoAcabadoRow({produto:'Café Della', tipo:'Torrado Moído', gramatura:'250g', kg:'200.00', status:'Disponível'});
+    addProdutoAcabadoRow({produto:'Café Empacotado Transparente', tipo:'Torrado Moído', embalagem:'Vácuo', gramatura:'500g', kg:'35.00', status:'Disponível'});
+    addProdutoAcabadoRow({produto:'Café Kremon a Vácuo', tipo:'Torrado Moído', embalagem:'Vácuo', gramatura:'500g', kg:'6879.00', status:'Disponível', obs:'Devolução MT'});
+    calcTotalProdutoAcabado();
+  }
 
   calcTotalEstoqueCafeVerde();
   calcTotalEstoqueGraoTorrado();
