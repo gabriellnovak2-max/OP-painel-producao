@@ -29,40 +29,14 @@ Arquivo único `index.html` (~6.500 linhas) com HTML + CSS inline + JavaScript v
 
 ### Abas (tabs)
 
-| Tab | Conteúdo |
-|-----|----------|
-| 0 | Home (KPIs, calendário feriados, 8 gráficos, fluxo rastreabilidade, widget workflow) |
-| 1 | Ordem de Produção |
-| 2 | Bateladas de Torra |
-| 3 | Controle de Silos |
-| 4 | Blendagem Pós-Torra (com silos visuais 3D) |
-| 5 | Moagem e Embalagem |
-| 6 | Controle de Tempos |
-| 7 | Quebra e Fiscal |
-| 8 | Cadastros (operadores, fornecedores, clientes) |
-| 9 | Estoque Café Verde Cru |
-| 10 | Estoque Embalagens |
-| 11 | Estoque Lenha |
-| 12 | Fichas Clientes/Produtos |
-| 13 | Selos e Certificados |
-| 14 | AGB Maquinação |
-| 15 | Histórico de OPs |
-| 16 | Descarregamento Torrefação |
-| 17 | Estoque Café Grão Torrado |
-| 18 | Estoque Café Torrado em Pó |
-| 19 | Simulador de Blend — Impureza MAPA (com blend proporcional, registro produção, clientes) |
-| 20 | Workflow — Editor Visual |
-| 21 | Workflow — Etapas |
-| 22 | Workflow — Templates |
-| 23 | Workflow — Histórico de Fluxos |
-| 24 | Workflow — Configurações (gatilhos ON/OFF) |
+Ver tabela completa na seção "Abas do sistema (atualizado)" abaixo — inclui tabs 0-30.
 
 ### Menu lateral (sidebar)
 
 Usa `nav-group` com `toggleSubmenu()` para submenus expansíveis:
-- **PRINCIPAL**: Home, Workflow (submenu), AGB Recebimento (submenu), Estoque (submenu)
+- **PRINCIPAL**: Home, Workflow (submenu), Compra de Café Cru, AGB Recebimento (submenu), Estoque (submenu com Produto Acabado)
 - **PRODUÇÃO**: OP, Bateladas, Silos, Blendagem (submenu), Moagem, Tempos
-- **GESTÃO**: Fichas, Quebra, Cadastros, Selos, Histórico
+- **GESTÃO**: Fichas, Quebra, Cadastros (submenu com 5 sub-abas), Selos, Histórico
 
 ### Navegação
 
@@ -136,9 +110,148 @@ git stash && git pull origin main
 
 ## Contexto do negócio
 
-- Torrefação de café em Goiânia, GO
-- Processo: Café Verde → AGB Maquinação (peneiras) → Torra (bateladas 60kg) → Silos → Blend → Moagem → Embalagem → Selo Puro Lote
-- Regra MAPA: impureza do blend deve ser < 1% (tolerância até 1.2% com aviso)
+- **Empresa**: Patrocínio Café Indústria e Comércio de Café LTDA
+- **CNPJ**: 36.236.772/0001-30
+- **Local**: Goiânia/GO
+- **Proprietário/Direção**: Judson Gabriel Martins (Gabriell)
+- **Email**: grupojirehcafes@hotmail.com
+- **ERP/Sistema**: SIGE Cloud
+- **Marcas**: Pompojeré, Cremon (Kremon), Modão, Patrocínio
 - Selo Puro Lote: primeiro do Brasil, registro INPI, laudo SENAI + NUGAP
-- Clientes: Benevita, Café Vida, Junior Ceresino, Jireh, etc.
-- Peneiras: P17/18, P15/16, P13/14, P10/12, FP10, FP8, FP5, PVA
+- Regra MAPA: impureza do blend deve ser < 1% (tolerância até 1.2% com aviso)
+
+### Equipe e funções
+
+- **Financeiro/Cadastro/Crédito/Faturamento**: Lucas (titular) e Diogo (backup)
+- **Estoque/Separação/Expedição**: Valtinho
+- **Produção** (torra/moagem/envase): equipe de chão de fábrica
+- **PCP/Apontamento**: setor administrativo
+- **Qualidade/Laudos**: setor de qualidade
+- **Gestão/Direção**: Judson Gabriel Martins
+
+### Clientes
+
+Benevita, Café Vida, Junior Ceresino, Jireh, Della, entre outros.
+
+## Matéria-prima — Café Cru
+
+### Classificação por peneiras (tamanho do grão)
+
+P5 (quebradinho), P8, P10, P10/12, P13/14, P15/16, P17/18, PVA (resíduo — SEMPRE segregado, PROIBIDO no produto final)
+
+### Qualidade
+
+Cada lote recebe classificação: "bom" ou "ruim". Exemplo: P5 bom, P8 ruim, P10/12 bom.
+
+### Recebimento do cru
+
+1. Conferência de peso (balança aferida)
+2. Coleta de amostras (umidade, defeitos)
+3. Pegar nota fiscal
+4. Lançar no SIGE Cloud (fornecedor, safra, origem, lote)
+5. Armazenagem segregada e etiquetada (FIFO/FEFO)
+
+## Guia de Produção (GP) — Processo completo
+
+A Guia de Produção é o documento central que acompanha todo o processo de fabricação de um pedido. Contém todos os dados do pedido, parâmetros de processo, registros de perdas, consumos e assinaturas.
+
+### Dados obrigatórios da GP
+
+- GP_ID (código único), Data, Cliente/Órgão, CNPJ do cliente
+- Marca do café (Pompojeré, Cremon, etc.)
+- Pedido/Contrato, Quantidade de cru (kg)
+- Padrão ABIC: Tradicional / Extraforte / Superior / Gourmet
+- Ponto de torra: clara / média / média-escura / escura
+- Granulometria: 1,4 mm (almofada) ou 1,6 mm (vácuo)
+- Tipo de embalagem: 250g almofada / 500g almofada / 500g vácuo
+- Peso da embalagem: 4,5g (250g alm.) / 5,5g (500g alm.) / 12g (500g vácuo)
+- Perdas-alvo (torra, moagem, embalagem)
+- Consumo de lenha por torra
+
+### Fluxo de produção — 12 Etapas
+
+**ETAPA 1 — Recebimento do pedido**: Cliente, marca, quantidade, embalagem, padrão ABIC, ponto de torra, prazo.
+
+**ETAPA 2 — Seleção de lotes do cru**: Escolher lotes por peneira e qualidade. PVA proibido no blend final. Reservar no ERP (baixa do estoque de cru).
+
+**ETAPA 3 — Torra**: Torrador capacidade 180-220 kg por carga. Torrar CADA PENEIRA SEPARADA. Tempo: 15-20 min. Temperatura: 550°C+. Quebra: clara 13-13,5%, média 14,5-15%, escura 16,5-18%. Registrar lote, peneira, carga, hora, temperatura, operador. Pesar na saída. Etiquetar LOTE TORRADO (LT).
+
+**ETAPA 4 — Resfriamento e degas**: Descanso 8-24h antes de moer/embalar.
+
+**ETAPA 5 — Silos e blend**: 3 silos para separar torrado. Depois de torrado, PODE misturar se padrão e bebida forem iguais. PVA nunca mistura.
+
+**ETAPA 6 — Moagem**: Moinho Jocar (martelo), 400 kg/hora. Peneiras: almofada 1,4 mm, vácuo 1,6 mm. Quebra: 2-4%. Registrar hora, temperatura, lote. Etiquetar LOTE PÓ (LP).
+
+**ETAPA 7 — Silo de pó**: Pó cai no silo para alimentar envase.
+
+**ETAPA 8 — Envase/Empacotamento**: Máquina Amazon Pack. Almofada 250g: fardo 20 pac = 5 kg (emb 4,5g). Almofada 500g: fardo 10 pac = 5 kg (emb 5,5g). Vácuo 500g: caixa 20 pac = 10 kg (emb 12g). Registrar quebras.
+
+**ETAPA 9 — Paletização**: Pallet com identificação: lote(s), data fab., validade, quantidade.
+
+**ETAPA 10 — Controle de qualidade final**: Peso INMETRO, rótulo com ponto de torra (obrigatório), selagem. Se não conforme: retrabalho.
+
+**ETAPA 11 — Lançamento no sistema**: Baixa no ERP + NF-e. Fechar GP com rendimentos reais. Custos: cru, lenha, embalagem, mão de obra, energia. Vincular laudos ao lote.
+
+**ETAPA 12 — Expedição**: Conferência 100% vs GP. Assinatura: Operador + Supervisor + PCP.
+
+### Fórmulas de rendimento
+
+```
+Peso_torrado = Peso_cru × (1 − %perda_torra)
+Peso_pó = Peso_torrado × (1 − %perda_moagem)
+Pacotes_500g = INT(Peso_pó / 0,5)
+Pacotes_250g = INT(Peso_pó / 0,25)
+Fardos_5kg (500g) = Pacotes / 10
+Fardos_5kg (250g) = Pacotes / 20
+Caixas_vácuo_10kg = INT(Peso_pó / 10)
+Embalagem_total_kg = (Pacotes × Peso_embalagem_g) / 1000
+Torras_necessárias = CEILING(Peso_cru / Carga_por_torra)
+Lenha_total = Torras_necessárias × Lenha_por_torra
+```
+
+### Checkpoints com assinaturas obrigatórias
+
+1. Recebimento: peso e amostra (Ass.: Recebimento)
+2. Torra: carga/descarga/perda/lenha (Ass.: Torrefador)
+3. Moagem: peneira/peso/perda (Ass.: Moageiro)
+4. Envase: checkweigher/fardos/quebras (Ass.: Envasador)
+5. Liberação final: QC + PCP
+
+## Abas do sistema (atualizado)
+
+| Tab | Conteúdo |
+|-----|----------|
+| 0 | Home (KPIs, calendário feriados, 8 gráficos, fluxo rastreabilidade, widget workflow) |
+| 1 | Ordem de Produção |
+| 2 | Bateladas de Torra |
+| 3 | Controle de Silos |
+| 4 | Blendagem Pós-Torra (com silos visuais 3D) |
+| 5 | Moagem e Embalagem |
+| 6 | Controle de Tempos |
+| 7 | Quebra e Fiscal |
+| 8 | Cadastro de Clientes |
+| 9 | Estoque Café Verde Cru |
+| 10 | Estoque Embalagens |
+| 11 | Estoque Lenha |
+| 12 | Fichas Clientes/Produtos |
+| 13 | Selos e Certificados |
+| 14 | AGB Maquinação |
+| 15 | Histórico de OPs |
+| 16 | Descarregamento Torrefação |
+| 17 | Estoque Café Grão Torrado |
+| 18 | Estoque Café Torrado em Pó |
+| 19 | Simulador de Blend — Impureza MAPA |
+| 20-24 | Workflow (Editor, Etapas, Templates, Histórico, Configurações) |
+| 25 | Produto Acabado |
+| 26 | Cadastro de Fornecedores |
+| 27 | Cadastro de Operadores/Funcionários |
+| 28 | Cadastro de Produtos |
+| 29 | Cadastro de Prestadores de Serviço |
+| 30 | Compra de Café Cru |
+
+## Próximos passos planejados
+
+- **Supabase**: banco de dados na nuvem para persistir dados (substituir localStorage)
+- **Vercel**: hospedar o sistema com link próprio para tablets dos funcionários
+- **n8n**: automação de processos — conectar WhatsApp, sistema, estoque, alertas
+- **Agentes IA**: cada setor da produção com IA guiando o funcionário etapa por etapa nos tablets
