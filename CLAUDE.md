@@ -268,9 +268,21 @@ Lenha_total = Torras_necessárias × Lenha_por_torra
 | 29 | Cadastro de Prestadores de Serviço |
 | 30 | Compra de Café Cru |
 
-## Próximos passos planejados
+## Próximos passos — Ordem obrigatória (confirmada pelo Gabriell)
 
-- **Supabase**: banco de dados na nuvem para persistir dados (substituir localStorage)
-- **Vercel**: hospedar o sistema com link próprio para tablets dos funcionários
-- **n8n**: automação de processos — conectar WhatsApp, sistema, estoque, alertas
-- **Agentes IA**: cada setor da produção com IA guiando o funcionário etapa por etapa nos tablets
+```
+PASSO 1 → Terminar o sistema de Ordem de Produção        ← ESTAMOS AQUI
+PASSO 2 → Contratar o Supabase (banco de dados na nuvem)
+PASSO 3 → Conectar o sistema ao Supabase (trocar localStorage por Supabase)
+PASSO 4 → Configurar domínio próprio no Vercel (já tem conta ativa)
+PASSO 5 → Ligar o n8n (automação: WhatsApp, alertas, conectar sistemas)
+PASSO 6 → Agentes IA nos tablets dos funcionários (cada setor com IA guiando etapa por etapa)
+```
+
+### Detalhes de cada passo
+- **Passo 1**: Sistema no index.html com todas as abas funcionando, estoque com baixa automática
+- **Passo 2**: Criar conta gratuita no Supabase, definir tabelas (estoque, clientes, OPs, lotes)
+- **Passo 3**: Eu (Claude Code) troco o código — onde salva no localStorage passa a salvar no Supabase
+- **Passo 4**: Vercel já funciona (op-painel-producao.vercel.app). Falta só comprar domínio (ex: patrociniocafe.com.br) e apontar
+- **Passo 5**: n8n conecta tudo — pedido no WhatsApp → sistema → estoque → alerta
+- **Passo 6**: Cada setor (torra, moagem, embalagem) com IA no tablet guiando o funcionário
