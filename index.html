@@ -5723,13 +5723,18 @@ function calcTotalProdutoAcabado() {
 }
 
 // ============ PRÉ-CARREGAR ESTOQUE INICIAL — AUDITORIA ATUALIZADA ABRIL/2026 ============
-// Fonte: auditoria física feita pelo Gabriell, conferida campo a campo
+// Versão do estoque: incrementar sempre que os dados mudarem
+const ESTOQUE_VERSAO = 3;
+
 function preCarregarEstoqueInicial() {
-  const cvTbody = document.querySelector('#tbl-estoque-cafe-verde tbody');
-  const cgtTbody = document.querySelector('#tbl-cafe-grao-torrado tbody');
-  const cpoTbody = document.querySelector('#tbl-cafe-po tbody');
-  const paTbody = document.querySelector('#tbl-produto-acabado tbody');
-  if (cvTbody.children.length > 0 || cgtTbody.children.length > 0 || cpoTbody.children.length > 0) return;
+  const versaoSalva = parseInt(localStorage.getItem('estoque_versao')) || 0;
+  if (versaoSalva >= ESTOQUE_VERSAO) return; // Dados já estão atualizados
+
+  // Limpa tabelas antigas
+  ['tbl-estoque-cafe-verde','tbl-cafe-grao-torrado','tbl-cafe-po','tbl-produto-acabado'].forEach(id => {
+    const tbody = document.querySelector('#' + id + ' tbody');
+    if (tbody) tbody.innerHTML = '';
+  });
 
   // === CAFÉ VERDE CRU (2 lotes) === Subtotal: 3.598,60 kg
   addEstoqueCafeVerdeRow({peneira:'Resíduo PVA', fornecedor:'Sr. Carlos', lote:'Lote Sr. Carlos', volumes:'10.5', kg:'495.50', conf:'✓'});
@@ -5749,20 +5754,19 @@ function preCarregarEstoqueInicial() {
   addCafePoRow({marca:'Café Moído Modão', volumes:'27', kg:'137.80', conf:'✓'});
 
   // === PRODUTO ACABADO (7 itens) === Subtotal: 8.324,00 kg
-  if (paTbody && paTbody.children.length === 0) {
-    addProdutoAcabadoRow({produto:'Café Vida', tipo:'Torrado Moído', gramatura:'500g', kg:'395.00', status:'Disponível'});
-    addProdutoAcabadoRow({produto:'Café Jireh', tipo:'Torrado Moído', gramatura:'500g', kg:'395.00', status:'Disponível', obs:'Litografia Nova'});
-    addProdutoAcabadoRow({produto:'Café Jireh', tipo:'Torrado Moído', gramatura:'250g', kg:'90.00', status:'Disponível'});
-    addProdutoAcabadoRow({produto:'Café Della', tipo:'Torrado Moído', gramatura:'500g', kg:'330.00', status:'Disponível'});
-    addProdutoAcabadoRow({produto:'Café Della', tipo:'Torrado Moído', gramatura:'250g', kg:'200.00', status:'Disponível'});
-    addProdutoAcabadoRow({produto:'Café Empacotado Transparente', tipo:'Torrado Moído', embalagem:'Vácuo', gramatura:'500g', kg:'35.00', status:'Disponível'});
-    addProdutoAcabadoRow({produto:'Café Kremon a Vácuo', tipo:'Torrado Moído', embalagem:'Vácuo', gramatura:'500g', kg:'6879.00', status:'Disponível', obs:'Devolução MT'});
-    calcTotalProdutoAcabado();
-  }
+  addProdutoAcabadoRow({produto:'Café Vida', tipo:'Torrado Moído', gramatura:'500g', kg:'395.00', status:'Disponível'});
+  addProdutoAcabadoRow({produto:'Café Jireh', tipo:'Torrado Moído', gramatura:'500g', kg:'395.00', status:'Disponível', obs:'Litografia Nova'});
+  addProdutoAcabadoRow({produto:'Café Jireh', tipo:'Torrado Moído', gramatura:'250g', kg:'90.00', status:'Disponível'});
+  addProdutoAcabadoRow({produto:'Café Della', tipo:'Torrado Moído', gramatura:'500g', kg:'330.00', status:'Disponível'});
+  addProdutoAcabadoRow({produto:'Café Della', tipo:'Torrado Moído', gramatura:'250g', kg:'200.00', status:'Disponível'});
+  addProdutoAcabadoRow({produto:'Café Empacotado Transparente', tipo:'Torrado Moído', embalagem:'Vácuo', gramatura:'500g', kg:'35.00', status:'Disponível'});
+  addProdutoAcabadoRow({produto:'Café Kremon a Vácuo', tipo:'Torrado Moído', embalagem:'Vácuo', gramatura:'500g', kg:'6879.00', status:'Disponível', obs:'Devolução MT'});
 
   calcTotalEstoqueCafeVerde();
   calcTotalEstoqueGraoTorrado();
   calcTotalEstoquePo();
+  calcTotalProdutoAcabado();
+  localStorage.setItem('estoque_versao', ESTOQUE_VERSAO);
   salvarDados(true);
 }
 
